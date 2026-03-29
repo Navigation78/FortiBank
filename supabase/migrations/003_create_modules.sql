@@ -77,3 +77,5 @@ CREATE TABLE public.user_module_progress (
 CREATE TRIGGER user_module_progress_updated_at
   BEFORE UPDATE ON public.user_module_progress
   FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+  

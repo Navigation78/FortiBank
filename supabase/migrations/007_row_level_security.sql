@@ -1,7 +1,7 @@
--- 
+-- ============================================================
 -- 007_row_level_security.sql
 -- RLS policies for all tables
--- 
+-- ============================================================
 
 -- ── Helper: get current user's role name ─────────────────────
 CREATE OR REPLACE FUNCTION public.current_user_role()
@@ -15,8 +15,13 @@ $$ LANGUAGE sql SECURITY DEFINER STABLE;
 
 CREATE OR REPLACE FUNCTION public.is_admin()
 RETURNS BOOLEAN AS $$
-  SELECT public.current_user_role() = 'admin';
-$$ LANGUAGE sql SECURITY DEFINER STABLE;
+  SELECT public.current_user_role() = 'system_admin';
+$$ LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public;
+
+CREATE OR REPLACE FUNCTION public.is_admin_or_it()
+RETURNS BOOLEAN AS $$
+  SELECT public.current_user_role() = 'system_admin';
+$$ LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public;
 
 -- ── Enable RLS on all tables ─────────────────────────────────
 ALTER TABLE public.users                  ENABLE ROW LEVEL SECURITY;

@@ -1,8 +1,6 @@
 'use client'
-
-// ============================================================
 // src/app/(auth)/forgot-password/page.jsx
-// ============================================================
+
 
 import { useState } from 'react'
 import Link from 'next/link'

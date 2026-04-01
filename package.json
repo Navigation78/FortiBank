@@ -18,8 +18,8 @@
     "resend": "^6.9.4"
   },
   "devDependencies": {
-    "autoprefixer": "^10.x.x",
-    "postcss": "^8.x.x",
-    "tailwindcss": "^3.x.x"
+    "autoprefixer": "^10.4.27",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^3.4.19"
   }
 }

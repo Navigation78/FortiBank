@@ -1,17 +1,14 @@
 'use client'
-
-// ============================================================
 // src/contexts/AuthContext.jsx
 // Global auth state — wraps the entire app.
 // Provides: user, session, role, loading, and auth methods.
-// ============================================================
 
 import { createContext, useContext, useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase'
 import { getDashboardUrl } from '@/utils/roleRedirect'
 import { useRouter } from 'next/navigation'
 
-const AuthContext = createContext(null)
+const AuthContext = createContext(null)// Create a context for auth state
 
 export function AuthProvider({ children }) {
   const supabase = createClient()

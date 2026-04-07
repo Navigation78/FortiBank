@@ -139,7 +139,7 @@ export default function LoginPage() {
 
       <div className="mt-6 pt-6 border-t border-slate-800">
         <p className="text-slate-500 text-xs text-center">
-          Access is restricted to FortiBank employees only.
+          Access is restricted to Akiba Commercial Bank's employees only.
           <br />Contact your administrator if you need access.
         </p>
       </div>

@@ -1,22 +1,19 @@
-import { Inter } from 'next/font/google'
-import { AuthProvider } from '@/contexts/AuthContext'
-import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+// Shell layout wrapping all employee-facing pages.
+// Includes sidebar, topbar and footer.
 
-export const metadata = {
-  title: 'FortiBank | Cybersecurity Training',
-  description: 'Role-based cybersecurity awareness training for FortiBank employees.',
-}
 
-export default function RootLayout({ children }) {
+import Sidebar from '@/components/layout/Sidebar'
+import Footer from '@/components/layout/Footer'
+
+export default function DashboardLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
-      </body>
-    </html>
+    <div className="flex min-h-screen bg-slate-950">
+      <Sidebar />
+      <div className="flex flex-col flex-1 min-w-0">
+        {children}
+        <Footer />
+      </div>
+    </div>
   )
 }

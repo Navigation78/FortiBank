@@ -65,19 +65,7 @@ export function canAccessPath(role, pathname) {
   }
 
   // Role-specific dashboards — each role can only access their own
-  const roleDashboards = {
-    '/dashboard/branch-manager':           ROLES.BRANCH_MANAGER,
-    '/dashboard/assistant-branch-manager': ROLES.ASSISTANT_BRANCH_MANAGER,
-    '/dashboard/credit-manager':           ROLES.CREDIT_MANAGER,
-    '/dashboard/customer-service-manager': ROLES.CUSTOMER_SERVICE_MANAGER,
-    '/dashboard/relationship-manager':     ROLES.RELATIONSHIP_MANAGER,
-    '/dashboard/relationship-officer':     ROLES.RELATIONSHIP_OFFICER,
-    '/dashboard/credit-officer':           ROLES.CREDIT_OFFICER,
-    '/dashboard/service-recovery-officer': ROLES.SERVICE_RECOVERY_OFFICER,
-    '/dashboard/head-teller':              ROLES.HEAD_TELLER,
-    '/dashboard/teller':                   ROLES.TELLER,
-    '/dashboard/customer-service-assistant': ROLES.CUSTOMER_SERVICE_ASSISTANT,
-  }
+  
 
   for (const [path, requiredRole] of Object.entries(roleDashboards)) {
     if (pathname.startsWith(path)) {

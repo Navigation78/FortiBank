@@ -1,10 +1,9 @@
 'use client'
 
-// ============================================================
+
 // src/app/unauthorized/page.jsx
 // Shown when a user tries to access a route their role
 // doesn't have permission for.
-// ============================================================
 
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'

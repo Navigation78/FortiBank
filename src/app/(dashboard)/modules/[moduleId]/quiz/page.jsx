@@ -3,7 +3,7 @@
 // src/app/(dashboard)/modules/[moduleId]/quiz/page.jsx
 // Full quiz experience — question flow, timer, submission
 
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import Topbar from '@/components/layout/Topbar'
@@ -261,5 +261,3 @@ export default function QuizPage() {
   )
 }
 
-// Need useState for the quizId state in this page
-import { useState } from 'react'

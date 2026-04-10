@@ -5,13 +5,7 @@ export default function ServiceRecoveryOfficerDashboard() {
   return (
     <DashboardTemplate
       title="Service Recovery Officer Dashboard"
-      welcomeRole="Service Recovery Officer"
-      statsConfig={[
-        { title: 'Modules Assigned',   value: '—', subtitle: 'Loading...',  icon: '📚', color: 'blue'   },
-        { title: 'Modules Completed',  value: '—', subtitle: 'Loading...',  icon: '✅', color: 'green'  },
-        { title: 'Risk Score',         value: '—', subtitle: 'Loading...',  icon: '🛡️', color: 'purple' },
-        { title: 'Certificates',       value: '—', subtitle: 'Loading...',  icon: '🏅', color: 'yellow' },
-      ]}
+     
       focusAreas={[
         {
           icon: '🎭',

@@ -5,13 +5,7 @@ export default function CustomerServiceManagerDashboard() {
   return (
     <DashboardTemplate
       title="Customer Service Manager Dashboard"
-      welcomeRole="Customer Service Manager"
-      statsConfig={[
-        { title: 'Modules Assigned',   value: '—', subtitle: 'Loading...',  icon: '📚', color: 'blue'   },
-        { title: 'Modules Completed',  value: '—', subtitle: 'Loading...',  icon: '✅', color: 'green'  },
-        { title: 'Risk Score',         value: '—', subtitle: 'Loading...',  icon: '🛡️', color: 'purple' },
-        { title: 'Certificates',       value: '—', subtitle: 'Loading...',  icon: '🏅', color: 'yellow' },
-      ]}
+      
       focusAreas={[
         {
           icon: '🎭',

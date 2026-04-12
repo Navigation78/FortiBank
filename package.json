@@ -15,7 +15,7 @@
     "next": "15.x.x",
     "react": "^18.x.x",
     "react-dom": "^18.x.x",
-    "resend": "^6.9.4"
+    "resend": "^6.10.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.27",

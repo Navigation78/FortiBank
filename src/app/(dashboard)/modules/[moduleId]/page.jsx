@@ -1,7 +1,10 @@
 'use client'
 
+// ============================================================
 // src/app/(dashboard)/modules/[moduleId]/page.jsx
-// Individual module viewer page
+// Individual module viewer page — NetAcad style.
+// Passes nextModule to viewer so it can show "Next Module" button.
+// ============================================================
 
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
@@ -12,8 +15,8 @@ import ModuleViewer from '@/components/modules/ModuleViewer'
 import { useModules } from '@/hooks/useModules'
 
 export default function ModuleViewerPage() {
-  const { moduleId } = useParams()
-  const { fetchModuleById } = useModules()
+  const { moduleId }        = useParams()
+  const { modules, fetchModuleById } = useModules()
 
   const [module, setModule]   = useState(null)
   const [loading, setLoading] = useState(true)
@@ -26,21 +29,27 @@ export default function ModuleViewerPage() {
   async function loadModule() {
     setLoading(true)
     const { data, error } = await fetchModuleById(moduleId)
-    if (error) {
-      setError(error)
-    } else {
-      setModule(data)
-    }
+    if (error) setError(error)
+    else setModule(data)
     setLoading(false)
   }
+
+  // Find the next module in sequence
+  const nextModule = (() => {
+    if (!module || modules.length === 0) return null
+    const currentOrder = module.order_index
+    return modules
+      .filter(m => m.order_index > currentOrder)
+      .sort((a, b) => a.order_index - b.order_index)[0] || null
+  })()
 
   if (loading) {
     return (
       <>
-        <Topbar title="Loading module..." />
+        <Topbar title="Loading..." />
         <PageWrapper>
-          <div className="space-y-4 animate-pulse">
-            <div className="h-6 bg-slate-800 rounded w-1/3" />
+          <div className="animate-pulse space-y-4 max-w-3xl">
+            <div className="h-5 bg-slate-800 rounded w-1/3" />
             <div className="h-64 bg-slate-800 rounded-xl" />
           </div>
         </PageWrapper>
@@ -55,7 +64,7 @@ export default function ModuleViewerPage() {
         <PageWrapper>
           <div className="text-center py-16">
             <p className="text-slate-400 mb-4">
-              {error || 'This module could not be found or you do not have access to it.'}
+              {error || 'This module could not be found or you do not have access.'}
             </p>
             <Link href="/modules" className="text-blue-400 hover:text-blue-300 text-sm">
               ← Back to modules
@@ -81,12 +90,12 @@ export default function ModuleViewerPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main content — 2 columns */}
+          {/* Main viewer — 2 columns */}
           <div className="lg:col-span-2">
-            <ModuleViewer module={module} />
+            <ModuleViewer module={module} nextModule={nextModule} />
           </div>
 
-          {/* Sidebar info — 1 column */}
+          {/* Sidebar — 1 column */}
           <div className="space-y-4">
             {/* Module info */}
             <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
@@ -96,9 +105,9 @@ export default function ModuleViewerPage() {
                   {module.description}
                 </p>
               )}
-              <div className="space-y-2 text-sm">
+              <div className="space-y-2 text-sm text-slate-500">
                 {module.duration_mins && (
-                  <div className="flex items-center gap-2 text-slate-500">
+                  <div className="flex items-center gap-2">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -106,48 +115,36 @@ export default function ModuleViewerPage() {
                     {module.duration_mins} minutes
                   </div>
                 )}
-                <div className="flex items-center gap-2 text-slate-500">
+                <div className="flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                   </svg>
                   {module.content?.length || 0} sections
                 </div>
+                {module.quiz && (
+                  <div className="flex items-center gap-2 text-blue-400">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                    Quiz included · Pass {module.quiz.pass_score}%
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Quiz info */}
-            {module.quiz && (
+            {/* Next module preview */}
+            {nextModule && (
               <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
-                <h3 className="text-white font-semibold mb-3">Module Quiz</h3>
-                <div className="space-y-2 text-sm text-slate-500 mb-4">
-                  <div className="flex justify-between">
-                    <span>Pass mark</span>
-                    <span className="text-white">{module.quiz.pass_score}%</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Max attempts</span>
-                    <span className="text-white">{module.quiz.max_attempts}</span>
-                  </div>
-                  {module.quiz.time_limit_mins && (
-                    <div className="flex justify-between">
-                      <span>Time limit</span>
-                      <span className="text-white">{module.quiz.time_limit_mins} min</span>
-                    </div>
-                  )}
-                </div>
-                {module.progress?.status === 'completed' && (
-                  <Link
-                    href={`/modules/${moduleId}/quiz`}
-                    className="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg py-2 text-sm transition-colors block text-center"
-                  >
-                    Take Quiz
-                  </Link>
+                <p className="text-slate-500 text-xs mb-2">Up next</p>
+                <p className="text-white text-sm font-medium">{nextModule.title}</p>
+                {nextModule.duration_mins && (
+                  <p className="text-slate-500 text-xs mt-1">{nextModule.duration_mins} min</p>
                 )}
               </div>
             )}
 
-            {/* Back link */}
             <Link
               href="/modules"
               className="flex items-center gap-2 text-slate-500 hover:text-slate-300 text-sm transition-colors"

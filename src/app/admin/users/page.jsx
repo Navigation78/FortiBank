@@ -5,22 +5,29 @@ import Link from 'next/link'
 import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import UserTable from '@/components/admin/UserTable'
-import { createClient } from '@/lib/supabase'
 
 export default function AdminUsersPage() {
-  const supabase      = createClient()
-  const [users, setUsers]     = useState([])
+  const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => { fetchUsers() }, [])
 
   async function fetchUsers() {
     setLoading(true)
-    const { data } = await supabase
-      .from('users_with_roles')
-      .select('*')
-      .order('created_at', { ascending: false })
-    setUsers(data || [])
+    setError('')
+
+    const res = await fetch('/api/admin/users')
+    const data = await res.json()
+
+    if (!res.ok) {
+      setError(data.error || 'Failed to load employees')
+      setUsers([])
+      setLoading(false)
+      return
+    }
+
+    setUsers(data.users || [])
     setLoading(false)
   }
 
@@ -43,6 +50,11 @@ export default function AdminUsersPage() {
             Add Employee
           </Link>
         </div>
+        {error && (
+          <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+            <p className="text-red-400 text-sm">{error}</p>
+          </div>
+        )}
         <UserTable users={users} loading={loading} onRefresh={fetchUsers} />
       </PageWrapper>
     </>

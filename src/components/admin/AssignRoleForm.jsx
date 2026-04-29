@@ -4,26 +4,36 @@
 // Reassigns a role to an existing employee
 
 import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase'
 
 export default function AssignRoleForm({ userId, currentRole, onSuccess }) {
-  const supabase      = createClient()
-  const [roles, setRoles]     = useState([])
-  const [roleId, setRoleId]   = useState('')
+  const [roles, setRoles] = useState([])
+  const [roleId, setRoleId] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError]     = useState('')
+  const [rolesLoading, setRolesLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => { fetchRoles() }, [])
 
   async function fetchRoles() {
-    const { data } = await supabase
-      .from('roles')
-      .select('id, name, display_name, category')
-      .order('id')
-    setRoles(data || [])
+    setRolesLoading(true)
+
+    const res = await fetch('/api/admin/roles')
+    const data = await res.json()
+
+    if (!res.ok) {
+      setError(data.error || 'Failed to load roles')
+      setRoles([])
+      setRolesLoading(false)
+      return
+    }
+
+    setRoles(data.roles || [])
+
     // Pre-select current role
-    const current = data?.find(r => r.name === currentRole)
+    const current = data.roles?.find(r => r.name === currentRole)
     if (current) setRoleId(String(current.id))
+
+    setRolesLoading(false)
   }
 
   async function handleSubmit(e) {
@@ -65,9 +75,12 @@ export default function AssignRoleForm({ userId, currentRole, onSuccess }) {
           value={roleId}
           onChange={e => setRoleId(e.target.value)}
           required
+          disabled={rolesLoading}
           className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
         >
-          <option value="">Select role...</option>
+          <option value="">
+            {rolesLoading ? 'Loading roles...' : 'Select role...'}
+          </option>
           {Object.entries(rolesByCategory).map(([category, categoryRoles]) => (
             <optgroup key={category} label={category}>
               {categoryRoles.map(role => (
@@ -76,6 +89,9 @@ export default function AssignRoleForm({ userId, currentRole, onSuccess }) {
             </optgroup>
           ))}
         </select>
+        {!rolesLoading && roles.length === 0 && (
+          <p className="text-red-400 text-xs mt-1">No roles are available yet.</p>
+        )}
       </div>
       <button
         type="submit"

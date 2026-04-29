@@ -16,6 +16,8 @@ const PUBLIC_ROUTES = [
   '/unauthorized',
 ]
 
+const PASSWORD_CHANGE_ROUTE = '/change-password'
+
 // Routes that are always public regardless (phishing click tracking)
 const ALWAYS_PUBLIC = [
   '/phishing-click',
@@ -76,8 +78,18 @@ export async function middleware(request) {
 
   // ── Logged in ─────────────────────────────────────────────
 
+  const mustChangePassword = user.user_metadata?.must_change_password === true
+
+  if (mustChangePassword && pathname !== PASSWORD_CHANGE_ROUTE) {
+    return NextResponse.redirect(new URL(PASSWORD_CHANGE_ROUTE, request.url))
+  }
+
   // Redirect away from auth pages if already logged in
   if (PUBLIC_ROUTES.some(route => pathname.startsWith(route))) {
+    if (mustChangePassword) {
+      return NextResponse.redirect(new URL(PASSWORD_CHANGE_ROUTE, request.url))
+    }
+
     // Fetch role to redirect to correct dashboard
     const { data: userRole } = await supabase
       .from('user_roles')
@@ -89,7 +101,22 @@ export async function middleware(request) {
     return NextResponse.redirect(new URL(getDashboardUrl(role), request.url))
   }
 
+  if (pathname === PASSWORD_CHANGE_ROUTE && !mustChangePassword) {
+    const { data: userRole } = await supabase
+      .from('user_roles')
+      .select('roles(name)')
+      .eq('user_id', user.id)
+      .single()
+
+    const role = userRole?.roles?.name
+    return NextResponse.redirect(new URL(getDashboardUrl(role), request.url))
+  }
+
   // Fetch the user's role for access control
+  if (pathname === PASSWORD_CHANGE_ROUTE) {
+    return response
+  }
+
   const { data: userRole } = await supabase
     .from('user_roles')
     .select('roles(name)')

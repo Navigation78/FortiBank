@@ -86,18 +86,81 @@ export const FRONTLINE_ROLES = [
 // Display names matching the database
 export const ROLE_LABELS = {
   [ROLES.BRANCH_MANAGER]:           'Branch Manager',
-  [ROLES.ASSISTANT_BRANCH_MANAGER]: 'Assistant Branch Manager / Operations Manager',
+  [ROLES.ASSISTANT_BRANCH_MANAGER]: 'Assistant Branch Manager',
   [ROLES.CREDIT_MANAGER]:           'Credit Manager',
   [ROLES.CUSTOMER_SERVICE_MANAGER]: 'Customer Service Manager',
   [ROLES.RELATIONSHIP_MANAGER]:     'Relationship Manager',
   [ROLES.RELATIONSHIP_OFFICER]:     'Relationship Officer',
   [ROLES.CREDIT_OFFICER]:           'Credit Officer',
-  [ROLES.SERVICE_RECOVERY_OFFICER]: 'Service Recovery Officer',
-  [ROLES.HEAD_TELLER]:              'Head Teller / Vault Custodian',
-  [ROLES.TELLER]:                   'Bank Teller',
+  [ROLES.SERVICE_RECOVERY_OFFICER]: 'Service Recovery Officers',
+  [ROLES.HEAD_TELLER]:              'Head Teller/Vault Custodian',
+  [ROLES.TELLER]:                   'Bank Tellers',
   [ROLES.CUSTOMER_SERVICE_ASSISTANT]: 'Customer Service Assistant',
   [ROLES.SYSTEM_ADMIN]:             'System Administrator',
 }
+
+export const DEFAULT_ROLE_DEFINITIONS = [
+  {
+    name: ROLES.BRANCH_MANAGER,
+    display_name: ROLE_LABELS[ROLES.BRANCH_MANAGER],
+    category: ROLE_CATEGORIES.LEADERSHIP,
+  },
+  {
+    name: ROLES.ASSISTANT_BRANCH_MANAGER,
+    display_name: ROLE_LABELS[ROLES.ASSISTANT_BRANCH_MANAGER],
+    category: ROLE_CATEGORIES.LEADERSHIP,
+  },
+  {
+    name: ROLES.CREDIT_MANAGER,
+    display_name: ROLE_LABELS[ROLES.CREDIT_MANAGER],
+    category: ROLE_CATEGORIES.DEPARTMENTAL_HEADS,
+  },
+  {
+    name: ROLES.CUSTOMER_SERVICE_MANAGER,
+    display_name: ROLE_LABELS[ROLES.CUSTOMER_SERVICE_MANAGER],
+    category: ROLE_CATEGORIES.DEPARTMENTAL_HEADS,
+  },
+  {
+    name: ROLES.RELATIONSHIP_MANAGER,
+    display_name: ROLE_LABELS[ROLES.RELATIONSHIP_MANAGER],
+    category: ROLE_CATEGORIES.DEPARTMENTAL_HEADS,
+  },
+  {
+    name: ROLES.RELATIONSHIP_OFFICER,
+    display_name: ROLE_LABELS[ROLES.RELATIONSHIP_OFFICER],
+    category: ROLE_CATEGORIES.PROFESSIONAL_STAFF,
+  },
+  {
+    name: ROLES.CREDIT_OFFICER,
+    display_name: ROLE_LABELS[ROLES.CREDIT_OFFICER],
+    category: ROLE_CATEGORIES.PROFESSIONAL_STAFF,
+  },
+  {
+    name: ROLES.SERVICE_RECOVERY_OFFICER,
+    display_name: ROLE_LABELS[ROLES.SERVICE_RECOVERY_OFFICER],
+    category: ROLE_CATEGORIES.PROFESSIONAL_STAFF,
+  },
+  {
+    name: ROLES.HEAD_TELLER,
+    display_name: ROLE_LABELS[ROLES.HEAD_TELLER],
+    category: ROLE_CATEGORIES.FRONTLINE_STAFF,
+  },
+  {
+    name: ROLES.TELLER,
+    display_name: ROLE_LABELS[ROLES.TELLER],
+    category: ROLE_CATEGORIES.FRONTLINE_STAFF,
+  },
+  {
+    name: ROLES.CUSTOMER_SERVICE_ASSISTANT,
+    display_name: ROLE_LABELS[ROLES.CUSTOMER_SERVICE_ASSISTANT],
+    category: ROLE_CATEGORIES.FRONTLINE_STAFF,
+  },
+  {
+    name: ROLES.SYSTEM_ADMIN,
+    display_name: ROLE_LABELS[ROLES.SYSTEM_ADMIN],
+    category: ROLE_CATEGORIES.SYSTEM,
+  },
+]
 
 // Risk thresholds per role (mirrors the database values)
 export const ROLE_THRESHOLDS = {

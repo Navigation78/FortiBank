@@ -9,55 +9,29 @@ import Link from 'next/link'
 import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import StatsCard from '@/components/dashboard/StatsCard'
-import supabaseAdmin from '@/lib/supabaseAdmin'
-import { createClient } from '@/lib/supabase'
 
 export default function AdminHomePage() {
-  const supabase = createClient()
-  const [stats, setStats]     = useState(null)
+  const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [recentUsers, setRecentUsers] = useState([])
-  const [riskySUsers, setRiskyUsers]  = useState([])
+  const [error, setError] = useState('')
 
   useEffect(() => { fetchStats() }, [])
 
   async function fetchStats() {
     setLoading(true)
+    setError('')
 
-    const [usersRes, modulesRes, campaignsRes, scoresRes] = await Promise.all([
-      supabase.from('users').select('id, is_active, created_at').order('created_at', { ascending: false }),
-      supabase.from('modules').select('id, status'),
-      supabase.from('phishing_campaigns').select('id, status'),
-      supabase.from('risk_scores').select('user_id, composite_score, is_critical, calculated_at').order('calculated_at', { ascending: false }),
-    ])
+    const res = await fetch('/api/admin/overview')
+    const data = await res.json()
 
-    const users     = usersRes.data     || []
-    const modules   = modulesRes.data   || []
-    const campaigns = campaignsRes.data || []
-    const scores    = scoresRes.data    || []
+    if (!res.ok) {
+      setError(data.error || 'Failed to load admin overview')
+      setStats(null)
+      setLoading(false)
+      return
+    }
 
-    // Get latest score per user
-    const latestScores = {}
-    scores.forEach(s => {
-      if (!latestScores[s.user_id]) latestScores[s.user_id] = s
-    })
-
-    const criticalCount = Object.values(latestScores).filter(s => s.is_critical).length
-    const avgScore = Object.values(latestScores).length > 0
-      ? Math.round(Object.values(latestScores).reduce((sum, s) => sum + s.composite_score, 0) / Object.values(latestScores).length)
-      : 0
-
-    setStats({
-      totalUsers:      users.filter(u => u.is_active).length,
-      totalModules:    modules.length,
-      publishedModules: modules.filter(m => m.status === 'published').length,
-      activeCampaigns: campaigns.filter(c => c.status === 'active').length,
-      totalCampaigns:  campaigns.length,
-      criticalUsers:   criticalCount,
-      avgRiskScore:    avgScore,
-    })
-
-    setRecentUsers(users.slice(0, 5))
+    setStats(data.stats || null)
     setLoading(false)
   }
 
@@ -77,6 +51,12 @@ export default function AdminHomePage() {
           <h2 className="text-white text-2xl font-bold">Welcome back, Admin</h2>
           <p className="text-slate-400 text-sm mt-1">Here's what's happening across the platform.</p>
         </div>
+
+        {error && (
+          <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+            <p className="text-red-400 text-sm">{error}</p>
+          </div>
+        )}
 
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

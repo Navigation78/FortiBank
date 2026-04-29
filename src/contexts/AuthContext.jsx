@@ -105,6 +105,11 @@ export function AuthProvider({ children }) {
       return { error }
     }
 
+    if (data.user?.user_metadata?.must_change_password) {
+      setLoading(false)
+      return { data, redirectTo: '/change-password' }
+    }
+
     // Fetch profile to get role for redirect
     const profileData = await fetchProfile(data.user.id)
     if (profileData) {
@@ -131,10 +136,23 @@ export function AuthProvider({ children }) {
   }
 
   async function updatePassword(newPassword) {
-    const { error } = await supabase.auth.updateUser({
+    const { data, error } = await supabase.auth.updateUser({
       password: newPassword,
+      data: {
+        must_change_password: false,
+      },
     })
-    return { error }
+
+    if (!error && data?.user) {
+      setUser(data.user)
+
+      const { data: sessionData } = await supabase.auth.getSession()
+      if (sessionData?.session) {
+        setSession(sessionData.session)
+      }
+    }
+
+    return { data, error }
   }
 
   const value = {

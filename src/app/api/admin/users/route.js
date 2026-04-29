@@ -7,6 +7,7 @@ import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 import supabaseAdmin from '@/lib/supabaseAdmin'
+import { ROLES } from '@/constants/roles'
 
 export async function GET() {
   const cookieStore = await cookies()
@@ -30,13 +31,13 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { data: adminCheck } = await supabaseAdmin
+  const { data: adminCheck, error: roleError } = await supabase
     .from('user_roles')
     .select('roles(name)')
     .eq('user_id', user.id)
     .single()
 
-  if (adminCheck?.roles?.name !== 'system_admin') {
+  if (roleError || adminCheck?.roles?.name !== ROLES.SYSTEM_ADMIN) {
     return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
   }
 
@@ -71,13 +72,13 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { data: adminCheck } = await supabaseAdmin
+  const { data: adminCheck, error: roleError } = await supabase
     .from('user_roles')
     .select('roles(name)')
     .eq('user_id', adminUser.id)
     .single()
 
-  if (adminCheck?.roles?.name !== 'system_admin') {
+  if (roleError || adminCheck?.roles?.name !== ROLES.SYSTEM_ADMIN) {
     return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
   }
 
@@ -93,7 +94,10 @@ export async function POST(request) {
     email,
     password,
     email_confirm: true,
-    user_metadata: { full_name },
+    user_metadata: {
+      full_name,
+      must_change_password: true,
+    },
   })
 
   if (authCreateError) {
@@ -103,13 +107,17 @@ export async function POST(request) {
   const newUserId = authData.user.id
 
   // 2. Update public.users profile (trigger creates the row, we update it)
-  await supabaseAdmin
+  const { error: profileUpdateError } = await supabaseAdmin
     .from('users')
     .update({ employee_id, department })
     .eq('id', newUserId)
 
+  if (profileUpdateError) {
+    return NextResponse.json({ error: profileUpdateError.message }, { status: 500 })
+  }
+
   // 3. Assign role
-  const { error: roleError } = await supabaseAdmin
+  const { error: roleAssignError } = await supabaseAdmin
     .from('user_roles')
     .insert({
       user_id:     newUserId,
@@ -117,8 +125,8 @@ export async function POST(request) {
       assigned_by: adminUser.id,
     })
 
-  if (roleError) {
-    return NextResponse.json({ error: roleError.message }, { status: 500 })
+  if (roleAssignError) {
+    return NextResponse.json({ error: roleAssignError.message }, { status: 500 })
   }
 
   return NextResponse.json({ user: authData.user }, { status: 201 })

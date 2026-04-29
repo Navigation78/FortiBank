@@ -5,7 +5,6 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
-import supabaseAdmin from '@/lib/supabaseAdmin'
 import { createClient } from '@/lib/supabase'
 
 export default function CampaignDetailAdminPage() {

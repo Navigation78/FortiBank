@@ -1,6 +1,5 @@
-
 // src/app/api/auth/logout/route.js
-// POST — signs out the authenticated user and clears Supabase auth cookies.
+// POST — signs out the current user and clears the session
 
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
@@ -24,6 +23,7 @@ export async function POST() {
     }
   )
 
+  // Sign out — this clears the session cookie
   const { error } = await supabase.auth.signOut()
 
   if (error) {
@@ -33,5 +33,5 @@ export async function POST() {
     )
   }
 
-  return NextResponse.json({ message: 'Logged out successfully' })
+  return NextResponse.json({ success: true })
 }

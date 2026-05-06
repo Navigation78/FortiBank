@@ -1,7 +1,5 @@
-// ============================================================
 // src/app/(auth)/layout.jsx
 // Shared layout for all auth pages (login, forgot, reset).
-// ============================================================
 
 import { Inter } from 'next/font/google'
 

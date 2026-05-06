@@ -62,67 +62,77 @@ export function AuthProvider({ children }) {
 
     // Listen for auth state changes (login, logout, token refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === 'SIGNED_IN' && session?.user) {
-          setSession(session)
-          setUser(session.user)
+  async (event, session) => {
 
-          const profileData = await fetchProfile(session.user.id)
-          if (profileData) {
-            setProfile(profileData)
-            setRole(profileData.role)
-          }
-        }
+    // ✅ 1. Handle token refresh separately (no heavy work)
+    if (event === 'TOKEN_REFRESHED') {
+      setSession(session)
+      return
+    }
 
-        if (event === 'SIGNED_OUT') {
-          setSession(null)
-          setUser(null)
-          setRole(null)
-          setProfile(null)
-          router.push('/login')
-        }
+    // ✅ 2. Prevent duplicate re-renders / loops
+    if (event === 'SIGNED_IN' && session?.user && !user) {
+      setSession(session)
+      setUser(session.user)
 
-        if (event === 'PASSWORD_RECOVERY') {
-          router.push('/reset-password')
-        }
+      const profileData = await fetchProfile(session.user.id)
+      if (profileData) {
+        setProfile(profileData)
+        setRole(profileData.role)
       }
-    )
+    }
 
+    // ✅ 3. Sign out cleanup
+    if (event === 'SIGNED_OUT') {
+      setSession(null)
+      setUser(null)
+      setRole(null)
+      setProfile(null)
+      router.push('/login')
+    }
+
+    // ✅ 4. Password recovery redirect
+    if (event === 'PASSWORD_RECOVERY') {
+      router.push('/reset-password')
+    }
+  }
+)
     return () => subscription.unsubscribe()
   }, [])
 
   // ── Auth methods ────────────────────────────────────────────
 
   async function signIn({ email, password }) {
-    setLoading(true)
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+  setLoading(true)
+  
+  const res = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  })
 
-    if (error) {
-      setLoading(false)
-      return { error }
-    }
+  const data = await res.json()
 
-    if (data.user?.user_metadata?.must_change_password) {
-      setLoading(false)
-      return { data, redirectTo: '/change-password' }
-    }
+  if (!res.ok) {
+    setLoading(false)
+    return { error: { message: data.error } }
+  }
 
-    // Fetch profile to get role for redirect
-    const profileData = await fetchProfile(data.user.id)
+  // Now refresh the client-side session from the cookie the server just set
+  const { data: { session } } = await supabase.auth.getSession()
+  if (session?.user) {
+    setSession(session)
+    setUser(session.user)
+    const profileData = await fetchProfile(session.user.id)
     if (profileData) {
       setProfile(profileData)
       setRole(profileData.role)
-      setLoading(false)
-      return { data, redirectTo: getDashboardUrl(profileData.role) }
     }
-
-    setLoading(false)
-    return { data, redirectTo: '/dashboard' }
   }
 
+  setLoading(false)
+  return { data, redirectTo: data.redirectTo }
+}
   async function signOut() {
     await supabase.auth.signOut()
     // onAuthStateChange handles the redirect

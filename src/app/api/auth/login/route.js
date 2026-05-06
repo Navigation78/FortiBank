@@ -1,4 +1,3 @@
-
 // src/app/api/auth/login/route.js
 // POST — signs in a user with email and password
 // Returns the user's role so the client can redirect correctly
@@ -79,7 +78,7 @@ export async function POST(request) {
     customer_service_assistant: '/dashboard/customer-service-assistant',
   }
 
-  const redirectTo = ROLE_REDIRECT_MAP[role] || '/login'
+  const redirectTo = ROLE_REDIRECT_MAP[role] || '/dashboard'
 
   return NextResponse.json({
     user:       data.user,

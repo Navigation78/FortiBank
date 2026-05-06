@@ -1,10 +1,7 @@
 'use client'
-
-// ============================================================
 // src/app/(dashboard)/modules/[moduleId]/page.jsx
 // Individual module viewer page — NetAcad style.
 // Passes nextModule to viewer so it can show "Next Module" button.
-// ============================================================
 
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'

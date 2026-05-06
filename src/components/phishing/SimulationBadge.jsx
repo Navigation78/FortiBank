@@ -1,7 +1,6 @@
 // src/components/phishing/SimulationBadge.jsx
 // Small badge shown on phishing results indicating test type
 
-
 export default function SimulationBadge({ type = 'simulation' }) {
   return (
     <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400">

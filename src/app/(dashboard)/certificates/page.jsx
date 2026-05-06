@@ -1,5 +1,4 @@
 'use client'
-
 // src/app/(dashboard)/certificates/page.jsx
 // Shows employee's earned certificates with download links
 

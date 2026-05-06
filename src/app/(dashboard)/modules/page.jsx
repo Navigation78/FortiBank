@@ -2,8 +2,6 @@
 
 // src/app/(dashboard)/modules/page.jsx
 // Shows all modules assigned to the current user's role
-
-
 import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import ModuleList from '@/components/modules/ModuleList'

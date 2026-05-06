@@ -1,8 +1,5 @@
 'use client'
-
-// ============================================================
 // src/app/(auth)/login/page.jsx
-// ============================================================
 
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -28,6 +25,7 @@ export default function LoginPage() {
 
     const { error, redirectTo: roleRedirect } = await signIn({ email, password })
 
+
     if (error) {
       setError(
         error.message === 'Invalid login credentials'
@@ -35,6 +33,7 @@ export default function LoginPage() {
           : error.message
       )
       setLoading(false)
+      router.push(redirectTo || roleRedirect || '/dashboard')
       return
     }
 

@@ -1,11 +1,9 @@
 'use client'
 
-// ============================================================
 // src/app/(auth)/reset-password/page.jsx
 // Handles both:
 // 1. Password reset (forgot password flow)
 // 2. Invite acceptance (new employee sets password for first time)
-// ============================================================
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'

@@ -129,7 +129,7 @@ export async function sendRiskAlertEmail({
   const { data, error } = await resend.emails.send({
     from:    FROM,
     to,
-    subject: `${isCritical ? '🚨' : '⚠️'} ${label} — Your risk score is ${score}/100`,
+    subject: `${isCritical ? '[CRITICAL]' : '[WARNING]'} ${label} — Your risk score is ${score}/100`,
     html,
   })
 
@@ -159,7 +159,7 @@ export async function sendCertificateEmail({
     <body style="margin:0;padding:0;background:#0f172a;font-family:system-ui,sans-serif;">
       <div style="max-width:560px;margin:40px auto;background:#1e293b;border-radius:12px;overflow:hidden;border:1px solid #334155;">
         <div style="background:#16a34a20;border-bottom:1px solid #16a34a40;padding:24px;">
-          <p style="margin:0;color:#4ade80;font-size:12px;font-weight:600;letter-spacing:1px;">CERTIFICATE AWARDED 🏅</p>
+          <p style="margin:0;color:#4ade80;font-size:12px;font-weight:600;letter-spacing:1px;">CERTIFICATE AWARDED</p>
           <h1 style="margin:8px 0 0;color:#f1f5f9;font-size:20px;">Congratulations on completing your training!</h1>
         </div>
         <div style="padding:24px;">
@@ -189,7 +189,7 @@ export async function sendCertificateEmail({
   const { data, error } = await resend.emails.send({
     from:    FROM,
     to,
-    subject: `🏅 Certificate Awarded — ${roleName} Cybersecurity Training`,
+    subject: `Certificate Awarded — ${roleName} Cybersecurity Training`,
     html,
   })
 

@@ -1,7 +1,7 @@
 // src/components/modules/ModuleCard.jsx
 // Displays a single module with progress and status badge
 
-
+import { Check, ChevronRight, Clock } from 'lucide-react'
 import Link from 'next/link'
 
 const STATUS_CONFIG = {
@@ -31,10 +31,7 @@ export default function ModuleCard({ module }) {
           </h3>
         </div>
         {/* Arrow icon */}
-        <svg className="w-4 h-4 text-slate-600 group-hover:text-blue-400 flex-shrink-0 mt-1 transition-colors"
-          fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
+        <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-blue-400 flex-shrink-0 mt-1 transition-colors" />
       </div>
 
       {/* Description */}
@@ -66,16 +63,14 @@ export default function ModuleCard({ module }) {
       <div className="flex items-center gap-3 text-xs text-slate-500">
         {module.duration_mins && (
           <span className="flex items-center gap-1">
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+            <Clock className="w-3.5 h-3.5" />
             {module.duration_mins} min
           </span>
         )}
         {status === 'completed' && module.progress?.completed_at && (
-          <span className="text-green-500">
-            ✓ Done {new Date(module.progress.completed_at).toLocaleDateString('en-KE')}
+          <span className="text-green-500 flex items-center gap-1">
+            <Check className="w-3.5 h-3.5" />
+            Done {new Date(module.progress.completed_at).toLocaleDateString('en-KE')}
           </span>
         )}
       </div>

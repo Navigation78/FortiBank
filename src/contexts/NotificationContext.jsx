@@ -7,6 +7,7 @@
 
 
 import { createContext, useContext, useState, useCallback } from 'react'
+import { Check, X, AlertTriangle, Info } from 'lucide-react'
 
 const NotificationContext = createContext(null)
 
@@ -30,11 +31,18 @@ export function NotificationProvider({ children }) {
 
   const remove = (id) => setNotifications(prev => prev.filter(n => n.id !== id))
 
+  const ICONS = {
+    success: Check,
+    error:   X,
+    warning: AlertTriangle,
+    info:    Info,
+  }
+
   const STYLES = {
-    success: { bg: 'bg-green-500/10',  border: 'border-green-500/30',  text: 'text-green-400',  icon: '✓' },
-    error:   { bg: 'bg-red-500/10',    border: 'border-red-500/30',    text: 'text-red-400',    icon: '✕' },
-    warning: { bg: 'bg-orange-500/10', border: 'border-orange-500/30', text: 'text-orange-400', icon: '⚠' },
-    info:    { bg: 'bg-blue-500/10',   border: 'border-blue-500/30',   text: 'text-blue-400',   icon: 'ℹ' },
+    success: { bg: 'bg-green-500/10',  border: 'border-green-500/30',  text: 'text-green-400' },
+    error:   { bg: 'bg-red-500/10',    border: 'border-red-500/30',    text: 'text-red-400'   },
+    warning: { bg: 'bg-orange-500/10', border: 'border-orange-500/30', text: 'text-orange-400' },
+    info:    { bg: 'bg-blue-500/10',   border: 'border-blue-500/30',   text: 'text-blue-400'   },
   }
 
   return (
@@ -45,19 +53,20 @@ export function NotificationProvider({ children }) {
       <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none">
         {notifications.map(n => {
           const s = STYLES[n.type] || STYLES.info
+          const Icon = ICONS[n.type] || ICONS.info
           return (
             <div
               key={n.id}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl border shadow-xl pointer-events-auto
                 ${s.bg} ${s.border} max-w-sm animate-in slide-in-from-right`}
             >
-              <span className={`font-bold ${s.text}`}>{s.icon}</span>
+              <Icon className={`w-5 h-5 ${s.text}`} />
               <p className={`text-sm flex-1 ${s.text}`}>{n.message}</p>
               <button
                 onClick={() => remove(n.id)}
-                className={`${s.text} opacity-60 hover:opacity-100 text-xs`}
+                className={`${s.text} opacity-60 hover:opacity-100`}
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
           )

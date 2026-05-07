@@ -1,4 +1,5 @@
 'use client'
+import { FileText, Fish, IdCard, Lock } from 'lucide-react'
 import DashboardTemplate from '@/components/dashboard/DashboardTemplate'
 
 export default function CreditOfficerDashboard() {
@@ -8,25 +9,25 @@ export default function CreditOfficerDashboard() {
       
       focusAreas={[
         {
-          icon: '📄',
+          icon: FileText,
           iconBg: 'bg-red-500/15',
           title: 'Fraudulent Documents',
           description: 'Fake payslips, bank statements and title deeds are common in loan fraud.',
         },
         {
-          icon: '🪪',
+          icon: IdCard,
           iconBg: 'bg-orange-500/15',
           title: 'Identity Fraud',
           description: 'Verify KYC documents thoroughly — stolen identities are used for loans.',
         },
         {
-          icon: '🎣',
+          icon: Fish,
           iconBg: 'bg-blue-500/15',
           title: 'Phishing',
           description: 'Watch for fake emails from supposed credit bureaus or partner institutions.',
         },
         {
-          icon: '🔒',
+          icon: Lock,
           iconBg: 'bg-purple-500/15',
           title: 'Data Privacy',
           description: 'Credit files contain highly sensitive data — handle with strict controls.',

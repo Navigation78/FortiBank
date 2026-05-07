@@ -1,4 +1,5 @@
 'use client'
+import { Fish, IdCard, Lock, Theater } from 'lucide-react'
 import DashboardTemplate from '@/components/dashboard/DashboardTemplate'
 
 export default function CustomerServiceAssistantDashboard() {
@@ -8,25 +9,25 @@ export default function CustomerServiceAssistantDashboard() {
       
       focusAreas={[
         {
-          icon: '🎭',
+          icon: Theater,
           iconBg: 'bg-red-500/15',
           title: 'Social Engineering',
           description: 'As first point of contact you are the primary target for manipulation.',
         },
         {
-          icon: '🪪',
+          icon: IdCard,
           iconBg: 'bg-orange-500/15',
           title: 'Customer Verification',
           description: 'Always verify customer identity before sharing any account information.',
         },
         {
-          icon: '📧',
+          icon: Fish,
           iconBg: 'bg-blue-500/15',
           title: 'Phishing Awareness',
           description: 'Suspicious emails asking for customer data should be reported immediately.',
         },
         {
-          icon: '🔇',
+          icon: Lock,
           iconBg: 'bg-yellow-500/15',
           title: 'Information Disclosure',
           description: 'Never share customer account details over phone without proper verification.',

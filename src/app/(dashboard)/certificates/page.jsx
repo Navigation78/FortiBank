@@ -3,6 +3,7 @@
 // Shows employee's earned certificates with download links
 
 import { useState, useEffect } from 'react'
+import { Award, BarChart3, BookOpen, Download, Loader2, Medal } from 'lucide-react'
 import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import { useModules } from '@/hooks/useModules'
@@ -61,13 +62,12 @@ export default function CertificatesPage() {
           >
             {checking ? (
               <>
-                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-                </svg>
+                <Loader2 className="w-4 h-4 animate-spin" />
                 Checking...
               </>
-            ) : 'Check Eligibility'}
+            ) : (
+              'Check Eligibility'
+            )}
           </button>
         </div>
 
@@ -85,12 +85,14 @@ export default function CertificatesPage() {
         {/* Progress summary */}
         <div className="grid grid-cols-3 gap-4 mb-8">
           {[
-            { label: 'Modules Completed', value: `${stats.completed}/${stats.total}`, icon: '📚' },
-            { label: 'Certificates Earned', value: certificates.length, icon: '🏅' },
-            { label: 'Status', value: stats.completed === stats.total && stats.total > 0 ? 'Eligible!' : 'In Progress', icon: '📊' },
+            { label: 'Modules Completed', value: `${stats.completed}/${stats.total}`, Icon: BookOpen },
+            { label: 'Certificates Earned', value: certificates.length, Icon: Medal },
+            { label: 'Status', value: stats.completed === stats.total && stats.total > 0 ? 'Eligible!' : 'In Progress', Icon: BarChart3 },
           ].map((s, i) => (
             <div key={i} className="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
-              <p className="text-2xl mb-1">{s.icon}</p>
+              <div className="flex justify-center mb-1">
+                <s.Icon className="w-6 h-6 text-slate-400" />
+              </div>
               <p className="text-white font-bold text-lg">{s.value}</p>
               <p className="text-slate-500 text-xs">{s.label}</p>
             </div>
@@ -111,7 +113,7 @@ export default function CertificatesPage() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <span className="text-2xl">🏅</span>
+                      <Award className="w-6 h-6 text-green-400" />
                     </div>
                     <div>
                       <p className="text-white font-semibold">
@@ -134,10 +136,7 @@ export default function CertificatesPage() {
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 px-4 py-2 bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 text-green-400 rounded-lg text-sm font-medium transition-colors flex-shrink-0"
                     >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
+                      <Download className="w-4 h-4" />
                       Download PDF
                     </a>
                   )}
@@ -148,7 +147,7 @@ export default function CertificatesPage() {
         ) : (
           <div className="text-center py-16 bg-slate-900 border border-slate-800 rounded-xl">
             <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl">🏅</span>
+              <Medal className="w-8 h-8 text-slate-400" />
             </div>
             <p className="text-white font-semibold">No certificates yet</p>
             <p className="text-slate-400 text-sm mt-2 max-w-sm mx-auto">

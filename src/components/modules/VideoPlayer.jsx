@@ -5,6 +5,7 @@
 // image, text and slides. Tracks reading progress.
 
 import { useState, useEffect, useCallback } from 'react'
+import { Check, Loader2 } from 'lucide-react'
 import VideoPlayer from '@/components/modules/VideoPlayer'
 import ModuleProgress from '@/components/modules/ModuleProgress'
 import { useProgress } from '@/hooks/useProgress'
@@ -215,15 +216,19 @@ export default function ModuleViewer({ module }) {
               >
                 {completing ? (
                   <>
-                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-                    </svg>
+                    <Loader2 className="w-4 h-4 animate-spin" />
                     Saving...
                   </>
                 ) : (
                   <>
-                    {allViewed ? 'Complete Module ✓' : 'View all sections first'}
+                    {allViewed ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        Complete Module
+                      </>
+                    ) : (
+                      'View all sections first'
+                    )}
                   </>
                 )}
               </button>

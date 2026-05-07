@@ -1,15 +1,15 @@
 // src/components/phishing/CampaignCard.jsx
 // Shows a single phishing test result for the employee
 
-
+import { AlertTriangle, Check, Lightbulb } from 'lucide-react'
 import Link from 'next/link'
 
 const RESULT_CONFIG = {
   not_sent: { label: 'Pending',   color: 'text-slate-400',  bg: 'bg-slate-700/50',   border: 'border-slate-600/30'  },
   sent:     { label: 'Received',  color: 'text-blue-400',   bg: 'bg-blue-500/10',    border: 'border-blue-500/20'   },
   opened:   { label: 'Opened',    color: 'text-yellow-400', bg: 'bg-yellow-500/10',  border: 'border-yellow-500/20' },
-  clicked:  { label: 'Clicked ⚠️', color: 'text-red-400',  bg: 'bg-red-500/10',     border: 'border-red-500/20'    },
-  reported: { label: 'Reported ✓', color: 'text-green-400', bg: 'bg-green-500/10',   border: 'border-green-500/20'  },
+  clicked:  { label: 'Clicked', color: 'text-red-400',  bg: 'bg-red-500/10',     border: 'border-red-500/20', icon: AlertTriangle },
+  reported: { label: 'Reported', color: 'text-green-400', bg: 'bg-green-500/10',   border: 'border-green-500/20', icon: Check },
 }
 
 export default function CampaignCard({ target }) {
@@ -40,7 +40,8 @@ export default function CampaignCard({ target }) {
             Sent: {formatDate(target.sent_at)}
           </p>
         </div>
-        <span className={`text-xs font-medium px-2.5 py-1 rounded-lg border flex-shrink-0 ${config.bg} ${config.border} ${config.color}`}>
+        <span className={`text-xs font-medium px-2.5 py-1 rounded-lg border flex-shrink-0 ${config.bg} ${config.border} ${config.color} flex items-center gap-1`}>
+          {config.icon && <config.icon className="w-3 h-3" />}
           {config.label}
         </span>
       </div>
@@ -71,7 +72,8 @@ export default function CampaignCard({ target }) {
       {target.result === 'clicked' && (
         <div className="mt-3 pt-3 border-t border-slate-800">
           <p className="text-slate-500 text-xs">
-            💡 Always hover over links before clicking and verify the sender domain carefully.
+            <Lightbulb className="w-3 h-3 inline mr-1" />
+          Always hover over links before clicking and verify the sender domain carefully.
           </p>
         </div>
       )}
@@ -80,7 +82,8 @@ export default function CampaignCard({ target }) {
       {target.result === 'reported' && (
         <div className="mt-3 pt-3 border-t border-slate-800">
           <p className="text-green-400 text-xs">
-            ✓ Great job identifying and reporting this phishing attempt!
+            <Check className="w-3 h-3 inline mr-1" />
+          Great job identifying and reporting this phishing attempt!
           </p>
         </div>
       )}

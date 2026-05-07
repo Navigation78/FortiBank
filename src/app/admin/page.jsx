@@ -3,8 +3,8 @@
 // src/app/admin/page.jsx
 // Admin home — overview stats, quick actions
 
-
 import { useState, useEffect } from 'react'
+import { AlertOctagon, BarChart3, BookOpen, ChevronRight, Fish, Users, UserPlus } from 'lucide-react'
 import Link from 'next/link'
 import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
@@ -36,10 +36,10 @@ export default function AdminHomePage() {
   }
 
   const quickActions = [
-    { label: 'Add Employee',      href: '/admin/users/create',    icon: '👤', color: 'blue'   },
-    { label: 'Create Module',     href: '/admin/modules/create',  icon: '📚', color: 'green'  },
-    { label: 'Launch Phishing',   href: '/admin/phishing/create', icon: '🎣', color: 'orange' },
-    { label: 'View Analytics',    href: '/admin/analytics',       icon: '📊', color: 'purple' },
+    { label: 'Add Employee',      href: '/admin/users/create',    icon: UserPlus, color: 'blue'   },
+    { label: 'Create Module',     href: '/admin/modules/create',  icon: BookOpen, color: 'green'  },
+    { label: 'Launch Phishing',   href: '/admin/phishing/create', icon: Fish,     color: 'orange' },
+    { label: 'View Analytics',    href: '/admin/analytics',       icon: BarChart3, color: 'purple' },
   ]
 
   return (
@@ -60,10 +60,10 @@ export default function AdminHomePage() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <StatsCard title="Active Employees" value={loading ? '—' : stats?.totalUsers}        icon="👥" color="blue"   />
-          <StatsCard title="Published Modules" value={loading ? '—' : stats?.publishedModules} icon="📚" color="green"  />
-          <StatsCard title="Active Campaigns"  value={loading ? '—' : stats?.activeCampaigns}  icon="🎣" color="yellow" />
-          <StatsCard title="Critical Risk Users" value={loading ? '—' : stats?.criticalUsers}  icon="🚨" color="red"    />
+          <StatsCard title="Active Employees" value={loading ? '—' : stats?.totalUsers}        icon={Users}      color="blue"   />
+          <StatsCard title="Published Modules" value={loading ? '—' : stats?.publishedModules} icon={BookOpen}  color="green"  />
+          <StatsCard title="Active Campaigns"  value={loading ? '—' : stats?.activeCampaigns}  icon={Fish}      color="yellow" />
+          <StatsCard title="Critical Risk Users" value={loading ? '—' : stats?.criticalUsers}  icon={AlertOctagon} color="red"  />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -73,19 +73,20 @@ export default function AdminHomePage() {
             <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
               <h3 className="text-white font-semibold mb-4">Quick Actions</h3>
               <div className="space-y-2">
-                {quickActions.map(action => (
-                  <Link
-                    key={action.href}
-                    href={action.href}
-                    className="flex items-center gap-3 px-4 py-3 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors"
-                  >
-                    <span className="text-lg">{action.icon}</span>
-                    <span className="text-slate-300 text-sm font-medium">{action.label}</span>
-                    <svg className="w-4 h-4 text-slate-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                ))}
+                {quickActions.map(action => {
+                  const Icon = action.icon
+                  return (
+                    <Link
+                      key={action.href}
+                      href={action.href}
+                      className="flex items-center gap-3 px-4 py-3 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors"
+                    >
+                      <Icon className="w-5 h-5 text-slate-400" />
+                      <span className="text-slate-300 text-sm font-medium">{action.label}</span>
+                      <ChevronRight className="w-4 h-4 text-slate-600 ml-auto" />
+                    </Link>
+                  )
+                })}
               </div>
             </div>
           </div>

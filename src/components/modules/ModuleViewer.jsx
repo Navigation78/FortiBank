@@ -7,6 +7,7 @@
 
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { ArrowRight, Check, ChevronRight, Loader2 } from 'lucide-react'
 import VideoPlayer from '@/components/modules/VideoPlayer'
 import QuizCard from '@/components/quiz/QuizCard'
 import QuizTimer from '@/components/quiz/QuizTimer'
@@ -350,11 +351,19 @@ export default function ModuleViewer({ module, nextModule }) {
                       disabled={quizLoading}
                       className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors"
                     >
-                      {quizLoading ? 'Loading quiz...' : 'Start Quiz →'}
+                      {quizLoading ? (
+                        'Loading quiz...'
+                      ) : (
+                        <>
+                          Start Quiz
+                          <ArrowRight className="w-4 h-4" />
+                        </>
+                      )}
                     </button>
                   ) : (
-                    <Link href="/modules" className="px-5 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm font-medium transition-colors">
-                      Back to Modules ✓
+                    <Link href="/modules" className="flex items-center gap-2 px-5 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm font-medium transition-colors">
+                      <Check className="w-4 h-4" />
+                      Back to Modules
                     </Link>
                   )
                 ) : (
@@ -363,12 +372,26 @@ export default function ModuleViewer({ module, nextModule }) {
                     disabled={completing || !allViewed}
                     className="flex items-center gap-2 px-5 py-2 bg-green-600 hover:bg-green-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors"
                   >
-                    {completing
-                      ? 'Saving...'
-                      : allViewed
-                        ? quiz ? 'Complete & Start Quiz →' : 'Complete Module ✓'
-                        : `View all sections first (${viewed.size}/${totalSecs})`
-                    }
+                    {completing ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Saving...
+                      </>
+                    ) : allViewed ? (
+                      quiz ? (
+                        <>
+                          Complete & Start Quiz
+                          <ArrowRight className="w-4 h-4" />
+                        </>
+                      ) : (
+                        <>
+                          <Check className="w-4 h-4" />
+                          Complete Module
+                        </>
+                      )
+                    ) : (
+                      `View all sections first (${viewed.size}/${totalSecs})`
+                    )}
                   </button>
                 )
               ) : (
@@ -377,9 +400,7 @@ export default function ModuleViewer({ module, nextModule }) {
                   className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors"
                 >
                   Next
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                  <ChevronRight className="w-4 h-4" />
                 </button>
               )}
             </div>
@@ -452,12 +473,16 @@ export default function ModuleViewer({ module, nextModule }) {
                 disabled={submitting || Object.keys(answers).length < questions.length}
                 className="flex items-center gap-2 px-6 py-2 bg-green-600 hover:bg-green-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors"
               >
-                {submitting
-                  ? 'Submitting...'
-                  : Object.keys(answers).length < questions.length
-                    ? `Answer all (${Object.keys(answers).length}/${questions.length})`
-                    : 'Submit Quiz ✓'
-                }
+                {submitting ? (
+                  'Submitting...'
+                ) : Object.keys(answers).length < questions.length ? (
+                  `Answer all (${Object.keys(answers).length}/${questions.length})`
+                ) : (
+                  <>
+                    <Check className="w-4 h-4" />
+                    Submit Quiz
+                  </>
+                )}
               </button>
             ) : (
               <button
@@ -465,9 +490,7 @@ export default function ModuleViewer({ module, nextModule }) {
                 className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors"
               >
                 Next
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
+                <ChevronRight className="w-4 h-4" />
               </button>
             )}
           </div>

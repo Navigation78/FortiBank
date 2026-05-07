@@ -1,6 +1,7 @@
 'use client'
 //src/app/admin/phishing/page.jsx
 import { useState, useEffect } from 'react'
+import { ArrowRight, Plus } from 'lucide-react'
 import Link from 'next/link'
 import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
@@ -39,9 +40,7 @@ export default function AdminPhishingPage() {
             href="/admin/phishing/create"
             className="flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm font-medium transition-colors"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
+            <Plus className="w-4 h-4" />
             New Campaign
           </Link>
         </div>
@@ -87,8 +86,9 @@ export default function AdminPhishingPage() {
                       </span>
                     </td>
                     <td className="px-5 py-3">
-                      <Link href={`/admin/phishing/${c.campaign_id}`} className="text-blue-400 hover:text-blue-300 text-xs font-medium">
-                        View →
+                      <Link href={`/admin/phishing/${c.campaign_id}`} className="text-blue-400 hover:text-blue-300 text-xs font-medium flex items-center gap-1">
+                        View
+                        <ArrowRight className="w-3 h-3" />
                       </Link>
                     </td>
                   </tr>
@@ -99,8 +99,9 @@ export default function AdminPhishingPage() {
         ) : (
           <div className="text-center py-16 bg-slate-900 border border-slate-800 rounded-xl">
             <p className="text-slate-400 font-medium">No campaigns yet</p>
-            <Link href="/admin/phishing/create" className="text-blue-400 text-sm hover:text-blue-300 mt-2 inline-block">
-              Create your first campaign →
+            <Link href="/admin/phishing/create" className="text-blue-400 text-sm hover:text-blue-300 mt-2 inline-flex items-center gap-1">
+              Create your first campaign
+              <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
         )}

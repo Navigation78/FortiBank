@@ -1,4 +1,5 @@
 'use client'
+import { Briefcase, FileText, Handshake, Lock } from 'lucide-react'
 import DashboardTemplate from '@/components/dashboard/DashboardTemplate'
 
 export default function RelationshipManagerDashboard() {
@@ -8,25 +9,25 @@ export default function RelationshipManagerDashboard() {
       
       focusAreas={[
         {
-          icon: '💼',
+          icon: Briefcase,
           iconBg: 'bg-red-500/15',
           title: 'Business Email Compromise',
           description: 'Attackers impersonate clients or partners to intercept financial transactions.',
         },
         {
-          icon: '📄',
+          icon: FileText,
           iconBg: 'bg-orange-500/15',
           title: 'Document & Contract Fraud',
           description: 'Verify authenticity of financial documents and client instructions carefully.',
         },
         {
-          icon: '🤝',
+          icon: Handshake,
           iconBg: 'bg-blue-500/15',
           title: 'Social Engineering',
           description: 'Fraudsters exploit relationship trust to gain access to client accounts.',
         },
         {
-          icon: '🔒',
+          icon: Lock,
           iconBg: 'bg-purple-500/15',
           title: 'Data Confidentiality',
           description: 'Client portfolio data is highly sensitive — handle with strict protocols.',

@@ -15,6 +15,7 @@ import RecentActivity from '@/components/dashboard/RecentActivity'
 import { useAuth } from '@/hooks/useAuth'
 import { useModules } from '@/hooks/useModules'
 import { createClient } from '@/lib/supabase'
+import { BookOpen, CheckCircle2, Shield, BarChart3, Hand } from 'lucide-react'
 
 export default function DashboardTemplate({
   title,
@@ -99,28 +100,28 @@ export default function DashboardTemplate({
       title:    'Modules Assigned',
       value:    modulesLoading ? '—' : stats.total,
       subtitle: modulesLoading ? 'Loading...' : `${stats.notStarted} not started`,
-      icon:     '📚',
+      icon:     BookOpen,
       color:    'blue',
     },
     {
       title:    'Modules Completed',
       value:    modulesLoading ? '—' : stats.completed,
       subtitle: modulesLoading ? 'Loading...' : `${stats.inProgress} in progress`,
-      icon:     '✅',
+      icon:     CheckCircle2,
       color:    'green',
     },
     {
       title:    'Risk Score',
       value:    riskLoading ? '—' : riskScore,
       subtitle: riskLoading ? 'Loading...' : getRiskLabel(riskScore),
-      icon:     '🛡️',
+      icon:     Shield,
       color:    riskScore >= 63 ? 'red' : riskScore >= 45 ? 'yellow' : 'green',
     },
     {
       title:    'Overall Progress',
       value:    modulesLoading ? '—' : `${stats.overallPct}%`,
       subtitle: 'Training completion',
-      icon:     '📊',
+      icon:     BarChart3,
       color:    'purple',
     },
   ]
@@ -141,7 +142,7 @@ export default function DashboardTemplate({
         {/* Welcome */}
         <div className="mb-6">
           <h2 className="text-white text-2xl font-bold">
-            Good {getTimeOfDay()}, {firstName} 👋
+            Good {getTimeOfDay()}, {firstName}
           </h2>
           <p className="text-slate-400 text-sm mt-1">
             Here's your security training overview for today.
@@ -177,17 +178,24 @@ export default function DashboardTemplate({
               <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
                 <h3 className="text-white font-semibold mb-4">Your Risk Focus Areas</h3>
                 <div className="space-y-3">
-                  {focusAreas.map((area, i) => (
-                    <div key={i} className="flex items-start gap-3">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${area.iconBg}`}>
-                        <span className="text-sm">{area.icon}</span>
-                      </div>
+                  {focusAreas.map((area, i) => {
+                    const Icon = area.icon
+                    return (
+                      <div key={i} className="flex items-start gap-3">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${area.iconBg}`}>
+                          {typeof area.icon === 'string' ? (
+                            <span className="text-sm">{area.icon}</span>
+                          ) : (
+                            <Icon className="w-4 h-4" />
+                          )}
+                        </div>
                       <div>
                         <p className="text-slate-300 text-sm font-medium">{area.title}</p>
                         <p className="text-slate-500 text-xs mt-0.5">{area.description}</p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </div>
             </div>

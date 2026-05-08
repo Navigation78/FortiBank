@@ -67,7 +67,8 @@ export function canAccessPath(role, pathname) {
   // Role-specific dashboards — each role can only access their own
   
 
-  for (const [path, requiredRole] of Object.entries(roleDashboards)) {
+  for (const [requiredRole, path] of Object.entries(ROLE_DASHBOARD_MAP)) {
+    if (requiredRole === ROLES.SYSTEM_ADMIN) continue
     if (pathname.startsWith(path)) {
       return role === requiredRole
     }

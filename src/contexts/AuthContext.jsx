@@ -1,141 +1,272 @@
 'use client'
-// src/contexts/AuthContext.jsx
-// Global auth state — wraps the entire app.
-// Provides: user, session, role, loading, and auth methods.
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
-import { getDashboardUrl } from '@/utils/roleRedirect'
-import { useRouter } from 'next/navigation'
+import { applyTabHeaders, getTabId } from '@/lib/tabSession'
+import { canAccessPath, getDashboardUrl } from '@/utils/roleRedirect'
 
-const AuthContext = createContext(null)// Create a context for auth state
+const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const supabase = createClient()
+  const supabase = useRef(createClient()).current
   const router = useRouter()
+  const pathname = usePathname()
 
-  const [user, setUser]       = useState(null)
+  const [user, setUser] = useState(null)
   const [session, setSession] = useState(null)
-  const [role, setRole]       = useState(null)
+  const [role, setRole] = useState(null)
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [authInitialized, setAuthInitialized] = useState(false)
 
-  // Fetch the user's role and profile from public.users_with_roles
-  async function fetchProfile(userId) {
+  const profileRequestId = useRef(0)
+  const fetchedUserId = useRef(null)
+
+  useEffect(() => {
+    getTabId()
+  }, [])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const nativeFetch = window.fetch.bind(window)
+
+    window.fetch = async (input, options = {}) => {
+      const requestUrl = typeof input === 'string' ? input : input?.url
+      const url = requestUrl ? new URL(requestUrl, window.location.origin) : null
+      const shouldTagRequest = url?.origin === window.location.origin && url.pathname.startsWith('/api/')
+
+      if (!shouldTagRequest) {
+        return nativeFetch(input, options)
+      }
+
+      const headers = applyTabHeaders(options.headers)
+
+      if (!headers.has('Authorization')) {
+        const {
+          data: { session: currentSession },
+        } = await supabase.auth.getSession()
+
+        if (currentSession?.access_token) {
+          headers.set('Authorization', `Bearer ${currentSession.access_token}`)
+        }
+      }
+
+      return nativeFetch(input, {
+        ...options,
+        headers,
+      })
+    }
+
+    return () => {
+      window.fetch = nativeFetch
+    }
+  }, [supabase])
+
+  const resetProfileState = useCallback(() => {
+    profileRequestId.current += 1
+    fetchedUserId.current = null
+    setRole(null)
+    setProfile(null)
+  }, [])
+
+  const fetchProfile = useCallback(async (userId) => {
     const { data, error } = await supabase
       .from('users_with_roles')
       .select('*')
       .eq('id', userId)
       .single()
 
-    if (error) {
-      console.error('Error fetching profile:', error.message)
-      return null
-    }
-
+    if (error) throw error
     return data
-  }
+  }, [supabase])
 
-  // Initialize auth state on mount
   useEffect(() => {
-    async function initAuth() {
-      setLoading(true)
-
-      // Get current session
-      const { data: { session } } = await supabase.auth.getSession()
-
-      if (session?.user) {
-        setSession(session)
-        setUser(session.user)
-
-        const profileData = await fetchProfile(session.user.id)
-        if (profileData) {
-          setProfile(profileData)
-          setRole(profileData.role)
-        }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, nextSession) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        router.push('/reset-password')
+        return
       }
 
+      if (event === 'SIGNED_OUT') {
+        setSession(null)
+        setUser(null)
+        resetProfileState()
+        setAuthInitialized(true)
+        setLoading(false)
+        router.push('/login')
+        return
+      }
+
+      if (
+        event === 'INITIAL_SESSION' ||
+        event === 'SIGNED_IN' ||
+        event === 'TOKEN_REFRESHED' ||
+        event === 'USER_UPDATED'
+      ) {
+        const nextUser = nextSession?.user ?? null
+        setSession(nextSession)
+        setUser(nextUser)
+
+        if (!nextUser || nextUser.id !== fetchedUserId.current) {
+          resetProfileState()
+        }
+
+        setAuthInitialized(true)
+        setLoading(!!nextUser)
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [resetProfileState, router, supabase])
+
+  useEffect(() => {
+    if (!authInitialized) return
+
+    if (!user?.id) {
       setLoading(false)
-    }
-
-    initAuth()
-
-    // Listen for auth state changes (login, logout, token refresh)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-  async (event, session) => {
-
-    // ✅ 1. Handle token refresh separately (no heavy work)
-    if (event === 'TOKEN_REFRESHED') {
-      setSession(session)
       return
     }
 
-    // ✅ 2. Prevent duplicate re-renders / loops
-    if (event === 'SIGNED_IN' && session?.user && !user) {
-      setSession(session)
-      setUser(session.user)
+    if (fetchedUserId.current === user.id && profile) {
+      setLoading(false)
+      return
+    }
 
-      const profileData = await fetchProfile(session.user.id)
-      if (profileData) {
+    let cancelled = false
+    const requestId = profileRequestId.current + 1
+    profileRequestId.current = requestId
+    setLoading(true)
+
+    async function loadProfile() {
+      try {
+        const profileData = await fetchProfile(user.id)
+
+        if (cancelled || profileRequestId.current !== requestId) return
+
+        fetchedUserId.current = user.id
         setProfile(profileData)
-        setRole(profileData.role)
+        setRole(profileData?.role ?? null)
+      } catch (err) {
+        if (!cancelled && profileRequestId.current === requestId) {
+          console.error('[Auth] Failed to load profile:', err.message)
+          setProfile(null)
+          setRole(null)
+        }
+      } finally {
+        if (!cancelled && profileRequestId.current === requestId) {
+          setLoading(false)
+        }
       }
     }
 
-    // ✅ 3. Sign out cleanup
-    if (event === 'SIGNED_OUT') {
-      setSession(null)
-      setUser(null)
-      setRole(null)
-      setProfile(null)
-      router.push('/login')
+    loadProfile()
+
+    return () => {
+      cancelled = true
+    }
+  }, [authInitialized, fetchProfile, profile, user?.id])
+
+  useEffect(() => {
+    if (!authInitialized || loading) return
+    if (!pathname) return
+
+    const publicRoutes = ['/login', '/forgot-password', '/reset-password', '/unauthorized']
+    const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route))
+    const isAlwaysPublic = pathname.startsWith('/phishing-click')
+
+    if (isAlwaysPublic) return
+
+    if (!user) {
+      if (!isPublicRoute) {
+        router.replace(`/login?redirectTo=${encodeURIComponent(pathname)}`)
+      }
+      return
     }
 
-    // ✅ 4. Password recovery redirect
-    if (event === 'PASSWORD_RECOVERY') {
-      router.push('/reset-password')
-    }
-  }
-)
-    return () => subscription.unsubscribe()
-  }, [])
+    const mustChangePassword = user.user_metadata?.must_change_password === true
 
-  // ── Auth methods ────────────────────────────────────────────
+    if (mustChangePassword && pathname !== '/change-password') {
+      router.replace('/change-password')
+      return
+    }
+
+    if (!mustChangePassword && pathname === '/change-password') {
+      router.replace(getDashboardUrl(role))
+      return
+    }
+
+    if (isPublicRoute) {
+      router.replace(getDashboardUrl(role))
+      return
+    }
+
+    if (role && !canAccessPath(role, pathname)) {
+      router.replace('/unauthorized')
+    }
+  }, [authInitialized, loading, pathname, role, router, user])
 
   async function signIn({ email, password }) {
-  setLoading(true)
-  
-  const res = await fetch('/api/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
-  })
+    setLoading(true)
+    resetProfileState()
 
-  const data = await res.json()
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: applyTabHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ email, password }),
+    })
 
-  if (!res.ok) {
-    setLoading(false)
-    return { error: { message: data.error } }
-  }
+    const data = await res.json()
 
-  // Now refresh the client-side session from the cookie the server just set
-  const { data: { session } } = await supabase.auth.getSession()
-  if (session?.user) {
-    setSession(session)
-    setUser(session.user)
-    const profileData = await fetchProfile(session.user.id)
-    if (profileData) {
-      setProfile(profileData)
-      setRole(profileData.role)
+    if (!res.ok) {
+      setLoading(false)
+      return { error: { message: data.error } }
+    }
+
+    try {
+      if (!data.session?.access_token || !data.session?.refresh_token) {
+        setLoading(false)
+        return { error: { message: 'No session was returned by the server' } }
+      }
+
+      const { data: sessionData, error: setError } = await supabase.auth.setSession({
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
+      })
+
+      if (setError) {
+        setLoading(false)
+        return { error: setError }
+      }
+
+      const nextSession = sessionData?.session ?? data.session
+      setSession(nextSession)
+      setUser(nextSession?.user ?? null)
+      setAuthInitialized(true)
+
+      if (nextSession?.user?.user_metadata?.must_change_password) {
+        return { data, redirectTo: '/change-password' }
+      }
+
+      return { data, redirectTo: data.redirectTo }
+    } catch (err) {
+      setLoading(false)
+      console.error('[signIn] Unexpected error:', err)
+      return { error: { message: 'An unexpected error occurred during sign in' } }
     }
   }
 
-  setLoading(false)
-  return { data, redirectTo: data.redirectTo }
-}
   async function signOut() {
+    setUser(null)
+    setSession(null)
+    resetProfileState()
+    setLoading(false)
+
+    await fetch('/api/auth/logout', { method: 'POST', headers: applyTabHeaders() })
     await supabase.auth.signOut()
-    // onAuthStateChange handles the redirect
   }
 
   async function sendPasswordResetEmail(email) {
@@ -148,21 +279,35 @@ export function AuthProvider({ children }) {
   async function updatePassword(newPassword) {
     const { data, error } = await supabase.auth.updateUser({
       password: newPassword,
-      data: {
-        must_change_password: false,
-      },
+      data: { must_change_password: false },
     })
 
     if (!error && data?.user) {
       setUser(data.user)
-
-      const { data: sessionData } = await supabase.auth.getSession()
-      if (sessionData?.session) {
-        setSession(sessionData.session)
-      }
+      const {
+        data: { session: currentSession },
+      } = await supabase.auth.getSession()
+      if (currentSession) setSession(currentSession)
     }
 
     return { data, error }
+  }
+
+  async function authenticatedFetch(url, options = {}) {
+    const {
+      data: { session: currentSession },
+    } = await supabase.auth.getSession()
+
+    const headers = applyTabHeaders(options.headers)
+
+    if (currentSession?.access_token) {
+      headers.set('Authorization', `Bearer ${currentSession.access_token}`)
+    }
+
+    return fetch(url, {
+      ...options,
+      headers,
+    })
   }
 
   const value = {
@@ -176,13 +321,11 @@ export function AuthProvider({ children }) {
     signOut,
     sendPasswordResetEmail,
     updatePassword,
+    authenticatedFetch,
+    supabase,
   }
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
 export function useAuthContext() {

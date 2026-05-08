@@ -4,35 +4,18 @@
 // options, and the user's attempt count.
 // ============================================================
 
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
+import { getRouteUser } from '@/lib/supabaseRoute'
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
   const quizId      = searchParams.get('quizId')
-  const cookieStore = await cookies()
 
   if (!quizId) {
     return NextResponse.json({ error: 'quizId is required' }, { status: 400 })
   }
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        getAll: () => cookieStore.getAll(),
-        setAll: (cookiesToSet) => {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
-          )
-        },
-      },
-    }
-  )
-
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const { user, error: authError, supabase } = await getRouteUser(request)
   if (authError || !user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }

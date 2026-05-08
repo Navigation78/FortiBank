@@ -12,17 +12,15 @@ import RiskScoreGauge from '@/components/dashboard/RiskScoreGauge'
 import AlertBanner from '@/components/dashboard/AlertBanner'
 import ProgressChart from '@/components/dashboard/ProgressChart'
 import RecentActivity from '@/components/dashboard/RecentActivity'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuthContext } from '@/contexts/AuthContext'
 import { useModules } from '@/hooks/useModules'
-import { createClient } from '@/lib/supabase'
 import { BookOpen, CheckCircle2, Shield, BarChart3, Hand } from 'lucide-react'
 
 export default function DashboardTemplate({
   title,
   focusAreas,
 }) {
-  const supabase                    = createClient()
-  const { profile, user }           = useAuth()
+  const { profile, user, supabase } = useAuthContext()
   const { modules, loading: modulesLoading, stats } = useModules()
 
   const [riskScore, setRiskScore]   = useState(0)

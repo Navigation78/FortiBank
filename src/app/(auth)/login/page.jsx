@@ -1,12 +1,12 @@
 'use client'
 // src/app/(auth)/login/page.jsx
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirectTo')
@@ -33,7 +33,6 @@ export default function LoginPage() {
           : error.message
       )
       setLoading(false)
-      router.push(redirectTo || roleRedirect || '/dashboard')
       return
     }
 
@@ -143,5 +142,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl" />}>
+      <LoginForm />
+    </Suspense>
   )
 }

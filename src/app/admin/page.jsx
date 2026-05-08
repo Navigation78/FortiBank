@@ -9,29 +9,37 @@ import Link from 'next/link'
 import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import StatsCard from '@/components/dashboard/StatsCard'
+import { useAuthContext } from '@/contexts/AuthContext'
 
 export default function AdminHomePage() {
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  useEffect(() => { fetchStats() }, [])
+  const { authenticatedFetch, profile } = useAuthContext()
+
+  useEffect(() => { fetchStats() }, [authenticatedFetch])
 
   async function fetchStats() {
     setLoading(true)
     setError('')
 
-    const res = await fetch('/api/admin/overview')
-    const data = await res.json()
+    try {
+      const res = await authenticatedFetch('/api/admin/overview')
+      const data = await res.json()
 
-    if (!res.ok) {
-      setError(data.error || 'Failed to load admin overview')
+      if (!res.ok) {
+        setError(data.error || 'Failed to load admin overview')
+        setStats(null)
+        setLoading(false)
+        return
+      }
+
+      setStats(data.stats || null)
+    } catch (err) {
+      setError('Network error: ' + err.message)
       setStats(null)
-      setLoading(false)
-      return
     }
-
-    setStats(data.stats || null)
     setLoading(false)
   }
 
@@ -48,7 +56,9 @@ export default function AdminHomePage() {
       <PageWrapper>
 
         <div className="mb-6">
-          <h2 className="text-white text-2xl font-bold">Welcome back, Admin</h2>
+          <h2 className="text-white text-2xl font-bold">
+            Welcome back, {profile?.full_name || profile?.email || 'Admin'}
+          </h2>
           <p className="text-slate-400 text-sm mt-1">Here's what's happening across the platform.</p>
         </div>
 

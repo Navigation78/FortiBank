@@ -3,26 +3,11 @@
 // Query params: type = 'users' | 'risk' | 'phishing' | 'completion'
 
 import { NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
-import { createServerClient } from '@supabase/ssr'
 import supabaseAdmin from '@/lib/supabaseAdmin'
+import { getRouteUser } from '@/lib/supabaseRoute'
 
-async function verifyAdmin(cookieStore) {
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        getAll: () => cookieStore.getAll(),
-        setAll: (cookiesToSet) => {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
-          )
-        },
-      },
-    }
-  )
-  const { data: { user } } = await supabase.auth.getUser()
+async function verifyAdmin(request) {
+  const { user } = await getRouteUser(request)
   if (!user) return null
   const { data } = await supabaseAdmin
     .from('user_roles').select('roles(name)').eq('user_id', user.id).single()
@@ -44,8 +29,7 @@ function toCSV(headers, rows) {
 }
 
 export async function GET(request) {
-  const cookieStore = await cookies()
-  const admin = await verifyAdmin(cookieStore)
+  const admin = await verifyAdmin(request)
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { searchParams } = new URL(request.url)

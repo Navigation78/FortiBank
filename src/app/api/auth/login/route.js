@@ -2,24 +2,17 @@
 // POST — signs in a user with email and password
 // Returns the user's role so the client can redirect correctly
 
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 
 export async function POST(request) {
-  const cookieStore = await cookies()
-
-  const supabase = createServerClient(
+  const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
-      cookies: {
-        getAll: () => cookieStore.getAll(),
-        setAll: (cookiesToSet) => {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
-          )
-        },
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
       },
     }
   )
@@ -80,9 +73,11 @@ export async function POST(request) {
 
   const redirectTo = ROLE_REDIRECT_MAP[role] || '/dashboard'
 
+  // Return session data so client can store in sessionStorage
   return NextResponse.json({
     user:       data.user,
     role,
     redirectTo,
+    session:    data.session, // Include access_token and refresh_token
   })
 }

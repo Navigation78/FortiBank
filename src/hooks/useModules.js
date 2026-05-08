@@ -4,11 +4,12 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuthContext } from '@/contexts/AuthContext'
 
 export function useModules() {
-  const supabase = createClient()
-  const { user } = useAuth()
+  const { user, supabase: contextSupabase } = useAuthContext()
+  // Fall back to creating a new client if context supabase is not available
+  const supabase = contextSupabase || createClient()
 
   const [modules, setModules]   = useState([])
   const [loading, setLoading]   = useState(true)

@@ -1,5 +1,4 @@
-// src/components/dashboard/StatsCard.jsx
-// Reusable stats widget used across all dashboards
+import { isValidElement } from 'react'
 
 export default function StatsCard({
   title,
@@ -18,18 +17,19 @@ export default function StatsCard({
   }
 
   const c = colors[color] || colors.blue
+  const renderIcon = () => {
+    if (typeof icon === 'string') return <span className={c.icon}>{icon}</span>
+    if (isValidElement(icon)) return <span className={c.icon}>{icon}</span>
 
-  const Icon = icon
+    const Icon = icon
+    return <Icon className={`w-6 h-6 ${c.icon}`} />
+  }
 
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 flex items-start gap-4">
       {icon && (
         <div className={`w-11 h-11 rounded-lg ${c.bg} border ${c.border} flex items-center justify-center flex-shrink-0`}>
-          {typeof icon === 'string' ? (
-            <span className={c.icon}>{icon}</span>
-          ) : (
-            <Icon className={`w-6 h-6 ${c.icon}`} />
-          )}
+          {renderIcon()}
         </div>
       )}
       <div className="min-w-0 flex-1">

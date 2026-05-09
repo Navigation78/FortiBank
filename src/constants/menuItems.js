@@ -45,5 +45,5 @@ export const ADMIN_NAV_ITEMS = [
   { label: 'Modules',    href: '/admin/modules' },
   { label: 'Phishing',   href: '/admin/phishing' },
   { label: 'Analytics',  href: '/admin/analytics' },
-  { label: 'Reports',    href: '/admin/reports' },
+  { label: 'Employee Dashboards', href: '/admin/reports' },
 ]

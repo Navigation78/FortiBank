@@ -70,6 +70,7 @@ export function canAccessPath(role, pathname) {
   for (const [requiredRole, path] of Object.entries(ROLE_DASHBOARD_MAP)) {
     if (requiredRole === ROLES.SYSTEM_ADMIN) continue
     if (pathname.startsWith(path)) {
+      if (role === ROLES.SYSTEM_ADMIN) return true
       return role === requiredRole
     }
   }

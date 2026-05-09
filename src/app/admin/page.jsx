@@ -17,6 +17,9 @@ export default function AdminHomePage() {
   const [error, setError] = useState('')
 
   const { authenticatedFetch, profile } = useAuthContext()
+  const adminDisplayName = profile?.full_name === 'New User'
+    ? 'System Admin'
+    : profile?.full_name || profile?.email || 'System Admin'
 
   useEffect(() => { fetchStats() }, [authenticatedFetch])
 
@@ -57,7 +60,7 @@ export default function AdminHomePage() {
 
         <div className="mb-6">
           <h2 className="text-white text-2xl font-bold">
-            Welcome back, {profile?.full_name || profile?.email || 'Admin'}
+            Welcome, {adminDisplayName}
           </h2>
           <p className="text-slate-400 text-sm mt-1">Here's what's happening across the platform.</p>
         </div>

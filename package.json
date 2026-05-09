@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node --max-http-header-size=32768 ./node_modules/next/dist/bin/next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "node --max-http-header-size=32768 ./node_modules/next/dist/bin/next start",
     "lint": "next lint"
   },
   "dependencies": {
@@ -13,8 +13,10 @@
     "@supabase/supabase-js": "^2.99.3",
     "lucide-react": "^0.577.0",
     "next": "15.x.x",
+    "pdf-lib": "^1.17.1",
     "react": "^18.x.x",
     "react-dom": "^18.x.x",
+    "recharts": "^3.8.1",
     "resend": "^6.10.0"
   },
   "devDependencies": {

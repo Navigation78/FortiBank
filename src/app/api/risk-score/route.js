@@ -20,7 +20,7 @@ export async function GET(request) {
     .eq('user_id', user.id)
     .order('calculated_at', { ascending: false })
     .limit(1)
-    .single()
+    .maybeSingle()
 
   if (error && error.code !== 'PGRST116') {
     return NextResponse.json({ error: error.message }, { status: 500 })

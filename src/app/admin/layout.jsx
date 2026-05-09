@@ -45,7 +45,7 @@ const NAV_ITEMS = [
     icon:  'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
   },
   {
-    label: 'Reports',
+    label: 'Employee Dashboards',
     href:  '/admin/reports',
     icon:  'M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
   },
@@ -54,6 +54,9 @@ const NAV_ITEMS = [
 function AdminSidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
   const pathname = usePathname()
   const { profile, signOut } = useAuth()
+  const adminDisplayName = profile?.full_name === 'New User'
+    ? 'System Admin'
+    : profile?.full_name || 'System Admin'
 
   function isActive(item) {
     if (item.exact) return pathname === item.href
@@ -89,11 +92,11 @@ function AdminSidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-green-500/20 border border-green-500/30 flex items-center justify-center flex-shrink-0">
               <span className="text-green-400 font-semibold text-sm">
-                {profile?.full_name?.charAt(0) || 'A'}
+                {adminDisplayName.charAt(0)}
               </span>
             </div>
             <div className="min-w-0">
-              <p className="text-white text-sm font-medium truncate">{profile?.full_name}</p>
+              <p className="text-white text-sm font-medium truncate">{adminDisplayName}</p>
               <p className="text-green-400 text-xs">System Administrator</p>
             </div>
           </div>
@@ -123,16 +126,16 @@ function AdminSidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
       {/* Bottom links */}
       <div className="px-3 py-4 border-t border-slate-800 space-y-1">
         <Link
-          href="/dashboard/teller"
+          href="/admin/reports"
           className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-slate-800 transition-all ${collapsed ? 'justify-center' : ''}`}
-          title={collapsed ? 'Employee view' : undefined}
+          title={collapsed ? 'Employee dashboards' : undefined}
         >
           <Icon path="M15 12a3 3 0 11-6 0 3 3 0 016 0z" className="w-4 h-4" />
-          {!collapsed && <span className="text-xs">Switch to employee view</span>}
+          {!collapsed && <span className="text-xs">Employee dashboards</span>}
         </Link>
         <button
           onClick={signOut}
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-green-400 hover:bg-green-400/10 transition-all w-full ${collapsed ? 'justify-center' : ''}`}
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-red-400 hover:bg-red-400/10 transition-all w-full ${collapsed ? 'justify-center' : ''}`}
         >
           <Icon path="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" className="w-5 h-5" />
           {!collapsed && <span>Sign out</span>}
@@ -165,7 +168,16 @@ function AdminSidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
       </aside>
 
       {/* Desktop sidebar */}
-      <aside className={`hidden lg:flex flex-col bg-slate-900 border-r border-slate-800 h-screen sticky top-0 transition-all duration-200 ${collapsed ? 'w-16' : 'w-64'}`}>
+      <aside className={`hidden lg:flex flex-col relative flex-shrink-0 bg-slate-900 border-r border-slate-800 h-screen transition-all duration-200 ${collapsed ? 'w-16' : 'w-64'}`}>
+        <button
+          type="button"
+          onClick={() => setCollapsed(!collapsed)}
+          className="absolute -right-3 top-20 z-40 w-7 h-7 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:border-green-500/60 hover:bg-slate-700 transition-colors flex items-center justify-center shadow-lg"
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          <Icon path={collapsed ? 'M9 5l7 7-7 7' : 'M15 19l-7-7 7-7'} className="w-4 h-4" />
+        </button>
         <Content />
       </aside>
     </>
@@ -177,14 +189,14 @@ export default function AdminLayout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
-    <div className="flex min-h-screen bg-slate-950">
+    <div className="flex h-screen overflow-hidden bg-slate-950">
       <AdminSidebar
         collapsed={collapsed}
         setCollapsed={setCollapsed}
         mobileOpen={mobileOpen}
         setMobileOpen={setMobileOpen}
       />
-      <div className="flex flex-col flex-1 min-w-0">
+      <div className="flex flex-col flex-1 min-w-0 min-h-0 overflow-y-auto">
         {children}
       </div>
     </div>

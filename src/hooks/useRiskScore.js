@@ -35,7 +35,7 @@ export function useRiskScore() {
       .eq('user_id', user.id)
       .order('calculated_at', { ascending: false })
       .limit(1)
-      .single()
+      .maybeSingle()
 
     if (latestError && latestError.code !== 'PGRST116') {
       // PGRST116 = no rows found — that's fine for new users

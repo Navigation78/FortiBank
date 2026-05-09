@@ -47,7 +47,7 @@ export default function DashboardTemplate({
       .eq('user_id', user.id)
       .order('calculated_at', { ascending: false })
       .limit(1)
-      .single()
+      .maybeSingle()
 
     if (scoreData) {
       setRiskScore(Math.round(scoreData.composite_score))

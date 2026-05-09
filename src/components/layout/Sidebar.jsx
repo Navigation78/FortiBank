@@ -181,12 +181,21 @@ export default function Sidebar() {
 
       {/* Desktop sidebar */}
       <aside className={`
-        hidden lg:flex flex-col
+        hidden lg:flex flex-col relative flex-shrink-0
         bg-slate-900 border-r border-slate-800
-        h-screen sticky top-0
+        h-screen
         transition-all duration-200
         ${collapsed ? 'w-16' : 'w-64'}
       `}>
+        <button
+          type="button"
+          onClick={() => setCollapsed(!collapsed)}
+          className="absolute -right-3 top-20 z-40 w-7 h-7 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:border-blue-500/60 hover:bg-slate-700 transition-colors flex items-center justify-center shadow-lg"
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          <Icon path={collapsed ? 'M9 5l7 7-7 7' : 'M15 19l-7-7 7-7'} className="w-4 h-4" />
+        </button>
         <SidebarContent />
       </aside>
     </>

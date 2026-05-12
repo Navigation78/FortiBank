@@ -12,6 +12,10 @@ const STATUS_COLORS = {
   archived:  'bg-red-500/15 text-red-400',
 }
 
+function formatModuleCode(orderIndex) {
+  return `FBM${String(orderIndex).padStart(3, '0')}`
+}
+
 export default function AdminModulesPage() {
   const supabase        = createClient()
   const [modules, setModules] = useState([])

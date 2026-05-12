@@ -41,10 +41,22 @@ export async function POST(request) {
 
   if (!title) return NextResponse.json({ error: 'Title is required' }, { status: 400 })
 
-  // 1. Get next order_index
-  const { data: lastModule } = await supabaseAdmin
-    .from('modules').select('order_index').order('order_index', { ascending: false }).limit(1).single()
-  const orderIndex = (lastModule?.order_index || 0) + 1
+  // 1. Get the lowest available order_index so new modules reuse gaps after deletions
+  const { data: existingModules, error: existingError } = await supabaseAdmin
+    .from('modules')
+    .select('order_index')
+    .order('order_index', { ascending: true })
+
+  if (existingError) return NextResponse.json({ error: existingError.message }, { status: 500 })
+
+  const usedIndexes = (existingModules || [])
+    .map(m => Number.isInteger(m.order_index) ? m.order_index : null)
+    .filter(Boolean)
+
+  let orderIndex = 1
+  while (usedIndexes.includes(orderIndex)) {
+    orderIndex += 1
+  }
 
   // 2. Create module
   const { data: module, error: moduleError } = await supabaseAdmin

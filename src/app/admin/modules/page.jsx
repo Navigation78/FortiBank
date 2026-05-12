@@ -12,6 +12,10 @@ const STATUS_COLORS = {
   archived:  'bg-red-500/15 text-red-400',
 }
 
+function formatModuleCode(orderIndex) {
+  return `FBM${String(orderIndex).padStart(3, '0')}`
+}
+
 export default function AdminModulesPage() {
   const supabase        = createClient()
   const [modules, setModules] = useState([])
@@ -33,6 +37,19 @@ export default function AdminModulesPage() {
     const newStatus = module.status === 'published' ? 'draft' : 'published'
     await supabase.from('modules').update({ status: newStatus }).eq('id', module.id)
     fetchModules()
+  }
+
+  async function deleteModule(moduleId) {
+    if (confirm('Are you sure you want to delete this module?')) {
+      const response = await fetch(`/api/admin/modules/${moduleId}`, {
+        method: 'DELETE',
+      })
+      if (response.ok) {
+        fetchModules()
+      } else {
+        alert('Failed to delete module')
+      }
+    }
   }
 
   return (
@@ -66,7 +83,7 @@ export default function AdminModulesPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-slate-800">
-                  <th className="text-left text-slate-500 text-xs font-medium px-5 py-3">#</th>
+                  <th className="text-left text-slate-500 text-xs font-medium px-5 py-3">Code</th>
                   <th className="text-left text-slate-500 text-xs font-medium px-5 py-3">Module</th>
                   <th className="text-left text-slate-500 text-xs font-medium px-5 py-3 hidden sm:table-cell">Status</th>
                   <th className="text-left text-slate-500 text-xs font-medium px-5 py-3 hidden md:table-cell">Duration</th>
@@ -76,7 +93,7 @@ export default function AdminModulesPage() {
               <tbody>
                 {modules.map((module, i) => (
                   <tr key={module.id} className="border-b border-slate-800 last:border-0 hover:bg-slate-800/50 transition-colors">
-                    <td className="px-5 py-3 text-slate-500 text-sm">{module.order_index}</td>
+                    <td className="px-5 py-3 text-slate-500 text-sm">{formatModuleCode(module.order_index)}</td>
                     <td className="px-5 py-3">
                       <p className="text-white text-sm font-medium">{module.title}</p>
                       {module.description && (
@@ -99,6 +116,14 @@ export default function AdminModulesPage() {
                           className={`text-xs font-medium transition-colors ${module.status === 'published' ? 'text-yellow-400 hover:text-yellow-300' : 'text-green-400 hover:text-green-300'}`}
                         >
                           {module.status === 'published' ? 'Unpublish' : 'Publish'}
+                        </button>
+                        <button
+                          onClick={() => deleteModule(module.id)}
+                          className="text-red-400 hover:text-red-300 text-xs font-medium transition-colors"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
                         </button>
                       </div>
                     </td>

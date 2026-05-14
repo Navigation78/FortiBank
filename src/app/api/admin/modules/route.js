@@ -40,6 +40,9 @@ export async function POST(request) {
   const { title, description, duration_mins, status, content_blocks, role_ids } = body
 
   if (!title) return NextResponse.json({ error: 'Title is required' }, { status: 400 })
+  if (!Array.isArray(role_ids) || role_ids.length === 0) {
+    return NextResponse.json({ error: 'Select at least one role for this module' }, { status: 400 })
+  }
 
   // 1. Get the lowest available order_index so new modules reuse gaps after deletions
   const { data: existingModules, error: existingError } = await supabaseAdmin
@@ -81,15 +84,28 @@ export async function POST(request) {
       }))
 
     if (blocks.length > 0) {
-      await supabaseAdmin.from('module_content').insert(blocks)
+      const { error: contentError } = await supabaseAdmin.from('module_content').insert(blocks)
+      if (contentError) {
+        await supabaseAdmin.from('modules').delete().eq('id', module.id)
+        return NextResponse.json({ error: contentError.message }, { status: 500 })
+      }
     }
   }
 
   // 4. Assign role access
-  if (role_ids && role_ids.length > 0) {
-    await supabaseAdmin
-      .from('module_role_access')
-      .insert(role_ids.map(roleId => ({ module_id: module.id, role_id: roleId })))
+  const uniqueRoleIds = [...new Set(role_ids.map(roleId => Number(roleId)).filter(Number.isInteger))]
+  if (uniqueRoleIds.length === 0) {
+    await supabaseAdmin.from('modules').delete().eq('id', module.id)
+    return NextResponse.json({ error: 'Select at least one valid role for this module' }, { status: 400 })
+  }
+
+  const { error: roleAccessError } = await supabaseAdmin
+    .from('module_role_access')
+    .insert(uniqueRoleIds.map(roleId => ({ module_id: module.id, role_id: roleId })))
+
+  if (roleAccessError) {
+    await supabaseAdmin.from('modules').delete().eq('id', module.id)
+    return NextResponse.json({ error: roleAccessError.message }, { status: 500 })
   }
 
   return NextResponse.json({ module }, { status: 201 })

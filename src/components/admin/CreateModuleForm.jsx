@@ -31,9 +31,12 @@ export default function CreateModuleForm({ existingModule }) {
     status:       existingModule?.status       || 'draft',
   })
 
-  const [selectedRoles, setSelectedRoles]   = useState([])
+  const [selectedRoles, setSelectedRoles]   = useState(
+    existingModule?.module_role_access?.map(access => access.role_id) || []
+  )
   const [contentBlocks, setContentBlocks]   = useState(
-    existingModule?.content || [{ title: '', content_type: 'text', content_url: '', content_body: '' }]
+    existingModule?.content?.slice().sort((a, b) => a.order_index - b.order_index) ||
+      [{ title: '', content_type: 'text', content_url: '', content_body: '' }]
   )
 
   useEffect(() => { fetchRoles() }, [])
@@ -74,8 +77,18 @@ export default function CreateModuleForm({ existingModule }) {
     setError('')
     setLoading(true)
 
-    const res = await fetch('/api/admin/modules', {
-      method:  'POST',
+    if (selectedRoles.length === 0) {
+      setError('Select at least one role so this module can appear on employee dashboards.')
+      setLoading(false)
+      return
+    }
+
+    const endpoint = existingModule?.id
+      ? `/api/admin/modules/${existingModule.id}`
+      : '/api/admin/modules'
+
+    const res = await fetch(endpoint, {
+      method:  existingModule?.id ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({
         ...form,
@@ -87,7 +100,7 @@ export default function CreateModuleForm({ existingModule }) {
 
     const data = await res.json()
     if (!res.ok) {
-      setError(data.error || 'Failed to create module')
+      setError(data.error || `Failed to ${existingModule ? 'update' : 'create'} module`)
       setLoading(false)
       return
     }
@@ -111,7 +124,7 @@ export default function CreateModuleForm({ existingModule }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <p className="text-white font-semibold">Module created successfully!</p>
+        <p className="text-white font-semibold">Module {existingModule ? 'updated' : 'created'} successfully!</p>
         <p className="text-slate-400 text-sm mt-1">Redirecting to modules list...</p>
       </div>
     )
@@ -284,7 +297,7 @@ export default function CreateModuleForm({ existingModule }) {
           disabled={loading}
           className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-lg text-sm font-medium transition-colors"
         >
-          {loading ? 'Creating...' : existingModule ? 'Update Module' : 'Create Module'}
+          {loading ? (existingModule ? 'Updating...' : 'Creating...') : existingModule ? 'Update Module' : 'Create Module'}
         </button>
         <button
           type="button"

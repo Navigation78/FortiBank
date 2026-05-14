@@ -16,6 +16,7 @@ export default function AdminModulesPage() {
   const supabase        = createClient()
   const [modules, setModules] = useState([])
   const [loading, setLoading] = useState(true)
+  const [resequenceLoading, setResequenceLoading] = useState(false)
 
   useEffect(() => { fetchModules() }, [])
 
@@ -46,6 +47,26 @@ export default function AdminModulesPage() {
     }
   }
 
+  async function resequenceModules() {
+    const confirmed = confirm(
+      'This will renumber all module codes from FBM001 upward using the current list order. Continue?'
+    )
+    if (!confirmed) return
+
+    setResequenceLoading(true)
+    const response = await fetch('/api/admin/modules/resequence', {
+      method: 'POST',
+    })
+    setResequenceLoading(false)
+
+    if (response.ok) {
+      fetchModules()
+    } else {
+      const data = await response.json()
+      alert(data.error || 'Failed to resequence modules')
+    }
+  }
+
   function formatModuleCode(orderIndex) {
     return orderIndex ? `FBM${String(orderIndex).padStart(3, '0')}` : '—'
   }
@@ -59,15 +80,25 @@ export default function AdminModulesPage() {
             <h2 className="text-white text-xl font-bold">All Modules</h2>
             <p className="text-slate-400 text-sm mt-0.5">{modules.length} total modules</p>
           </div>
-          <Link
-            href="/admin/modules/create"
-            className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            Create Module
-          </Link>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={resequenceModules}
+              disabled={resequenceLoading}
+              className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-60 text-slate-300 rounded-lg text-sm font-medium transition-colors"
+            >
+              {resequenceLoading ? 'Resequencing...' : 'Resequence Codes'}
+            </button>
+            <Link
+              href="/admin/modules/create"
+              className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Create Module
+            </Link>
+          </div>
         </div>
 
         {loading ? (

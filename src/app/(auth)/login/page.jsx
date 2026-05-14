@@ -36,8 +36,15 @@ function LoginForm() {
       return
     }
 
-    // Redirect to the page they tried to visit, or their role dashboard
-    router.push(redirectTo || roleRedirect || '/dashboard')
+    const publicRedirects = ['/', '/login', '/forgot-password', '/reset-password', '/unauthorized']
+    const safeRedirectTo = redirectTo && !publicRedirects.some(route =>
+      route === '/' ? redirectTo === '/' : redirectTo.startsWith(route)
+    )
+      ? redirectTo
+      : null
+
+    // Redirect to a protected page they tried to visit, or their role dashboard.
+    router.push(safeRedirectTo || roleRedirect || '/dashboard')
   }
 
   return (

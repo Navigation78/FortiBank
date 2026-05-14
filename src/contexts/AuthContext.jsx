@@ -174,8 +174,10 @@ export function AuthProvider({ children }) {
     if (!authInitialized || loading) return
     if (!pathname) return
 
-    const publicRoutes = ['/login', '/forgot-password', '/reset-password', '/unauthorized']
-    const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route))
+    const publicRoutes = ['/', '/login', '/forgot-password', '/reset-password', '/unauthorized']
+    const isPublicRoute = publicRoutes.some(route =>
+      route === '/' ? pathname === '/' : pathname.startsWith(route)
+    )
     const isAlwaysPublic = pathname.startsWith('/phishing-click')
 
     if (isAlwaysPublic) return

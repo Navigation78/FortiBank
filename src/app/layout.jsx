@@ -11,8 +11,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" style={{ margin: 0, padding: 0, background: '#020617' }}>
-      <body className={inter.className} style={{ margin: 0, padding: 0, background: '#020617' }}>
+    <html lang="en" style={{ margin: 0, padding: 0, background: '#0f172a' }}>
+      <body className={inter.className} style={{ margin: 0, padding: 0, background: '#0f172a' }}>
         <AuthProvider>
           {children}
         </AuthProvider>

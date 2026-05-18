@@ -26,15 +26,15 @@ export default function Topbar({ title }) {
   const roleLabel = ROLE_LABELS[role] || role
 
   return (
-    <header className="h-16 bg-slate-900/80 backdrop-blur-sm border-b border-slate-800 flex items-center justify-between px-6 sticky top-0 z-30">
-
-      {/* Page title */}
-      <div className="pl-10 lg:pl-0">
-        <h1 className="text-white font-semibold text-lg">{title}</h1>
+    <header className="h-[90px] bg-slate-900/80 backdrop-blur-sm border-b border-slate-800 flex items-center px-6 sticky top-0 z-30">
+      <div className="min-w-0 flex-1">
+        {title && (
+          <h1 className="sr-only">{title}</h1>
+        )}
       </div>
 
       {/* Right side */}
-      <div className="flex items-center gap-3">
+      <div className="ml-auto flex items-center gap-3">
 
         {/* Risk score quick badge */}
         <Link

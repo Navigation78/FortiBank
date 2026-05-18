@@ -70,7 +70,7 @@ export default function Sidebar() {
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Logo + collapse button */}
-      <div className="flex items-center justify-between px-4 py-5 border-b border-slate-800">
+      <div className="flex items-center justify-between px-4 h-[90px] border-b border-slate-800">
         {!collapsed && (
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -89,25 +89,7 @@ export default function Sidebar() {
           <Icon path={collapsed ? ICONS.menu : ICONS.close} className="w-5 h-5" />
         </button>
       </div>
-
-      {/* User info */}
-      {!collapsed && (
-        <div className="px-4 py-4 border-b border-slate-800">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center flex-shrink-0">
-              <span className="text-blue-400 font-semibold text-sm">
-                {profile?.full_name?.charAt(0) || 'U'}
-              </span>
-            </div>
-            <div className="min-w-0">
-              <p className="text-white text-sm font-medium truncate">
-                {profile?.full_name || 'User'}
-              </p>
-              <p className="text-slate-400 text-xs truncate">{roleLabel}</p>
-            </div>
-          </div>
-        </div>
-      )}
+  
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">

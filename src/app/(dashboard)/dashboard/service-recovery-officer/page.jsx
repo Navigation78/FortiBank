@@ -30,7 +30,7 @@ export default function ServiceRecoveryOfficerDashboard() {
           icon: FileText,
           iconBg: 'bg-green-500/15',
           title: 'Complaint Escalation',
-          description: 'Escalate suspicious complaints — not all are genuine customer issues.',
+          description: 'Escalate suspicious complaints - not all are genuine customer issues.',
         },
       ]}
     />

@@ -1,5 +1,5 @@
 // src/app/api/upload/route.js
-// POST — uploads a file to Supabase Storage for module content
+// POST - uploads a file to Supabase Storage for module content
 // Accepts: multipart/form-data with file + moduleId
 
 import { NextResponse } from 'next/server'

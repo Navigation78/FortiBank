@@ -1,8 +1,8 @@
 
 // src/app/api/phishing/click/route.js
-// POST — records when an employee clicks a phishing link.
+// POST - records when an employee clicks a phishing link.
 // Updates phishing_targets, logs event, recalculates risk score.
-// No auth required — token identifies the target.
+// No auth required - token identifies the target.
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'

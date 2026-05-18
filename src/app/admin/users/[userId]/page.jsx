@@ -84,7 +84,7 @@ export default function UserDetailPage() {
                     <span className="text-blue-400 text-xl font-bold">{user.full_name?.charAt(0)}</span>
                   </div>
                   <div>
-                    <h2 className="text-white text-lg font-bold">{user.full_name}</h2>
+                    <h4 className="text-white text-lg font-bold">{user.full_name}</h4>
                     <p className="text-slate-400 text-sm">{user.email}</p>
                     <p className="text-slate-500 text-xs">{user.role_display_name} · {user.department || 'No department'}</p>
                   </div>
@@ -105,7 +105,7 @@ export default function UserDetailPage() {
               <div className="grid grid-cols-2 gap-4 text-sm border-t border-slate-800 pt-4">
                 <div>
                   <p className="text-slate-500 text-xs">Employee ID</p>
-                  <p className="text-slate-300 mt-0.5">{user.employee_id || '—'}</p>
+                  <p className="text-slate-300 mt-0.5">{user.employee_id || '-'}</p>
                 </div>
                 <div>
                   <p className="text-slate-500 text-xs">Member since</p>
@@ -114,7 +114,7 @@ export default function UserDetailPage() {
                 <div>
                   <p className="text-slate-500 text-xs">Risk score</p>
                   <p className={`font-semibold mt-0.5 ${latestScore?.is_critical ? 'text-red-400' : latestScore?.is_warning ? 'text-orange-400' : 'text-green-400'}`}>
-                    {latestScore ? Math.round(latestScore.composite_score) : '—'}/100
+                    {latestScore ? Math.round(latestScore.composite_score) : '-'}/100
                   </p>
                 </div>
                 <div>

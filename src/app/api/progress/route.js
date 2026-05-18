@@ -1,5 +1,5 @@
 // src/app/api/progress/route.js
-// POST /api/progress — upserts user module progress.
+// POST /api/progress - upserts user module progress.
 // Called as the user moves through module content.
 
 import { NextResponse } from 'next/server'

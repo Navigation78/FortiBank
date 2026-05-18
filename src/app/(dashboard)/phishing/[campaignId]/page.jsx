@@ -90,7 +90,7 @@ export default function CampaignDetailPage() {
               <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                 clicked ? 'bg-red-500/20' : reported ? 'bg-green-500/20' : 'bg-blue-500/20'
               }`}>
-                {clicked ? '⚠️' : reported ? '✓' : '📧'}
+                {clicked ? '!' : reported ? '✓' : ''}
               </div>
               <div>
                 <p className={`font-bold ${clicked ? 'text-red-400' : reported ? 'text-green-400' : 'text-blue-400'}`}>

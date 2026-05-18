@@ -1,7 +1,7 @@
 'use client'
 
 // src/app/admin/page.jsx
-// Admin home — overview stats, quick actions
+// Admin home - overview stats, quick actions
 
 import { useState, useEffect } from 'react'
 import { AlertOctagon, BarChart3, BookOpen, ChevronRight, Fish, Users, UserPlus } from 'lucide-react'
@@ -57,9 +57,9 @@ export default function AdminHomePage() {
       <PageWrapper>
 
         <div className="mb-6">
-          <h2 className="text-white text-2xl font-bold">
+          <h4 className="text-white text-2xl font-bold">
             Welcome, {adminDisplayName}
-          </h2>
+          </h4>
           <p className="text-slate-400 text-sm mt-1">Here's what's happening across the platform.</p>
         </div>
 
@@ -71,10 +71,10 @@ export default function AdminHomePage() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatsCard title="Active Employees" value={loading ? '—' : stats?.totalUsers}        icon={Users}      color="blue"   />
-          <StatsCard title="Published Modules" value={loading ? '—' : stats?.publishedModules} icon={BookOpen}  color="green"  />
-          <StatsCard title="Active Campaigns"  value={loading ? '—' : stats?.activeCampaigns}  icon={Fish}      color="yellow" />
-          <StatsCard title="Critical Risk Users" value={loading ? '—' : stats?.criticalUsers}  icon={AlertOctagon} color="red"  />
+          <StatsCard title="Active Employees" value={loading ? '-' : stats?.totalUsers}        icon={Users}      color="blue"   />
+          <StatsCard title="Published Modules" value={loading ? '-' : stats?.publishedModules} icon={BookOpen}  color="green"  />
+          <StatsCard title="Active Campaigns"  value={loading ? '-' : stats?.activeCampaigns}  icon={Fish}      color="yellow" />
+          <StatsCard title="Critical Risk Users" value={loading ? '-' : stats?.criticalUsers}  icon={AlertOctagon} color="red"  />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -126,7 +126,7 @@ export default function AdminHomePage() {
                         <p className="text-slate-400 text-xs">{item.sub}</p>
                       </div>
                       <span className={`font-bold text-xl ${item.alert ? 'text-red-400' : 'text-slate-100'}`}>
-                        {item.value ?? '—'}
+                        {item.value ?? '-'}
                       </span>
                     </div>
                   ))}

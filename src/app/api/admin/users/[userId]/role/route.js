@@ -1,6 +1,6 @@
 
 // src/app/api/admin/users/[userId]/role/route.js
-// PUT — reassigns a user's role
+// PUT - reassigns a user's role
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'

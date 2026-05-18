@@ -52,7 +52,7 @@ export default function ResultsPage() {
   }
 
   function formatDuration(secs) {
-    if (!secs) return '—'
+    if (!secs) return '-'
     const m = Math.floor(secs / 60)
     const s = secs % 60
     return `${m}m ${s}s`
@@ -199,7 +199,7 @@ export default function ResultsPage() {
                           <span className="text-slate-400 text-sm">
                             {target.sent_at
                               ? new Date(target.sent_at).toLocaleDateString('en-KE', { dateStyle: 'medium' })
-                              : '—'}
+                              : '-'}
                           </span>
                         </td>
                       </tr>

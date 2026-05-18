@@ -35,7 +35,7 @@ export default function AdminUsersPage() {
       <PageWrapper>
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-white text-xl font-bold">All Employees</h2>
+            <h4 className="text-white text-xl font-bold">All Employees</h4>
             <p className="text-slate-400 text-sm mt-0.5">{users.length} total employees</p>
           </div>
           <Link

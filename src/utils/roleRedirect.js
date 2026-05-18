@@ -59,12 +59,12 @@ export function isAdminRole(role) {
  * allowed to access that path.
  */
 export function canAccessPath(role, pathname) {
-  // Admin panel — system_admin only
+  // Admin panel - system_admin only
   if (pathname.startsWith('/admin')) {
     return isAdminRole(role)
   }
 
-  // Role-specific dashboards — each role can only access their own
+  // Role-specific dashboards - each role can only access their own
   
 
   for (const [requiredRole, path] of Object.entries(ROLE_DASHBOARD_MAP)) {

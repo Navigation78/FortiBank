@@ -1,6 +1,6 @@
 // src/app/api/admin/campaigns/route.js
-// GET  — all campaigns with stats
-// POST — create new phishing campaign
+// GET  - all campaigns with stats
+// POST - create new phishing campaign
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'

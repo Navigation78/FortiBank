@@ -1,6 +1,6 @@
 // src/app/api/certificates/route.js
-// GET  — fetch current user's certificates
-// POST — check eligibility and award certificate if qualified
+// GET  - fetch current user's certificates
+// POST - check eligibility and award certificate if qualified
 
 
 import { NextResponse } from 'next/server'
@@ -114,7 +114,7 @@ export async function POST(request) {
     }
   }
 
-  // ✅ User is eligible — generate certificate
+  // User is eligible - generate certificate
   const { data: roleData } = await supabaseAdmin
     .from('roles')
     .select('id, display_name')

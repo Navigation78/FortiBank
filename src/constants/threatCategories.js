@@ -33,7 +33,7 @@ export const THREAT_CATEGORIES = {
   INSIDER_THREAT: {
     id:          'insider_threat',
     label:       'Insider Threat',
-    description: 'Security risks from within the organization — employees or contractors.',
+    description: 'Security risks from within the organization - employees or contractors.',
     icon:        'Eye',
     color:       'blue',
   },
@@ -54,7 +54,7 @@ export const THREAT_CATEGORIES = {
   VISHING: {
     id:          'vishing',
     label:       'Vishing',
-    description: 'Voice phishing — attackers call and impersonate trusted parties.',
+    description: 'Voice phishing - attackers call and impersonate trusted parties.',
     icon:        'Phone',
     color:       'yellow',
   },

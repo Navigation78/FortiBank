@@ -129,7 +129,7 @@ export async function sendRiskAlertEmail({
   const { data, error } = await resend.emails.send({
     from:    FROM,
     to,
-    subject: `${isCritical ? '[CRITICAL]' : '[WARNING]'} ${label} — Your risk score is ${score}/100`,
+    subject: `${isCritical ? '[CRITICAL]' : '[WARNING]'} ${label} - Your risk score is ${score}/100`,
     html,
   })
 
@@ -189,7 +189,7 @@ export async function sendCertificateEmail({
   const { data, error } = await resend.emails.send({
     from:    FROM,
     to,
-    subject: `Certificate Awarded — ${roleName} Cybersecurity Training`,
+    subject: `Certificate Awarded - ${roleName} Cybersecurity Training`,
     html,
   })
 

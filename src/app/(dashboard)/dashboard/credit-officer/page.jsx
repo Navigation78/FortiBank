@@ -18,7 +18,7 @@ export default function CreditOfficerDashboard() {
           icon: IdCard,
           iconBg: 'bg-orange-500/15',
           title: 'Identity Fraud',
-          description: 'Verify KYC documents thoroughly — stolen identities are used for loans.',
+          description: 'Verify KYC documents thoroughly - stolen identities are used for loans.',
         },
         {
           icon: Fish,
@@ -30,7 +30,7 @@ export default function CreditOfficerDashboard() {
           icon: Lock,
           iconBg: 'bg-purple-500/15',
           title: 'Data Privacy',
-          description: 'Credit files contain highly sensitive data — handle with strict controls.',
+          description: 'Credit files contain highly sensitive data - handle with strict controls.',
         },
       ]}
     />

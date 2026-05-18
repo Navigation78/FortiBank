@@ -1,6 +1,6 @@
 'use client'
 // src/app/(dashboard)/modules/[moduleId]/page.jsx
-// Individual module viewer page — NetAcad style.
+// Individual module viewer page - NetAcad style.
 // Passes nextModule to viewer so it can show "Next Module" button.
 
 import { useState, useEffect } from 'react'
@@ -78,12 +78,12 @@ export default function ModuleViewerPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main viewer — 2 columns */}
+          {/* Main viewer - 2 columns */}
           <div className="lg:col-span-2">
             <ModuleViewer module={module} nextModule={nextModule} />
           </div>
 
-          {/* Sidebar — 1 column */}
+          {/* Sidebar - 1 column */}
           <div className="space-y-4">
             {/* Module info */}
             <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-5">

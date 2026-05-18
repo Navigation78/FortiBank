@@ -67,7 +67,7 @@ export default function AdminModulesPage() {
   }
 
   function formatModuleCode(orderIndex) {
-    return orderIndex ? `FBM${String(orderIndex).padStart(3, '0')}` : '—'
+    return orderIndex ? `FBM${String(orderIndex).padStart(3, '0')}` : '-'
   }
 
   return (
@@ -75,7 +75,7 @@ export default function AdminModulesPage() {
       <PageWrapper>
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-white text-xl font-bold">All Modules</h2>
+            <h4 className="text-white text-xl font-bold">All Modules</h4>
             <p className="text-slate-400 text-sm mt-0.5">{modules.length} total modules</p>
           </div>
           <div className="flex items-center gap-2">
@@ -133,7 +133,7 @@ export default function AdminModulesPage() {
                       </span>
                     </td>
                     <td className="px-5 py-3 hidden md:table-cell">
-                      <span className="text-slate-400 text-sm">{module.duration_mins ? `${module.duration_mins} min` : '—'}</span>
+                      <span className="text-slate-400 text-sm">{module.duration_mins ? `${module.duration_mins} min` : '-'}</span>
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">

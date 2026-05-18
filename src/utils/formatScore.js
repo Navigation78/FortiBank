@@ -1,7 +1,7 @@
 // src/utils/formatScore.js
 
 export function formatScore(score) {
-  if (score === null || score === undefined) return '—'
+  if (score === null || score === undefined) return '-'
   return `${Math.round(score)}/100`
 }
 

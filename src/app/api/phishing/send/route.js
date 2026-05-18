@@ -1,6 +1,6 @@
 
 // src/app/api/phishing/send/route.js
-// POST — sends phishing simulation emails to targeted employees.
+// POST - sends phishing simulation emails to targeted employees.
 // Admin only. Uses Resend via email.js.
 
 import { NextResponse } from 'next/server'

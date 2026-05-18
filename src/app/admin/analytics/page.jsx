@@ -130,17 +130,17 @@ export default function AnalyticsPage() {
       <PageWrapper>
 
         <div className="mb-6">
-          <h2 className="text-white text-xl font-bold">Platform Analytics</h2>
+          <h4 className="text-white text-xl font-bold">Platform Analytics</h4>
           <p className="text-slate-400 text-sm mt-1">Overview of training progress and cybersecurity risk across the branch.</p>
         </div>
 
         {/* Summary stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
-            { label: 'Active Employees',   value: loading ? '—' : data.summary?.activeUsers,   color: 'text-white' },
-            { label: 'With Risk Scores',   value: loading ? '—' : data.summary?.scoredUsers,   color: 'text-blue-400' },
-            { label: 'At Critical Risk',   value: loading ? '—' : data.summary?.criticalUsers,  color: 'text-red-400' },
-            { label: 'Avg Risk Score',     value: loading ? '—' : data.summary?.avgScore,       color: 'text-yellow-400' },
+            { label: 'Active Employees',   value: loading ? '-' : data.summary?.activeUsers,   color: 'text-white' },
+            { label: 'With Risk Scores',   value: loading ? '-' : data.summary?.scoredUsers,   color: 'text-blue-400' },
+            { label: 'At Critical Risk',   value: loading ? '-' : data.summary?.criticalUsers,  color: 'text-red-400' },
+            { label: 'Avg Risk Score',     value: loading ? '-' : data.summary?.avgScore,       color: 'text-yellow-400' },
           ].map((s, i) => (
             <div key={i} className="bg-slate-800 border border-white/[0.08] rounded-xl p-4 text-center">
               <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>

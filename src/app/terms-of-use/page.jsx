@@ -143,7 +143,7 @@ export default function TermsOfUsePage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
           {SECTIONS.map((s, i) => (
             <div key={i} style={{ borderTop: '0.5px solid rgba(255,255,255,0.06)', paddingTop: 32 }}>
-              <h2 style={{ fontSize: 17, fontWeight: 500, color: '#e2e8f0', marginBottom: 14 }}>{s.title}</h2>
+              <h4 style={{ fontSize: 17, fontWeight: 500, color: '#e2e8f0', marginBottom: 14 }}>{s.title}</h4>
               <p style={{ fontSize: 14, color: '#64748b', lineHeight: 1.85, whiteSpace: 'pre-line' }}>{s.body}</p>
             </div>
           ))}

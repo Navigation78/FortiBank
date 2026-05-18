@@ -1,7 +1,7 @@
 
 // src/constants/roles.js
 // Single source of truth for all role names and configuration.
-// Import from here everywhere — never hardcode role strings elsewhere!
+// Import from here everywhere - never hardcode role strings elsewhere!
 
 export const ROLES = {
   // Leadership

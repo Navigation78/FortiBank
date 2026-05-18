@@ -1,7 +1,7 @@
 // src/app/api/phishing/track/route.js
-// GET — tracks email opens via 1x1 pixel.
+// GET - tracks email opens via 1x1 pixel.
 // Called when the email is opened by the recipient.
-// No auth required — token is the identifier.
+// No auth required - token is the identifier.
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
@@ -47,7 +47,7 @@ export async function GET(request) {
           })
       }
     } catch (err) {
-      // Silently fail — never break the email rendering
+      // Silently fail - never break the email rendering
       console.error('Tracking pixel error:', err)
     }
   }

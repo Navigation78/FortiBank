@@ -1,6 +1,6 @@
 // src/app/api/admin/modules/route.js
-// GET  — all modules with content and role access
-// POST — create new module with content blocks and role access
+// GET  - all modules with content and role access
+// POST - create new module with content blocks and role access
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'

@@ -10,7 +10,7 @@ export function useProgress() {
   const { user } = useAuth()
   const [updating, setUpdating] = useState(false)
 
-  // Start a module — sets status to in_progress
+  // Start a module - sets status to in_progress
   async function startModule(moduleId) {
     if (!user) return { error: 'Not authenticated' }
     setUpdating(true)

@@ -54,7 +54,7 @@ export default function ResetPasswordPage() {
       }
     )
 
-    // Safety fallback — stop spinner after 4 seconds no matter what
+    // Safety fallback - stop spinner after 4 seconds no matter what
     const fallback = setTimeout(() => {
       setCheckingSession(false)
     }, 4000)
@@ -131,7 +131,7 @@ export default function ResetPasswordPage() {
               d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <h2 className="text-white text-xl font-bold mb-2">Link expired or invalid</h2>
+        <h4 className="text-white text-xl font-bold mb-2">Link expired or invalid</h4>
         <p className="text-slate-400 text-sm mb-6">
           This link has expired or has already been used.
           Please request a new one or contact your administrator.
@@ -159,9 +159,9 @@ export default function ResetPasswordPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 className="text-white text-xl font-bold mb-2">
+        <h4 className="text-white text-xl font-bold mb-2">
           {isInvite ? 'Account activated!' : 'Password updated!'}
-        </h2>
+        </h4>
         <p className="text-slate-400 text-sm mb-4">
           {isInvite
             ? 'Your account is ready. Please log in with your new password.'
@@ -179,9 +179,9 @@ export default function ResetPasswordPage() {
   return (
     <div className="bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl">
       <div className="mb-6">
-        <h2 className="text-white text-2xl font-bold">
+        <h4 className="text-white text-2xl font-bold">
           {isInvite ? 'Set your password' : 'Set new password'}
-        </h2>
+        </h4>
         <p className="text-slate-400 text-sm mt-1">
           {isInvite
             ? 'Welcome to FortiBank! Choose a password to activate your account.'

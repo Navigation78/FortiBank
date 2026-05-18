@@ -17,7 +17,7 @@ export default function CampaignCard({ target }) {
   const config   = RESULT_CONFIG[target.result] || RESULT_CONFIG.not_sent
 
   function formatDate(dateStr) {
-    if (!dateStr) return '—'
+    if (!dateStr) return '-'
     return new Date(dateStr).toLocaleDateString('en-KE', {
       day: 'numeric', month: 'short', year: 'numeric'
     })

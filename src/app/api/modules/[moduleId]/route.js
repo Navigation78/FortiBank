@@ -1,5 +1,5 @@
 // src/app/api/modules/[moduleId]/route.js
-// GET /api/modules/:moduleId — returns a single module with
+// GET /api/modules/:moduleId - returns a single module with
 // all content blocks, progress, and quiz info.
 
 

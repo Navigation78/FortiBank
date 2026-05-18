@@ -1,4 +1,4 @@
-// POST — uploads a profile avatar to Supabase Storage and returns the public URL.
+// POST - uploads a profile avatar to Supabase Storage and returns the public URL.
 // Accepts: multipart/form-data with a single "file" field (images only, max 5 MB).
 
 import { NextResponse } from 'next/server'

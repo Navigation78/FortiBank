@@ -24,7 +24,7 @@ export default function BranchManagerDashboard() {
           icon: Lock,
           iconBg: 'bg-blue-500/15',
           title: 'Credential Security',
-          description: 'Your credentials grant wide system access — protect them rigorously.',
+          description: 'Your credentials grant wide system access - protect them rigorously.',
         },
         {
           icon: ClipboardList,

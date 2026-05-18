@@ -1,6 +1,6 @@
 // src/app/api/risk-score/route.js
-// GET  — returns latest risk score for current user
-// POST — triggers recalculation via Postgres function
+// GET  - returns latest risk score for current user
+// POST - triggers recalculation via Postgres function
 
 
 import { NextResponse } from 'next/server'

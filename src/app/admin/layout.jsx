@@ -287,7 +287,7 @@ function AdminSidebar({ isCollapsed, onToggle, isMobileOpen, setIsMobileOpen }) 
         />
       )}
 
-      {/* Mobile sidebar — hamburger closes the drawer */}
+      {/* Mobile sidebar - hamburger closes the drawer */}
       <aside
         className={`lg:hidden fixed top-0 left-0 h-full z-50 w-64 transform transition-transform duration-200 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
         style={{ background: '#1a2035' }}
@@ -295,7 +295,7 @@ function AdminSidebar({ isCollapsed, onToggle, isMobileOpen, setIsMobileOpen }) 
         <SidebarInner {...sharedProps} collapsed={false} onToggle={() => setIsMobileOpen(false)} />
       </aside>
 
-      {/* Desktop sidebar — hamburger toggles collapse */}
+      {/* Desktop sidebar - hamburger toggles collapse */}
       <aside
         className={`hidden lg:flex flex-col relative flex-shrink-0 h-screen transition-all duration-200 ${isCollapsed ? 'w-[68px]' : 'w-64'}`}
         style={{ background: '#1a2035' }}
@@ -316,7 +316,7 @@ function AdminTopbar({ toggleMobileSidebar }) {
   return (
     <header className="bg-slate-900 border-b border-white/[0.06] flex items-center px-4 py-3 sticky top-0 z-30 shadow-sm shadow-black/40">
       <div className="flex items-center gap-4">
-        {/* Mobile-only hamburger — desktop one lives in the sidebar */}
+        {/* Mobile-only hamburger - desktop one lives in the sidebar */}
         <button
           onClick={toggleMobileSidebar}
           className="lg:hidden flex items-center justify-center text-white transition-all duration-150 p-1 rounded-lg hover:bg-white/[0.08]"

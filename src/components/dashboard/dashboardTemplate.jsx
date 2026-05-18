@@ -95,28 +95,28 @@ export default function DashboardTemplate({
   const realStats = [
     {
       title:    'Modules Assigned',
-      value:    modulesLoading ? '—' : stats.total,
+      value:    modulesLoading ? '-' : stats.total,
       subtitle: modulesLoading ? 'Loading...' : `${stats.notStarted} not started`,
       icon:     BookOpen,
       color:    'blue',
     },
     {
       title:    'Modules Completed',
-      value:    modulesLoading ? '—' : stats.completed,
+      value:    modulesLoading ? '-' : stats.completed,
       subtitle: modulesLoading ? 'Loading...' : `${stats.inProgress} in progress`,
       icon:     CheckCircle2,
       color:    'green',
     },
     {
       title:    'Risk Score',
-      value:    riskLoading ? '—' : riskScore,
+      value:    riskLoading ? '-' : riskScore,
       subtitle: riskLoading ? 'Loading...' : getRiskLabel(riskScore),
       icon:     Shield,
       color:    riskScore >= 63 ? 'red' : riskScore >= 45 ? 'yellow' : 'green',
     },
     {
       title:    'Overall Progress',
-      value:    modulesLoading ? '—' : `${stats.overallPct}%`,
+      value:    modulesLoading ? '-' : `${stats.overallPct}%`,
       subtitle: 'Training completion',
       icon:     BarChart3,
       color:    'purple',
@@ -136,9 +136,9 @@ export default function DashboardTemplate({
 
         {/* Welcome */}
         <div className="mb-6">
-          <h2 className="text-slate-100 text-2xl font-bold">
+          <h4 className="text-slate-100 text-2xl font-bold">
             Good {getTimeOfDay()}, {firstName}
-          </h2>
+          </h4>
           <p className="text-slate-400 text-sm mt-1">
             Here's your security training overview for today.
           </p>
@@ -209,8 +209,8 @@ function getTimeOfDay() {
 }
 
 function getRiskLabel(score) {
-  if (score >= 63) return 'High risk — take action'
+  if (score >= 63) return 'High risk - take action'
   if (score >= 45) return 'Medium risk'
-  if (score > 0)   return 'Low risk — well done'
+  if (score > 0)   return 'Low risk - well done'
   return 'No data yet'
 }

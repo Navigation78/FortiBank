@@ -3,7 +3,6 @@
 // Admin analytics dashboard with charts and risk overview
 
 import { useState, useEffect } from 'react'
-import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import CompletionRateChart from '@/components/analytics/CompletionRateChart'
 import DepartmentRiskChart from '@/components/analytics/DepartmentRiskChart'
@@ -128,7 +127,6 @@ export default function AnalyticsPage() {
 
   return (
     <>
-      <Topbar title="Analytics" />
       <PageWrapper>
 
         <div className="mb-6">
@@ -144,9 +142,9 @@ export default function AnalyticsPage() {
             { label: 'At Critical Risk',   value: loading ? '—' : data.summary?.criticalUsers,  color: 'text-red-400' },
             { label: 'Avg Risk Score',     value: loading ? '—' : data.summary?.avgScore,       color: 'text-yellow-400' },
           ].map((s, i) => (
-            <div key={i} className="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+            <div key={i} className="bg-slate-800 border border-white/[0.08] rounded-xl p-4 text-center">
               <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
-              <p className="text-slate-500 text-xs mt-1">{s.label}</p>
+              <p className="text-slate-400 text-xs mt-1">{s.label}</p>
             </div>
           ))}
         </div>

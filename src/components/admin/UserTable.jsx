@@ -42,7 +42,7 @@ export default function UserTable({ users = [], loading = false, onRefresh: _onR
     return (
       <div className="space-y-2">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="h-14 bg-slate-900 border border-slate-800 rounded-xl animate-pulse" />
+          <div key={i} className="h-14 bg-slate-800 border border-white/[0.06] rounded-xl animate-pulse" />
         ))}
       </div>
     )
@@ -68,8 +68,8 @@ export default function UserTable({ users = [], loading = false, onRefresh: _onR
               onClick={() => setFilter(cat)}
               className={`px-3 py-2 rounded-lg text-xs font-medium transition-all capitalize ${
                 categoryFilter === cat
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-slate-800 text-slate-400 hover:text-white'
+                  ? 'bg-blue-600 text-white shadow-sm shadow-blue-600/20'
+                  : 'bg-white/[0.05] text-slate-300 hover:text-white hover:bg-white/[0.09] border border-white/[0.07]'
               }`}
             >
               {cat}
@@ -97,8 +97,8 @@ export default function UserTable({ users = [], loading = false, onRefresh: _onR
                     </span>
                   </div>
                   <div>
-                    <p className="text-white text-sm font-medium">{user.full_name}</p>
-                    <p className="text-slate-500 text-xs">{user.email}</p>
+                    <p className="text-slate-100 text-sm font-medium">{user.full_name}</p>
+                    <p className="text-slate-400 text-xs">{user.email}</p>
                   </div>
                 </div>
               </Td>
@@ -108,7 +108,7 @@ export default function UserTable({ users = [], loading = false, onRefresh: _onR
                 </Badge>
               </Td>
               <Td className="hidden md:table-cell">
-                <span className="text-slate-400 text-sm">{user.department || '—'}</span>
+                <span className="text-slate-300 text-sm">{user.department || '—'}</span>
               </Td>
               <Td className="hidden lg:table-cell">
                 <Badge variant={user.is_active ? 'green' : 'slate'}>
@@ -118,7 +118,7 @@ export default function UserTable({ users = [], loading = false, onRefresh: _onR
               <Td>
                 <Link
                   href={`/admin/users/${user.id}`}
-                  className="text-blue-400 hover:text-blue-300 text-xs font-medium transition-colors"
+                  className="text-blue-400 hover:text-blue-300 text-xs font-medium transition-all duration-150"
                 >
                   View →
                 </Link>
@@ -134,7 +134,7 @@ export default function UserTable({ users = [], loading = false, onRefresh: _onR
         </Tbody>
       </Table>
 
-      <p className="text-slate-600 text-xs mt-3 text-right">
+      <p className="text-slate-500 text-xs mt-3 text-right">
         Showing {filtered.length} of {users.length} employees
       </p>
     </div>

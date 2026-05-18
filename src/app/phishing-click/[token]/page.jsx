@@ -3,7 +3,7 @@
 // src/app/phishing-click/[token]/page.jsx
 // Landing page shown when an employee clicks a phishing link.
 // Records the click, updates risk score, shows awareness message.
-// No auth required — accessible via the email link.
+// No auth required  accessible via the email link.
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
@@ -63,7 +63,7 @@ export default function PhishingClickPage() {
               <p className="text-slate-300 text-sm leading-relaxed">
                 This was a <strong className="text-white">simulated phishing test</strong> conducted
                 by your organization as part of the FortiBank cybersecurity training program.
-                The email you received was not real — but a real attacker could have used the
+                The email you received was not real  but a real attacker could have used the
                 same technique to compromise your account or steal sensitive information.
               </p>
 
@@ -80,7 +80,7 @@ export default function PhishingClickPage() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-green-400 mt-0.5">✓</span>
-                    Be suspicious of urgency — legitimate systems don't demand immediate action
+                    Be suspicious of urgency  legitimate systems don't demand immediate action
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-green-400 mt-0.5">✓</span>
@@ -102,13 +102,13 @@ export default function PhishingClickPage() {
             <div className="px-6 pb-6 flex flex-col sm:flex-row gap-3">
               <Link
                 href="/modules"
-                className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg py-2.5 text-sm transition-colors text-center"
+                className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg py-2.5 text-sm transition-all duration-150 text-center"
               >
                 Complete Training Modules
               </Link>
               <Link
                 href="/login"
-                className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-colors text-center"
+                className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-all duration-150 text-center"
               >
                 Go to Dashboard
               </Link>

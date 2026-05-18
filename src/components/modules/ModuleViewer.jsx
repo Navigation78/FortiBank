@@ -210,7 +210,7 @@ export default function ModuleViewer({ module, nextModule }) {
   // ── No content fallback ───────────────────────────────────
   if (totalSecs === 0 && !quiz) {
     return (
-      <div className="text-center py-16 bg-slate-900 border border-slate-800 rounded-xl">
+      <div className="text-center py-16 bg-slate-800 border border-white/[0.08] rounded-xl">
         <p className="text-slate-400">No content available yet.</p>
         <p className="text-slate-600 text-sm mt-1">Check back after the admin adds content.</p>
       </div>
@@ -249,9 +249,9 @@ export default function ModuleViewer({ module, nextModule }) {
           )}
 
           {/* Content panel */}
-          <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden mb-4">
+          <div className="bg-slate-800 border border-white/[0.08] rounded-xl overflow-hidden mb-4">
             {/* Section header */}
-            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+            <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
               <div>
                 <p className="text-slate-500 text-xs capitalize mb-0.5">
                   {currentSec?.content_type?.replace('_', ' ')}
@@ -334,7 +334,7 @@ export default function ModuleViewer({ module, nextModule }) {
               <button
                 onClick={goPrev}
                 disabled={currentIdx === 0}
-                className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-slate-300 rounded-lg text-sm font-medium transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-slate-300 rounded-lg text-sm font-medium transition-all duration-150"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -349,7 +349,7 @@ export default function ModuleViewer({ module, nextModule }) {
                     <button
                       onClick={loadQuiz}
                       disabled={quizLoading}
-                      className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors"
+                      className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-all duration-150"
                     >
                       {quizLoading ? (
                         'Loading quiz...'
@@ -361,7 +361,7 @@ export default function ModuleViewer({ module, nextModule }) {
                       )}
                     </button>
                   ) : (
-                    <Link href="/modules" className="flex items-center gap-2 px-5 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm font-medium transition-colors">
+                    <Link href="/modules" className="flex items-center gap-2 px-5 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm font-medium transition-all duration-150">
                       <Check className="w-4 h-4" />
                       Back to Modules
                     </Link>
@@ -370,7 +370,7 @@ export default function ModuleViewer({ module, nextModule }) {
                   <button
                     onClick={handleCompleteAndStartQuiz}
                     disabled={completing || !allViewed}
-                    className="flex items-center gap-2 px-5 py-2 bg-green-600 hover:bg-green-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors"
+                    className="flex items-center gap-2 px-5 py-2 bg-green-600 hover:bg-green-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-all duration-150"
                   >
                     {completing ? (
                       <>
@@ -397,7 +397,7 @@ export default function ModuleViewer({ module, nextModule }) {
               ) : (
                 <button
                   onClick={goNext}
-                  className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors"
+                  className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-all duration-150"
                 >
                   Next
                   <ChevronRight className="w-4 h-4" />
@@ -459,7 +459,7 @@ export default function ModuleViewer({ module, nextModule }) {
             <button
               onClick={() => setCurrentQ(prev => Math.max(0, prev - 1))}
               disabled={currentQ === 0}
-              className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-slate-300 rounded-lg text-sm font-medium transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-slate-300 rounded-lg text-sm font-medium transition-all duration-150"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -471,7 +471,7 @@ export default function ModuleViewer({ module, nextModule }) {
               <button
                 onClick={submitQuiz}
                 disabled={submitting || Object.keys(answers).length < questions.length}
-                className="flex items-center gap-2 px-6 py-2 bg-green-600 hover:bg-green-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors"
+                className="flex items-center gap-2 px-6 py-2 bg-green-600 hover:bg-green-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-all duration-150"
               >
                 {submitting ? (
                   'Submitting...'
@@ -487,7 +487,7 @@ export default function ModuleViewer({ module, nextModule }) {
             ) : (
               <button
                 onClick={() => setCurrentQ(prev => Math.min(questions.length - 1, prev + 1))}
-                className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors"
+                className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-all duration-150"
               >
                 Next
                 <ChevronRight className="w-4 h-4" />
@@ -532,7 +532,7 @@ export default function ModuleViewer({ module, nextModule }) {
 
           {/* Question breakdown */}
           {result.questions?.length > 0 && (
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+            <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-5">
               <h4 className="text-white font-semibold mb-3">Question Breakdown</h4>
               <div className="space-y-2">
                 {result.questions.map((q, i) => (
@@ -560,7 +560,7 @@ export default function ModuleViewer({ module, nextModule }) {
             {result.can_retake && !result.passed && (
               <button
                 onClick={retakeQuiz}
-                className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg py-2.5 text-sm transition-colors"
+                className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg py-2.5 text-sm transition-all duration-150"
               >
                 Retake Quiz
               </button>
@@ -568,14 +568,14 @@ export default function ModuleViewer({ module, nextModule }) {
             {result.passed && nextModule && (
               <Link
                 href={`/modules/${nextModule.id}`}
-                className="flex-1 bg-green-600 hover:bg-green-500 text-white font-medium rounded-lg py-2.5 text-sm transition-colors text-center"
+                className="flex-1 bg-green-600 hover:bg-green-500 text-white font-medium rounded-lg py-2.5 text-sm transition-all duration-150 text-center"
               >
                 Next Module: {nextModule.title} →
               </Link>
             )}
             <Link
               href="/modules"
-              className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-colors text-center"
+              className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-all duration-150 text-center"
             >
               All Modules
             </Link>

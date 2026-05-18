@@ -1,3 +1,4 @@
+'use client'
 // src/app/page.jsx
 // FortiBank LMS Public Landing Page
 
@@ -74,7 +75,11 @@ export default function LandingPage() {
         <Link href="/login" style={{
           background: '#2563eb', color: 'white', padding: '8px 20px',
           borderRadius: 8, fontSize: 14, fontWeight: 500, textDecoration: 'none',
-        }}>Sign in</Link>
+          transition: 'background 0.15s',
+        }}
+          onMouseEnter={e => e.currentTarget.style.background='#3b82f6'}
+          onMouseLeave={e => e.currentTarget.style.background='#2563eb'}
+        >Sign in</Link>
       </nav>
 
       {/* HERO */}
@@ -93,7 +98,7 @@ export default function LandingPage() {
           <span style={{ color: '#3b82f6' }}>every employee</span>
         </h1>
 
-        <p style={{ fontSize: 18, color: '#475569', maxWidth: 560, margin: '0 auto 44px', lineHeight: 1.75 }}>
+        <p style={{ fontSize: 18, color: '#94a3b8', maxWidth: 560, margin: '0 auto 44px', lineHeight: 1.75 }}>
           Role-based cybersecurity training, live phishing simulations, and real-time
           risk scoring purpose-built for the financial sector.
         </p>
@@ -113,7 +118,7 @@ export default function LandingPage() {
           ].map(s => (
             <div key={s.l} style={{ textAlign: 'center' }}>
               <div style={{ fontSize: 30, fontWeight: 500, color: '#f1f5f9' }}>{s.n}</div>
-              <div style={{ fontSize: 13, color: '#334155', marginTop: 6 }}>{s.l}</div>
+              <div style={{ fontSize: 13, color: '#64748b', marginTop: 6 }}>{s.l}</div>
             </div>
           ))}
         </div>
@@ -132,7 +137,7 @@ export default function LandingPage() {
           <h2 style={{ fontSize: 36, fontWeight: 500, color: '#f1f5f9', marginBottom: 16, letterSpacing: '-0.01em' }}>
             Everything your bank needs to stay secure
           </h2>
-          <p style={{ fontSize: 16, color: '#475569', maxWidth: 520, lineHeight: 1.7, marginBottom: 52 }}>
+          <p style={{ fontSize: 16, color: '#94a3b8', maxWidth: 520, lineHeight: 1.7, marginBottom: 52 }}>
             A complete cybersecurity training ecosystem designed around how banks actually operate.
           </p>
 
@@ -143,7 +148,14 @@ export default function LandingPage() {
             border: '0.5px solid rgba(255,255,255,0.06)',
           }}>
             {FEATURES.map((f, i) => (
-              <div key={i} style={{ background: '#0d1526', padding: '30px 28px' }}>
+              <div key={i} style={{
+                background: '#0d1526', padding: '30px 28px',
+                transition: 'background 0.15s, border-color 0.15s',
+                cursor: 'default',
+              }}
+                onMouseEnter={e => e.currentTarget.style.background='#111d35'}
+                onMouseLeave={e => e.currentTarget.style.background='#0d1526'}
+              >
                 <div style={{
                   width: 44, height: 44, borderRadius: 10,
                   background: f.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18,
@@ -153,7 +165,7 @@ export default function LandingPage() {
                   </svg>
                 </div>
                 <div style={{ fontSize: 15, fontWeight: 500, color: '#f1f5f9', marginBottom: 8 }}>{f.title}</div>
-                <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.65 }}>{f.desc}</div>
+                <div style={{ fontSize: 13, color: '#94a3b8', lineHeight: 1.65 }}>{f.desc}</div>
               </div>
             ))}
           </div>
@@ -169,7 +181,7 @@ export default function LandingPage() {
           <h2 style={{ fontSize: 36, fontWeight: 500, color: '#f1f5f9', marginBottom: 16, letterSpacing: '-0.01em' }}>
             From onboarding to certification
           </h2>
-          <p style={{ fontSize: 16, color: '#475569', maxWidth: 480, lineHeight: 1.7, marginBottom: 64 }}>
+          <p style={{ fontSize: 16, color: '#94a3b8', maxWidth: 480, lineHeight: 1.7, marginBottom: 64 }}>
             A simple, structured flow for both admins and employees.
           </p>
 
@@ -192,7 +204,7 @@ export default function LandingPage() {
                   {step.n}
                 </div>
                 <div style={{ fontSize: 15, fontWeight: 500, color: '#f1f5f9', marginBottom: 10 }}>{step.t}</div>
-                <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.65 }}>{step.d}</div>
+                <div style={{ fontSize: 13, color: '#94a3b8', lineHeight: 1.65 }}>{step.d}</div>
               </div>
             ))}
           </div>
@@ -221,7 +233,7 @@ export default function LandingPage() {
           <h2 style={{ fontSize: 40, fontWeight: 500, color: '#f1f5f9', marginBottom: 20, letterSpacing: '-0.01em', lineHeight: 1.2 }}>
             Ready to protect your bank from the inside out?
           </h2>
-          <p style={{ fontSize: 16, color: '#475569', marginBottom: 40, lineHeight: 1.75 }}>
+          <p style={{ fontSize: 16, color: '#94a3b8', marginBottom: 40, lineHeight: 1.75 }}>
             FortiBank LMS gives your security team full visibility over staff cyber awareness
              and gives employees the tools to stay one step ahead of threats.
           </p>
@@ -231,7 +243,11 @@ export default function LandingPage() {
               background: '#2563eb', color: 'white', padding: '14px 32px',
               borderRadius: 8, fontSize: 15, fontWeight: 500, textDecoration: 'none',
               display: 'inline-flex', alignItems: 'center', gap: 8,
-            }}>
+              transition: 'background 0.15s',
+            }}
+              onMouseEnter={e => e.currentTarget.style.background='#3b82f6'}
+              onMouseLeave={e => e.currentTarget.style.background='#2563eb'}
+            >
               Sign in
               <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
@@ -247,10 +263,10 @@ export default function LandingPage() {
         padding: '28px 48px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
-        <div style={{ fontSize: 13, color: '#475569' }}>© 2026 FortiBank Security Training. All rights reserved.</div>
+        <div style={{ fontSize: 13, color: '#94a3b8' }}>© 2026 FortiBank Security Training. All rights reserved.</div>
         <div style={{ display: 'flex', gap: 24 }}>
-          <Link href="/privacy-policy" style={{ fontSize: 13, color: '#475569', textDecoration: 'underline' }}>Privacy policy</Link>
-          <Link href="/terms-of-use" style={{ fontSize: 13, color: '#475569', textDecoration: 'underline' }}>Terms of use</Link>
+          <Link href="/privacy-policy" style={{ fontSize: 13, color: '#94a3b8', textDecoration: 'underline' }}>Privacy policy</Link>
+          <Link href="/terms-of-use" style={{ fontSize: 13, color: '#94a3b8', textDecoration: 'underline' }}>Terms of use</Link>
         </div>
       </footer>
 

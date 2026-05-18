@@ -17,15 +17,15 @@ function timeAgo(dateString) {
 export default function RecentActivity({ activities = [], loading = false }) {
   if (loading) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+      <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-4 bg-slate-800 rounded w-1/3" />
+          <div className="h-4 bg-slate-700 rounded w-1/3" />
           {[...Array(4)].map((_, i) => (
             <div key={i} className="flex gap-3">
-              <div className="w-8 h-8 bg-slate-800 rounded-lg" />
+              <div className="w-8 h-8 bg-slate-700 rounded-lg" />
               <div className="flex-1 space-y-2">
-                <div className="h-3 bg-slate-800 rounded w-3/4" />
-                <div className="h-3 bg-slate-800 rounded w-1/2" />
+                <div className="h-3 bg-slate-700 rounded w-3/4" />
+                <div className="h-3 bg-slate-700 rounded w-1/2" />
               </div>
             </div>
           ))}
@@ -35,10 +35,10 @@ export default function RecentActivity({ activities = [], loading = false }) {
   }
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+    <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 transition-all duration-150 hover:border-white/[0.14] hover:shadow-md hover:shadow-black/40">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-white font-semibold">Recent Activity</h3>
-        <Link href="/results" className="text-blue-400 hover:text-blue-300 text-xs transition-colors">
+        <h3 className="text-slate-100 font-semibold">Recent Activity</h3>
+        <Link href="/results" className="text-blue-400 hover:text-blue-300 text-xs transition-all duration-150">
           View all →
         </Link>
       </div>
@@ -47,13 +47,12 @@ export default function RecentActivity({ activities = [], loading = false }) {
         <div className="space-y-3">
           {activities.map((activity, i) => (
             <div key={i} className="flex items-start gap-3">
-              {/* Icon */}
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
                 activity.type === 'quiz_passed'    ? 'bg-green-500/15' :
                 activity.type === 'quiz_failed'    ? 'bg-red-500/15' :
                 activity.type === 'module_done'    ? 'bg-blue-500/15' :
                 activity.type === 'phishing_click' ? 'bg-orange-500/15' :
-                'bg-slate-800'
+                'bg-white/[0.05]'
               }`}>
                 <svg className={`w-4 h-4 ${
                   activity.type === 'quiz_passed'    ? 'text-green-400' :
@@ -72,9 +71,8 @@ export default function RecentActivity({ activities = [], loading = false }) {
                 </svg>
               </div>
 
-              {/* Content */}
               <div className="flex-1 min-w-0">
-                <p className="text-slate-300 text-sm">{activity.title}</p>
+                <p className="text-slate-200 text-sm">{activity.title}</p>
                 <div className="flex items-center gap-2 mt-0.5">
                   {activity.score !== undefined && (
                     <span className={`text-xs font-medium ${
@@ -91,8 +89,8 @@ export default function RecentActivity({ activities = [], loading = false }) {
         </div>
       ) : (
         <div className="text-center py-6">
-          <p className="text-slate-500 text-sm">No activity yet.</p>
-          <p className="text-slate-600 text-xs mt-1">Complete a module or quiz to see your activity here.</p>
+          <p className="text-slate-400 text-sm">No activity yet.</p>
+          <p className="text-slate-500 text-xs mt-1">Complete a module or quiz to see your activity here.</p>
         </div>
       )}
     </div>

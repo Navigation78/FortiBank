@@ -18,7 +18,7 @@ export default function ModuleCard({ module }) {
   return (
     <Link
       href={`/modules/${module.id}`}
-      className="group bg-slate-900 border border-slate-800 hover:border-slate-600 rounded-xl p-5 flex flex-col gap-4 transition-all hover:shadow-lg hover:shadow-black/20"
+      className="group bg-slate-800 border border-white/[0.08] hover:border-slate-600 rounded-xl p-5 flex flex-col gap-4 transition-all hover:shadow-lg hover:shadow-black/20"
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
@@ -26,12 +26,12 @@ export default function ModuleCard({ module }) {
           <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-md border mb-2 ${config.classes}`}>
             {config.label}
           </span>
-          <h3 className="text-white font-semibold text-sm leading-snug group-hover:text-blue-400 transition-colors">
+          <h3 className="text-white font-semibold text-sm leading-snug group-hover:text-blue-400 transition-all duration-150">
             {module.title}
           </h3>
         </div>
         {/* Arrow icon */}
-        <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-blue-400 flex-shrink-0 mt-1 transition-colors" />
+        <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-blue-400 flex-shrink-0 mt-1 transition-all duration-150" />
       </div>
 
       {/* Description */}

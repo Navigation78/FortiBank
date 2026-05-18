@@ -7,7 +7,6 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import SimulationBadge from '@/components/phishing/SimulationBadge'
 import { createClient } from '@/lib/supabase'
@@ -44,29 +43,23 @@ export default function CampaignDetailPage() {
 
   if (loading) {
     return (
-      <>
-        <Topbar title="Phishing Test Detail" />
-        <PageWrapper>
-          <div className="animate-pulse space-y-4 max-w-2xl">
+      <PageWrapper>
+        <div className="animate-pulse space-y-4 max-w-2xl">
             <div className="h-5 bg-slate-800 rounded w-1/3" />
             <div className="h-32 bg-slate-800 rounded-xl" />
           </div>
         </PageWrapper>
-      </>
     )
   }
 
   if (!target) {
     return (
-      <>
-        <Topbar title="Not Found" />
-        <PageWrapper>
+      <PageWrapper>
           <div className="text-center py-16">
             <p className="text-slate-400 mb-4">Campaign not found.</p>
             <Link href="/phishing" className="text-blue-400 text-sm">← Back to phishing tests</Link>
           </div>
         </PageWrapper>
-      </>
     )
   }
 
@@ -75,9 +68,7 @@ export default function CampaignDetailPage() {
   const reported  = target.result === 'reported'
 
   return (
-    <>
-      <Topbar title="Phishing Test Detail" />
-      <PageWrapper>
+    <PageWrapper>
         <div className="max-w-2xl mx-auto">
 
           {/* Breadcrumb */}
@@ -122,7 +113,7 @@ export default function CampaignDetailPage() {
           </div>
 
           {/* Campaign details */}
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-6">
+          <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 mb-6">
             <h3 className="text-white font-semibold mb-4">Email Details</h3>
             <div className="space-y-3 text-sm">
               <div className="flex gap-3">
@@ -145,7 +136,7 @@ export default function CampaignDetailPage() {
           </div>
 
           {/* What to look for */}
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-6">
+          <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 mb-6">
             <h3 className="text-white font-semibold mb-4">Red Flags in This Email</h3>
             <ul className="space-y-2 text-sm text-slate-400">
               <li className="flex items-start gap-2">
@@ -169,7 +160,7 @@ export default function CampaignDetailPage() {
 
           <Link
             href="/phishing"
-            className="flex items-center gap-2 text-slate-500 hover:text-slate-300 text-sm transition-colors"
+            className="flex items-center gap-2 text-slate-500 hover:text-slate-300 text-sm transition-all duration-150"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -179,6 +170,5 @@ export default function CampaignDetailPage() {
 
         </div>
       </PageWrapper>
-    </>
-  )
+    )
 }

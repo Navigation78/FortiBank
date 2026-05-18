@@ -48,7 +48,7 @@ function LoginForm() {
   }
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl">
+    <div className="bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl">
       <div className="mb-6">
         <h2 className="text-white text-2xl font-bold">Welcome back</h2>
         <p className="text-slate-400 text-sm mt-1">Sign in to your training portal</p>
@@ -76,7 +76,7 @@ function LoginForm() {
             placeholder="you@fortibank.com"
             required
             autoComplete="email"
-            className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+            className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 transition-all duration-150"
           />
         </div>
 
@@ -88,7 +88,7 @@ function LoginForm() {
             </label>
             <Link
               href="/forgot-password"
-              className="text-blue-400 text-xs hover:text-blue-300 transition-colors"
+              className="text-blue-400 text-xs hover:text-blue-300 transition-all duration-150"
             >
               Forgot password?
             </Link>
@@ -101,7 +101,7 @@ function LoginForm() {
               placeholder="••••••••"
               required
               autoComplete="current-password"
-              className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors pr-10"
+              className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 transition-all duration-150 pr-10"
             />
             <button
               type="button"
@@ -126,7 +126,7 @@ function LoginForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 disabled:cursor-not-allowed text-white font-medium rounded-lg py-2.5 text-sm transition-colors flex items-center justify-center gap-2 mt-2"
+          className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 disabled:cursor-not-allowed text-white font-medium rounded-lg py-2.5 text-sm transition-all duration-150 flex items-center justify-center gap-2 mt-2"
         >
           {loading ? (
             <>
@@ -154,7 +154,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl" />}>
+    <Suspense fallback={<div className="bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl" />}>
       <LoginForm />
     </Suspense>
   )

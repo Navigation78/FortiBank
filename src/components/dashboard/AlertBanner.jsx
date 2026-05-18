@@ -52,19 +52,19 @@ export default function RiskScoreGauge({ score = 0, loading = false }) {
 
   if (loading) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 flex items-center justify-center h-48">
+      <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 flex items-center justify-center h-48">
         <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+    <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-white font-semibold">Risk Score</h3>
         <Link
           href="/risk-score"
-          className="text-blue-400 hover:text-blue-300 text-xs transition-colors"
+          className="text-blue-400 hover:text-blue-300 text-xs transition-all duration-150"
         >
           View details →
         </Link>

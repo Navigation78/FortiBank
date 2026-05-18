@@ -12,7 +12,7 @@ const COLORS = ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6']
 export default function CompletionRateChart({ data = [], loading = false }) {
   if (loading) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+      <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
         <div className="h-4 bg-slate-800 rounded w-1/3 mb-4 animate-pulse" />
         <div className="h-48 bg-slate-800 rounded animate-pulse" />
       </div>
@@ -20,7 +20,7 @@ export default function CompletionRateChart({ data = [], loading = false }) {
   }
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+    <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
       <h3 className="text-white font-semibold mb-4">Module Completion Rate by Role</h3>
       {data.length > 0 ? (
         <ResponsiveContainer width="100%" height={220}>

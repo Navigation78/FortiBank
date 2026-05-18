@@ -3,7 +3,6 @@
 // src/app/(dashboard)/profile/page.jsx
 
 import { useState } from 'react'
-import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import { useAuth } from '@/hooks/useAuth'
 import { useRole } from '@/hooks/useRole'
@@ -59,13 +58,11 @@ export default function ProfilePage() {
   }
 
   return (
-    <>
-      <Topbar title="My Profile" />
-      <PageWrapper>
+    <PageWrapper>
         <div className="max-w-2xl mx-auto space-y-6">
 
           {/* Profile card */}
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+          <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
             <div className="flex items-start gap-5">
               {/* Avatar */}
               <div className="w-16 h-16 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center flex-shrink-0">
@@ -125,7 +122,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Change password */}
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+          <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
             <h3 className="text-white font-semibold mb-4">Change Password</h3>
 
             {pwSuccess && (
@@ -152,7 +149,7 @@ export default function ProfilePage() {
                   placeholder="At least 8 characters"
                   required
                   minLength={8}
-                  className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 transition-all duration-150"
                 />
               </div>
               <div>
@@ -165,13 +162,13 @@ export default function ProfilePage() {
                   onChange={e => setConfirmPassword(e.target.value)}
                   placeholder="Repeat new password"
                   required
-                  className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 transition-all duration-150"
                 />
               </div>
               <button
                 type="submit"
                 disabled={pwLoading}
-                className="bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 disabled:cursor-not-allowed text-white font-medium rounded-lg px-5 py-2.5 text-sm transition-colors flex items-center gap-2"
+                className="bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 disabled:cursor-not-allowed text-white font-medium rounded-lg px-5 py-2.5 text-sm transition-all duration-150 flex items-center gap-2"
               >
                 {pwLoading ? (
                   <>

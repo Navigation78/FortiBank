@@ -4,7 +4,6 @@
 
 import { useState, useEffect } from 'react'
 import { Award, BarChart3, BookOpen, Download, Loader2, Medal } from 'lucide-react'
-import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import { useModules } from '@/hooks/useModules'
 
@@ -43,9 +42,7 @@ export default function CertificatesPage() {
   }
 
   return (
-    <>
-      <Topbar title="My Certificates" />
-      <PageWrapper>
+    <PageWrapper>
 
         {/* Header */}
         <div className="flex items-start justify-between mb-6">
@@ -58,7 +55,7 @@ export default function CertificatesPage() {
           <button
             onClick={checkEligibility}
             disabled={checking}
-            className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-lg text-sm font-medium transition-colors"
+            className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-lg text-sm font-medium transition-all duration-150"
           >
             {checking ? (
               <>
@@ -89,7 +86,7 @@ export default function CertificatesPage() {
             { label: 'Certificates Earned', value: certificates.length, Icon: Medal },
             { label: 'Status', value: stats.completed === stats.total && stats.total > 0 ? 'Eligible!' : 'In Progress', Icon: BarChart3 },
           ].map((s, i) => (
-            <div key={i} className="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+            <div key={i} className="bg-slate-800 border border-white/[0.08] rounded-xl p-4 text-center">
               <div className="flex justify-center mb-1">
                 <s.Icon className="w-6 h-6 text-slate-400" />
               </div>
@@ -103,7 +100,7 @@ export default function CertificatesPage() {
         {loading ? (
           <div className="space-y-4">
             {[...Array(2)].map((_, i) => (
-              <div key={i} className="h-32 bg-slate-900 border border-slate-800 rounded-xl animate-pulse" />
+              <div key={i} className="h-32 bg-slate-800 border border-white/[0.08] rounded-xl animate-pulse" />
             ))}
           </div>
         ) : certificates.length > 0 ? (
@@ -134,7 +131,7 @@ export default function CertificatesPage() {
                       href={cert.pdf_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-4 py-2 bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 text-green-400 rounded-lg text-sm font-medium transition-colors flex-shrink-0"
+                      className="flex items-center gap-2 px-4 py-2 bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 text-green-400 rounded-lg text-sm font-medium transition-all duration-150 flex-shrink-0"
                     >
                       <Download className="w-4 h-4" />
                       Download PDF
@@ -145,7 +142,7 @@ export default function CertificatesPage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 bg-slate-900 border border-slate-800 rounded-xl">
+          <div className="text-center py-16 bg-slate-800 border border-white/[0.08] rounded-xl">
             <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
               <Medal className="w-8 h-8 text-slate-400" />
             </div>

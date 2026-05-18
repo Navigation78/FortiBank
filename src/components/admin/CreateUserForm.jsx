@@ -176,7 +176,7 @@ export default function CreateUserForm() {
             onChange={handleChange}
             required
             disabled={rolesLoading}
-            className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+            className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
           >
             <option value="">{rolesLoading ? 'Loading roles...' : 'Select a role...'}</option>
             {Object.entries(rolesByCategory).map(([category, categoryRoles]) => (

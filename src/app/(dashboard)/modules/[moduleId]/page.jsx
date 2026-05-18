@@ -6,7 +6,6 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import ModuleViewer from '@/components/modules/ModuleViewer'
 import { useModules } from '@/hooks/useModules'
@@ -42,23 +41,18 @@ export default function ModuleViewerPage() {
 
   if (loading) {
     return (
-      <>
-        <Topbar title="Loading..." />
-        <PageWrapper>
-          <div className="animate-pulse space-y-4 max-w-3xl">
+      <PageWrapper>
+        <div className="animate-pulse space-y-4 max-w-3xl">
             <div className="h-5 bg-slate-800 rounded w-1/3" />
             <div className="h-64 bg-slate-800 rounded-xl" />
           </div>
         </PageWrapper>
-      </>
     )
   }
 
   if (error || !module) {
     return (
-      <>
-        <Topbar title="Module not found" />
-        <PageWrapper>
+      <PageWrapper>
           <div className="text-center py-16">
             <p className="text-slate-400 mb-4">
               {error || 'This module could not be found or you do not have access.'}
@@ -68,18 +62,15 @@ export default function ModuleViewerPage() {
             </Link>
           </div>
         </PageWrapper>
-      </>
     )
   }
 
   return (
-    <>
-      <Topbar title={module.title} />
-      <PageWrapper>
+    <PageWrapper>
 
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-          <Link href="/modules" className="hover:text-slate-300 transition-colors">
+          <Link href="/modules" className="hover:text-slate-300 transition-all duration-150">
             Modules
           </Link>
           <span>/</span>
@@ -95,7 +86,7 @@ export default function ModuleViewerPage() {
           {/* Sidebar — 1 column */}
           <div className="space-y-4">
             {/* Module info */}
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+            <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-5">
               <h3 className="text-white font-semibold mb-3">About this module</h3>
               {module.description && (
                 <p className="text-slate-400 text-sm leading-relaxed mb-4">
@@ -133,7 +124,7 @@ export default function ModuleViewerPage() {
 
             {/* Next module preview */}
             {nextModule && (
-              <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+              <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-5">
                 <p className="text-slate-500 text-xs mb-2">Up next</p>
                 <p className="text-white text-sm font-medium">{nextModule.title}</p>
                 {nextModule.duration_mins && (
@@ -144,7 +135,7 @@ export default function ModuleViewerPage() {
 
             <Link
               href="/modules"
-              className="flex items-center gap-2 text-slate-500 hover:text-slate-300 text-sm transition-colors"
+              className="flex items-center gap-2 text-slate-500 hover:text-slate-300 text-sm transition-all duration-150"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -155,6 +146,5 @@ export default function ModuleViewerPage() {
         </div>
 
       </PageWrapper>
-    </>
-  )
+    )
 }

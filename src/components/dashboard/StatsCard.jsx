@@ -9,11 +9,11 @@ export default function StatsCard({
   trend,
 }) {
   const colors = {
-    blue:   { bg: 'bg-blue-500/10',   icon: 'text-blue-400',   border: 'border-blue-500/20' },
-    green:  { bg: 'bg-green-500/10',  icon: 'text-green-400',  border: 'border-green-500/20' },
-    yellow: { bg: 'bg-yellow-500/10', icon: 'text-yellow-400', border: 'border-yellow-500/20' },
-    red:    { bg: 'bg-red-500/10',    icon: 'text-red-400',    border: 'border-red-500/20' },
-    purple: { bg: 'bg-purple-500/10', icon: 'text-purple-400', border: 'border-purple-500/20' },
+    blue:   { bg: 'bg-blue-500/10',   icon: 'text-blue-400',   border: 'border-blue-500/25' },
+    green:  { bg: 'bg-green-500/10',  icon: 'text-green-400',  border: 'border-green-500/25' },
+    yellow: { bg: 'bg-yellow-500/10', icon: 'text-yellow-400', border: 'border-yellow-500/25' },
+    red:    { bg: 'bg-red-500/10',    icon: 'text-red-400',    border: 'border-red-500/25' },
+    purple: { bg: 'bg-purple-500/10', icon: 'text-purple-400', border: 'border-purple-500/25' },
   }
 
   const c = colors[color] || colors.blue
@@ -26,7 +26,7 @@ export default function StatsCard({
   }
 
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-xl p-5 flex items-start gap-4 shadow-sm shadow-black/20">
+    <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-5 flex items-start gap-4 shadow-sm shadow-black/30 transition-all duration-150 hover:border-white/[0.14] hover:shadow-md hover:shadow-black/40 hover:-translate-y-0.5">
       {icon && (
         <div className={`w-11 h-11 rounded-lg ${c.bg} border ${c.border} flex items-center justify-center flex-shrink-0`}>
           {renderIcon()}

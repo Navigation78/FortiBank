@@ -4,7 +4,6 @@
 // Full history of quiz attempts and phishing tests
 
 import { useState, useEffect } from 'react'
-import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import { createClient } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
@@ -60,17 +59,15 @@ export default function ResultsPage() {
   }
 
   return (
-    <>
-      <Topbar title="My Results" />
-      <PageWrapper>
+    <PageWrapper>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 border-b border-slate-800">
+        <div className="flex gap-2 mb-6 border-b border-white/[0.06]">
           {TABS.map((t, i) => (
             <button
               key={t}
               onClick={() => setTab(i)}
-              className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px ${
+              className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-all duration-150 -mb-px ${
                 tab === i
                   ? 'border-blue-500 text-blue-400'
                   : 'border-transparent text-slate-500 hover:text-slate-300'
@@ -87,14 +84,14 @@ export default function ResultsPage() {
             {loading ? (
               <div className="space-y-3">
                 {[...Array(5)].map((_, i) => (
-                  <div key={i} className="h-16 bg-slate-900 border border-slate-800 rounded-xl animate-pulse" />
+                  <div key={i} className="h-16 bg-slate-800 border border-white/[0.08] rounded-xl animate-pulse" />
                 ))}
               </div>
             ) : quizAttempts.length > 0 ? (
-              <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+              <div className="bg-slate-800 border border-white/[0.08] rounded-xl overflow-hidden">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-slate-800">
+                    <tr className="border-b border-white/[0.06]">
                       <th className="text-left text-slate-500 text-xs font-medium px-5 py-3">Module / Quiz</th>
                       <th className="text-left text-slate-500 text-xs font-medium px-5 py-3 hidden sm:table-cell">Attempt</th>
                       <th className="text-left text-slate-500 text-xs font-medium px-5 py-3">Score</th>
@@ -104,7 +101,7 @@ export default function ResultsPage() {
                   </thead>
                   <tbody>
                     {quizAttempts.map((attempt, i) => (
-                      <tr key={attempt.id} className={`border-b border-slate-800 last:border-0 ${i % 2 === 0 ? '' : 'bg-slate-900/50'}`}>
+                      <tr key={attempt.id} className={`border-b border-white/[0.06] last:border-0 ${i % 2 === 0 ? '' : 'bg-slate-900/50'}`}>
                         <td className="px-5 py-3">
                           <p className="text-white text-sm font-medium truncate max-w-48">
                             {attempt.quizzes?.modules?.title || 'Unknown Module'}
@@ -158,14 +155,14 @@ export default function ResultsPage() {
             {loading ? (
               <div className="space-y-3">
                 {[...Array(4)].map((_, i) => (
-                  <div key={i} className="h-16 bg-slate-900 border border-slate-800 rounded-xl animate-pulse" />
+                  <div key={i} className="h-16 bg-slate-800 border border-white/[0.08] rounded-xl animate-pulse" />
                 ))}
               </div>
             ) : phishingTargets.length > 0 ? (
-              <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+              <div className="bg-slate-800 border border-white/[0.08] rounded-xl overflow-hidden">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-slate-800">
+                    <tr className="border-b border-white/[0.06]">
                       <th className="text-left text-slate-500 text-xs font-medium px-5 py-3">Campaign</th>
                       <th className="text-left text-slate-500 text-xs font-medium px-5 py-3">Result</th>
                       <th className="text-left text-slate-500 text-xs font-medium px-5 py-3 hidden sm:table-cell">Date</th>
@@ -173,7 +170,7 @@ export default function ResultsPage() {
                   </thead>
                   <tbody>
                     {phishingTargets.map((target, i) => (
-                      <tr key={target.id} className={`border-b border-slate-800 last:border-0 ${i % 2 === 0 ? '' : 'bg-slate-900/50'}`}>
+                      <tr key={target.id} className={`border-b border-white/[0.06] last:border-0 ${i % 2 === 0 ? '' : 'bg-slate-900/50'}`}>
                         <td className="px-5 py-3">
                           <p className="text-white text-sm font-medium truncate max-w-48">
                             {target.phishing_campaigns?.name || 'Simulation'}
@@ -190,7 +187,7 @@ export default function ResultsPage() {
                                 ? 'bg-green-500/15 text-green-400'
                                 : target.result === 'opened'
                                   ? 'bg-yellow-500/15 text-yellow-400'
-                                  : 'bg-slate-700 text-slate-400'
+                                  : 'bg-white/[0.06] text-slate-300'
                           }`}>
                             {target.result === 'clicked'  ? '⚠ Clicked' :
                              target.result === 'reported' ? '✓ Reported' :

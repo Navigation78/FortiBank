@@ -32,14 +32,14 @@ export default function UnauthorizedPage() {
           {role ? (
             <Link
               href={dashboardUrl}
-              className="bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg py-2.5 text-sm transition-colors"
+              className="bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg py-2.5 text-sm transition-all duration-150"
             >
               Go to my dashboard
             </Link>
           ) : null}
           <button
             onClick={signOut}
-            className="bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-colors"
+            className="bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-all duration-150"
           >
             Sign out
           </button>

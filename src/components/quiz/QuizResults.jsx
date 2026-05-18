@@ -49,7 +49,7 @@ export default function QuizResults({
 
       {/* Question breakdown */}
       {result.questions && result.questions.length > 0 && (
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-5">
           <h3 className="text-white font-semibold mb-4">Question Breakdown</h3>
           <div className="space-y-2">
             {result.questions.map((q, i) => (
@@ -84,20 +84,20 @@ export default function QuizResults({
         {can_retake && !passed && (
           <button
             onClick={onRetake}
-            className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg py-2.5 text-sm transition-colors"
+            className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg py-2.5 text-sm transition-all duration-150"
           >
             Retake Quiz
           </button>
         )}
         <Link
           href={`/modules/${moduleId}`}
-          className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-colors text-center"
+          className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-all duration-150 text-center"
         >
           Back to Module
         </Link>
         <Link
           href="/modules"
-          className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-colors text-center"
+          className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-all duration-150 text-center"
         >
           All Modules
         </Link>

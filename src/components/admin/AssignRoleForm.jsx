@@ -76,7 +76,7 @@ export default function AssignRoleForm({ userId, currentRole, onSuccess }) {
           onChange={e => setRoleId(e.target.value)}
           required
           disabled={rolesLoading}
-          className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+          className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
         >
           <option value="">
             {rolesLoading ? 'Loading roles...' : 'Select role...'}
@@ -96,7 +96,7 @@ export default function AssignRoleForm({ userId, currentRole, onSuccess }) {
       <button
         type="submit"
         disabled={loading || !roleId}
-        className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-lg text-sm font-medium transition-colors"
+        className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-lg text-sm font-medium transition-all duration-150"
       >
         {loading ? 'Updating...' : 'Update Role'}
       </button>

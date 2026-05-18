@@ -2,7 +2,6 @@
 //src/app/admin/users/page.jsx
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import UserTable from '@/components/admin/UserTable'
 
@@ -33,7 +32,6 @@ export default function AdminUsersPage() {
 
   return (
     <>
-      <Topbar title="Employees" />
       <PageWrapper>
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -42,7 +40,7 @@ export default function AdminUsersPage() {
           </div>
           <Link
             href="/admin/users/create"
-            className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors"
+            className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white rounded-lg text-sm font-medium transition-all duration-150 shadow-sm shadow-blue-600/20"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />

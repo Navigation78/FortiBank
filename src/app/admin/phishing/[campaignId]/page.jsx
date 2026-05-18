@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import { createClient } from '@/lib/supabase'
 
@@ -57,9 +56,8 @@ export default function CampaignDetailAdminPage() {
   if (loading) {
     return (
       <>
-        <Topbar title="Campaign Details" />
         <PageWrapper>
-          <div className="animate-pulse space-y-4"><div className="h-32 bg-slate-900 border border-slate-800 rounded-xl" /></div>
+          <div className="animate-pulse space-y-4"><div className="h-32 bg-slate-800 border border-white/[0.08] rounded-xl" /></div>
         </PageWrapper>
       </>
     )
@@ -67,7 +65,6 @@ export default function CampaignDetailAdminPage() {
 
   return (
     <>
-      <Topbar title={campaign?.name || 'Campaign'} />
       <PageWrapper>
         <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
           <Link href="/admin/phishing" className="hover:text-slate-300">Phishing</Link>
@@ -84,7 +81,7 @@ export default function CampaignDetailAdminPage() {
               { label: 'Links Clicked', value: stats.clicked,  color: 'text-red-400' },
               { label: 'Click Rate',    value: `${stats.clickRate}%`, color: stats.clickRate > 30 ? 'text-red-400' : 'text-green-400' },
             ].map((s, i) => (
-              <div key={i} className="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+              <div key={i} className="bg-slate-800 border border-white/[0.08] rounded-xl p-4 text-center">
                 <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
                 <p className="text-slate-500 text-xs mt-1">{s.label}</p>
               </div>
@@ -92,7 +89,7 @@ export default function CampaignDetailAdminPage() {
           </div>
 
           {/* Campaign info + send button */}
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 flex items-start justify-between gap-4">
+          <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 flex items-start justify-between gap-4">
             <div className="space-y-2 text-sm">
               <div><span className="text-slate-500">Subject: </span><span className="text-slate-300">{campaign?.email_subject}</span></div>
               <div><span className="text-slate-500">Sender: </span><span className="text-slate-300">{campaign?.email_sender_name} &lt;{campaign?.email_sender_addr}&gt;</span></div>
@@ -102,22 +99,22 @@ export default function CampaignDetailAdminPage() {
               <button
                 onClick={handleSend}
                 disabled={sending}
-                className="flex-shrink-0 px-4 py-2 bg-red-600 hover:bg-red-500 disabled:bg-red-600/50 text-white rounded-lg text-sm font-medium transition-colors"
+                className="flex-shrink-0 px-4 py-2 bg-red-600 hover:bg-red-500 disabled:bg-red-600/50 text-white rounded-lg text-sm font-medium transition-all duration-150"
               >
-                {sending ? 'Sending...' : '🚀 Send Now'}
+                {sending ? 'Sending...' : ' Send Now'}
               </button>
             )}
           </div>
 
           {/* Targets table */}
           {targets.length > 0 && (
-            <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-              <div className="px-5 py-4 border-b border-slate-800">
+            <div className="bg-slate-800 border border-white/[0.08] rounded-xl overflow-hidden">
+              <div className="px-5 py-4 border-b border-white/[0.06]">
                 <h3 className="text-white font-semibold">Target Employees</h3>
               </div>
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-slate-800">
+                  <tr className="border-b border-white/[0.06]">
                     <th className="text-left text-slate-500 text-xs font-medium px-5 py-3">Employee</th>
                     <th className="text-left text-slate-500 text-xs font-medium px-5 py-3">Result</th>
                     <th className="text-left text-slate-500 text-xs font-medium px-5 py-3 hidden sm:table-cell">Sent</th>
@@ -125,7 +122,7 @@ export default function CampaignDetailAdminPage() {
                 </thead>
                 <tbody>
                   {targets.map(t => (
-                    <tr key={t.id} className="border-b border-slate-800 last:border-0">
+                    <tr key={t.id} className="border-b border-white/[0.06] last:border-0">
                       <td className="px-5 py-3">
                         <p className="text-white text-sm">{t.users?.full_name}</p>
                         <p className="text-slate-500 text-xs">{t.users?.email}</p>
@@ -136,7 +133,7 @@ export default function CampaignDetailAdminPage() {
                           t.result === 'reported' ? 'bg-green-500/15 text-green-400' :
                           t.result === 'opened'   ? 'bg-yellow-500/15 text-yellow-400' :
                           t.result === 'sent'     ? 'bg-blue-500/15 text-blue-400' :
-                          'bg-slate-700 text-slate-400'
+                          'bg-white/[0.06] text-slate-300'
                         }`}>
                           {t.result}
                         </span>

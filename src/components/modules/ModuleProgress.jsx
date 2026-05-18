@@ -7,7 +7,7 @@ export default function ModuleProgress({
   completedPct,
 }) {
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl px-5 py-4">
+    <div className="bg-slate-800 border border-white/[0.08] rounded-xl px-5 py-4">
       <div className="flex items-center justify-between mb-2">
         <span className="text-slate-400 text-sm">
           Section {current} of {total}

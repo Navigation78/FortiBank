@@ -86,7 +86,7 @@ export default function VideoPlayer({ url, title }) {
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-blue-400 hover:text-blue-300 text-sm transition-colors"
+        className="text-blue-400 hover:text-blue-300 text-sm transition-all duration-150"
       >
         Open video in new tab
       </a>

@@ -109,13 +109,13 @@ export default function CreateCampaignForm() {
           <button
             onClick={handleSendNow}
             disabled={sending}
-            className="w-full bg-red-600 hover:bg-red-500 disabled:bg-red-600/50 text-white font-medium rounded-lg py-2.5 text-sm transition-colors"
+            className="w-full bg-red-600 hover:bg-red-500 disabled:bg-red-600/50 text-white font-medium rounded-lg py-2.5 text-sm transition-all duration-150"
           >
             {sending ? 'Sending emails...' : '🚀 Send Campaign Now'}
           </button>
           <button
             onClick={() => router.push('/admin/phishing')}
-            className="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-colors"
+            className="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-all duration-150"
           >
             Save as Draft — Send Later
           </button>
@@ -133,26 +133,26 @@ export default function CreateCampaignForm() {
       )}
 
       {/* Campaign details */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-4">
+      <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 space-y-4">
         <h3 className="text-white font-semibold">Campaign Details</h3>
         <div>
           <label className="block text-slate-300 text-sm font-medium mb-1.5">Campaign Name *</label>
           <input name="name" value={form.name} onChange={handleChange} required
             placeholder="e.g. Q2 IT Password Reset Phishing Test"
-            className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+            className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
           />
         </div>
         <div>
           <label className="block text-slate-300 text-sm font-medium mb-1.5">Description</label>
           <input name="description" value={form.description} onChange={handleChange}
             placeholder="Internal note about this campaign"
-            className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+            className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
           />
         </div>
       </div>
 
       {/* Email template */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-4">
+      <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 space-y-4">
         <div>
           <h3 className="text-white font-semibold">Email Template</h3>
           <p className="text-slate-500 text-xs mt-1">
@@ -165,32 +165,32 @@ export default function CreateCampaignForm() {
             <label className="block text-slate-300 text-sm font-medium mb-1.5">Email Subject *</label>
             <input name="email_subject" value={form.email_subject} onChange={handleChange} required
               placeholder="URGENT: Action required"
-              className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
             />
           </div>
           <div>
             <label className="block text-slate-300 text-sm font-medium mb-1.5">Sender Name</label>
             <input name="email_sender_name" value={form.email_sender_name} onChange={handleChange}
-              className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
             />
           </div>
           <div>
             <label className="block text-slate-300 text-sm font-medium mb-1.5">Sender Address</label>
             <input name="email_sender_addr" value={form.email_sender_addr} onChange={handleChange}
-              className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
             />
           </div>
         </div>
         <div>
           <label className="block text-slate-300 text-sm font-medium mb-1.5">Email Body (HTML) *</label>
           <textarea name="email_body_html" value={form.email_body_html} onChange={handleChange} required rows={10}
-            className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm font-mono focus:outline-none focus:border-blue-500 transition-colors resize-y"
+            className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm font-mono focus:outline-none focus:border-blue-500 transition-all duration-150 resize-y"
           />
         </div>
       </div>
 
       {/* Target roles */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+      <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
         <h3 className="text-white font-semibold mb-1">Target Roles</h3>
         <p className="text-slate-400 text-sm mb-4">
           {selectedRoles.length === 0 ? 'No roles selected — campaign will target ALL employees.' : `${selectedRoles.length} role(s) selected.`}
@@ -222,12 +222,12 @@ export default function CreateCampaignForm() {
 
       <div className="flex gap-3">
         <button type="submit" disabled={loading}
-          className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-lg text-sm font-medium transition-colors"
+          className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-lg text-sm font-medium transition-all duration-150"
         >
           {loading ? 'Creating...' : 'Create Campaign'}
         </button>
         <button type="button" onClick={() => router.back()}
-          className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm font-medium transition-colors"
+          className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm font-medium transition-all duration-150"
         >
           Cancel
         </button>

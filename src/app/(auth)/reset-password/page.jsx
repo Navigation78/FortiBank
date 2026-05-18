@@ -108,7 +108,7 @@ export default function ResetPasswordPage() {
   // Still checking session
   if (checkingSession) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl text-center">
+      <div className="bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl text-center">
         <div className="flex items-center justify-center gap-3 text-slate-400">
           <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
@@ -124,7 +124,7 @@ export default function ResetPasswordPage() {
   // Invalid or expired link
   if (!validSession) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl text-center">
+      <div className="bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl text-center">
         <div className="w-14 h-14 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
           <svg className="w-7 h-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -138,11 +138,11 @@ export default function ResetPasswordPage() {
         </p>
         <div className="space-y-3">
           <Link href="/forgot-password"
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg py-2.5 text-sm transition-colors block text-center">
+            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg py-2.5 text-sm transition-all duration-150 block text-center">
             Request new reset link
           </Link>
           <Link href="/login"
-            className="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-colors block text-center">
+            className="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-all duration-150 block text-center">
             Back to login
           </Link>
         </div>
@@ -153,7 +153,7 @@ export default function ResetPasswordPage() {
   // Success state
   if (success) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl text-center">
+      <div className="bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl text-center">
         <div className="w-14 h-14 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
           <svg className="w-7 h-7 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -168,7 +168,7 @@ export default function ResetPasswordPage() {
             : 'Your password has been reset. Redirecting to login...'}
         </p>
         <Link href="/login"
-          className="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg py-2.5 text-sm transition-colors block text-center">
+          className="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg py-2.5 text-sm transition-all duration-150 block text-center">
           Go to Login
         </Link>
       </div>
@@ -177,7 +177,7 @@ export default function ResetPasswordPage() {
 
   // Password form
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl">
+    <div className="bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl">
       <div className="mb-6">
         <h2 className="text-white text-2xl font-bold">
           {isInvite ? 'Set your password' : 'Set new password'}
@@ -208,7 +208,7 @@ export default function ResetPasswordPage() {
               placeholder="At least 8 characters"
               required
               minLength={8}
-              className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors pr-10"
+              className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 transition-all duration-150 pr-10"
             />
             <button type="button" onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300">
@@ -229,7 +229,7 @@ export default function ResetPasswordPage() {
           {password && (
             <div className="mt-2 flex gap-1">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className={`h-1 flex-1 rounded-full transition-colors ${
+                <div key={i} className={`h-1 flex-1 rounded-full transition-all duration-150 ${
                   password.length >= (i + 1) * 3
                     ? password.length >= 12 ? 'bg-green-500'
                       : password.length >= 8  ? 'bg-yellow-500'
@@ -251,7 +251,7 @@ export default function ResetPasswordPage() {
             onChange={e => setConfirm(e.target.value)}
             placeholder="Repeat your password"
             required
-            className={`w-full bg-slate-800 border text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-1 transition-colors ${
+            className={`w-full bg-slate-800 border text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-1 transition-all duration-150 ${
               confirm && password !== confirm
                 ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                 : 'border-slate-700 focus:border-blue-500 focus:ring-blue-500'
@@ -265,7 +265,7 @@ export default function ResetPasswordPage() {
         <button
           type="submit"
           disabled={loading || Boolean(confirm && password !== confirm)}
-          className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 disabled:cursor-not-allowed text-white font-medium rounded-lg py-2.5 text-sm transition-colors flex items-center justify-center gap-2 mt-2"
+          className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 disabled:cursor-not-allowed text-white font-medium rounded-lg py-2.5 text-sm transition-all duration-150 flex items-center justify-center gap-2 mt-2"
         >
           {loading ? (
             <>

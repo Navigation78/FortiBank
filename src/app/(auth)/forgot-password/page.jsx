@@ -33,7 +33,7 @@ export default function ForgotPasswordPage() {
 
   if (sent) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl text-center">
+      <div className="bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl text-center">
         <div className="w-14 h-14 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
           <svg className="w-7 h-7 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -50,13 +50,13 @@ export default function ForgotPasswordPage() {
         <div className="flex flex-col gap-2">
           <button
             onClick={() => { setSent(false) }}
-            className="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-colors"
+            className="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-all duration-150"
           >
             Try a different email
           </button>
           <Link
             href="/login"
-            className="w-full bg-transparent text-slate-500 hover:text-slate-400 font-medium rounded-lg py-2.5 text-sm transition-colors text-center"
+            className="w-full bg-transparent text-slate-500 hover:text-slate-400 font-medium rounded-lg py-2.5 text-sm transition-all duration-150 text-center"
           >
             Back to sign in
           </Link>
@@ -66,7 +66,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl">
+    <div className="bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl">
       <div className="mb-6">
         <h2 className="text-white text-2xl font-bold">Reset your password</h2>
         <p className="text-slate-400 text-sm mt-1">
@@ -92,14 +92,14 @@ export default function ForgotPasswordPage() {
             placeholder="you@fortibank.com"
             required
             autoComplete="email"
-            className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+            className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 transition-all duration-150"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 disabled:cursor-not-allowed text-white font-medium rounded-lg py-2.5 text-sm transition-colors flex items-center justify-center gap-2"
+          className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 disabled:cursor-not-allowed text-white font-medium rounded-lg py-2.5 text-sm transition-all duration-150 flex items-center justify-center gap-2"
         >
           {loading ? (
             <>
@@ -116,7 +116,7 @@ export default function ForgotPasswordPage() {
       </form>
 
       <div className="mt-4 text-center">
-        <Link href="/login" className="text-slate-500 hover:text-slate-400 text-sm transition-colors">
+        <Link href="/login" className="text-slate-500 hover:text-slate-400 text-sm transition-all duration-150">
           ← Back to sign in
         </Link>
       </div>

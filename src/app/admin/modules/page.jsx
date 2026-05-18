@@ -2,13 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import { createClient } from '@/lib/supabase'
 
 const STATUS_COLORS = {
   published: 'bg-green-500/15 text-green-400',
-  draft:     'bg-slate-700 text-slate-400',
+  draft:     'bg-white/[0.06] text-slate-300',
   archived:  'bg-red-500/15 text-red-400',
 }
 
@@ -73,7 +72,6 @@ export default function AdminModulesPage() {
 
   return (
     <>
-      <Topbar title="Training Modules" />
       <PageWrapper>
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -85,13 +83,13 @@ export default function AdminModulesPage() {
               type="button"
               onClick={resequenceModules}
               disabled={resequenceLoading}
-              className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-60 text-slate-300 rounded-lg text-sm font-medium transition-colors"
+              className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-60 text-slate-300 rounded-lg text-sm font-medium transition-all duration-150"
             >
               {resequenceLoading ? 'Resequencing...' : 'Resequence Codes'}
             </button>
             <Link
               href="/admin/modules/create"
-              className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-all duration-150"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -104,25 +102,25 @@ export default function AdminModulesPage() {
         {loading ? (
           <div className="space-y-3">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-16 bg-slate-900 border border-slate-800 rounded-xl animate-pulse" />
+              <div key={i} className="h-16 bg-slate-800 border border-white/[0.06] rounded-xl animate-pulse" />
             ))}
           </div>
         ) : (
-          <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+          <div className="bg-slate-800 border border-white/[0.08] rounded-xl overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-800">
-                  <th className="text-left text-slate-500 text-xs font-medium px-5 py-3">Code</th>
-                  <th className="text-left text-slate-500 text-xs font-medium px-5 py-3">Module</th>
-                  <th className="text-left text-slate-500 text-xs font-medium px-5 py-3 hidden sm:table-cell">Status</th>
-                  <th className="text-left text-slate-500 text-xs font-medium px-5 py-3 hidden md:table-cell">Duration</th>
-                  <th className="text-left text-slate-500 text-xs font-medium px-5 py-3">Actions</th>
+                <tr className="border-b border-white/[0.06]">
+                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3">Code</th>
+                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3">Module</th>
+                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3 hidden sm:table-cell">Status</th>
+                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3 hidden md:table-cell">Duration</th>
+                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {modules.map((module, i) => (
-                  <tr key={module.id} className="border-b border-slate-800 last:border-0 hover:bg-slate-800/50 transition-colors">
-                    <td className="px-5 py-3 text-slate-500 text-sm">{formatModuleCode(module.order_index)}</td>
+                {modules.map((module) => (
+                  <tr key={module.id} className="border-b border-white/[0.06] last:border-0 hover:bg-white/[0.04] transition-all duration-150">
+                    <td className="px-5 py-3 text-slate-400 text-sm">{formatModuleCode(module.order_index)}</td>
                     <td className="px-5 py-3">
                       <p className="text-white text-sm font-medium">{module.title}</p>
                       {module.description && (
@@ -142,13 +140,13 @@ export default function AdminModulesPage() {
                         <Link href={`/admin/modules/${module.id}`} className="text-blue-400 hover:text-blue-300 text-xs font-medium">Edit</Link>
                         <button
                           onClick={() => togglePublish(module)}
-                          className={`text-xs font-medium transition-colors ${module.status === 'published' ? 'text-yellow-400 hover:text-yellow-300' : 'text-green-400 hover:text-green-300'}`}
+                          className={`text-xs font-medium transition-all duration-150 ${module.status === 'published' ? 'text-yellow-400 hover:text-yellow-300' : 'text-green-400 hover:text-green-300'}`}
                         >
                           {module.status === 'published' ? 'Unpublish' : 'Publish'}
                         </button>
                         <button
                           onClick={() => deleteModule(module.id)}
-                          className="text-red-400 hover:text-red-300 text-xs font-medium transition-colors"
+                          className="text-red-400 hover:text-red-300 text-xs font-medium transition-all duration-150"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

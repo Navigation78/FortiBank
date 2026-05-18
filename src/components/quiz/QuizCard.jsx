@@ -79,7 +79,7 @@ export default function QuizCard({
   )
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-5">
+    <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 space-y-5">
       {/* Question */}
       <div>
         {isMultiSelect && (

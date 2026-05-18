@@ -8,7 +8,7 @@ export default function QuizProgress({
   onJump,
 }) {
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
+    <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-4">
       <div className="flex items-center justify-between mb-3">
         <span className="text-slate-400 text-sm">
           Question {current + 1} of {total}

@@ -23,7 +23,7 @@ export default function UserRiskTable({ users = [], loading = false }) {
 
   if (loading) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+      <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
         <div className="h-4 bg-slate-800 rounded w-1/3 mb-4 animate-pulse" />
         <div className="space-y-2">
           {[...Array(5)].map((_, i) => (
@@ -35,8 +35,8 @@ export default function UserRiskTable({ users = [], loading = false }) {
   }
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-      <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between gap-3">
+    <div className="bg-slate-800 border border-white/[0.08] rounded-xl overflow-hidden">
+      <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between gap-3">
         <h3 className="text-white font-semibold">Employee Risk Scores</h3>
         <div className="flex items-center gap-2">
           <input
@@ -44,11 +44,11 @@ export default function UserRiskTable({ users = [], loading = false }) {
             placeholder="Search..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-blue-500 transition-colors w-40"
+            className="bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-blue-500 transition-all duration-150 w-40"
           />
           <button
             onClick={() => setSortDir(d => d === 'desc' ? 'asc' : 'desc')}
-            className="text-slate-400 hover:text-white text-xs px-2 py-1.5 bg-slate-800 rounded-lg transition-colors"
+            className="text-slate-400 hover:text-white text-xs px-2 py-1.5 bg-slate-800 rounded-lg transition-all duration-150"
           >
             Score {sortDir === 'desc' ? '↓' : '↑'}
           </button>
@@ -58,7 +58,7 @@ export default function UserRiskTable({ users = [], loading = false }) {
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-slate-800">
+            <tr className="border-b border-white/[0.06]">
               <th className="text-left text-slate-500 text-xs font-medium px-5 py-3">Employee</th>
               <th className="text-left text-slate-500 text-xs font-medium px-5 py-3 hidden sm:table-cell">Role</th>
               <th className="text-left text-slate-500 text-xs font-medium px-5 py-3">Risk Score</th>
@@ -75,7 +75,7 @@ export default function UserRiskTable({ users = [], loading = false }) {
               const scoreColor = isCrit ? 'text-red-400' : isWarn ? 'text-orange-400' : score > 0 ? 'text-green-400' : 'text-slate-500'
 
               return (
-                <tr key={user.id} className={`border-b border-slate-800 last:border-0 ${i % 2 === 0 ? '' : 'bg-slate-900/50'}`}>
+                <tr key={user.id} className={`border-b border-white/[0.06] last:border-0 ${i % 2 === 0 ? '' : 'bg-slate-900/50'}`}>
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-2">
                       {isCrit && <span className="text-xs">🚨</span>}
@@ -112,7 +112,7 @@ export default function UserRiskTable({ users = [], loading = false }) {
                   <td className="px-5 py-3">
                     <Link
                       href={`/admin/users/${user.id}`}
-                      className="text-blue-400 hover:text-blue-300 text-xs font-medium transition-colors"
+                      className="text-blue-400 hover:text-blue-300 text-xs font-medium transition-all duration-150"
                     >
                       View →
                     </Link>

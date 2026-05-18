@@ -5,7 +5,6 @@
 
 
 import { useState, useEffect } from 'react'
-import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import PhishingStats from '@/components/phishing/PhishingStats'
 import CampaignCard from '@/components/phishing/CampaignCard'
@@ -39,9 +38,7 @@ export default function PhishingPage() {
   }
 
   return (
-    <>
-      <Topbar title="Phishing Tests" />
-      <PageWrapper>
+    <PageWrapper>
 
         {/* Header */}
         <div className="flex items-start justify-between mb-6">
@@ -74,7 +71,7 @@ export default function PhishingPage() {
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-slate-900 border border-slate-800 rounded-xl p-5 animate-pulse">
+              <div key={i} className="bg-slate-800 border border-white/[0.08] rounded-xl p-5 animate-pulse">
                 <div className="h-4 bg-slate-800 rounded w-3/4 mb-3" />
                 <div className="h-3 bg-slate-800 rounded w-1/2" />
               </div>

@@ -15,7 +15,7 @@ export function Tabs({ children, defaultTab, className = '' }) {
 
 export function TabList({ children, className = '' }) {
   return (
-    <div className={`flex gap-1 bg-slate-900 border border-slate-800 rounded-xl p-1 ${className}`}>
+    <div className={`flex gap-1 bg-slate-800 border border-white/[0.08] rounded-xl p-1 ${className}`}>
       {children}
     </div>
   )

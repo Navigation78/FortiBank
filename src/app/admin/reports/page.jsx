@@ -6,7 +6,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { ArrowUpRight, BriefcaseBusiness, Building2, Headphones, Landmark, ShieldCheck, UserRoundCog } from 'lucide-react'
-import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import { createClient } from '@/lib/supabase'
 import {
@@ -108,7 +107,6 @@ export default function EmployeeDashboardsPage() {
 
   return (
     <>
-      <Topbar title="Employee Dashboards" />
       <PageWrapper>
 
         <div className="mb-6">
@@ -129,9 +127,9 @@ export default function EmployeeDashboardsPage() {
             { label: 'Role Groups', value: CATEGORY_CONFIG.length, color: 'text-blue-400' },
             { label: 'Employee Roles', value: EMPLOYEE_ROLES.length, color: 'text-amber-400' },
           ].map(item => (
-            <div key={item.label} className="bg-slate-900 border border-slate-800 rounded-xl p-4">
+            <div key={item.label} className="bg-slate-800 border border-white/[0.08] rounded-xl p-4">
               <p className={`text-2xl font-bold ${item.color}`}>{item.value}</p>
-              <p className="text-slate-500 text-xs mt-1">{item.label}</p>
+              <p className="text-slate-400 text-xs mt-1">{item.label}</p>
             </div>
           ))}
         </div>
@@ -157,7 +155,7 @@ export default function EmployeeDashboardsPage() {
                       <Link
                         key={role}
                         href={ROLE_DASHBOARD_MAP[role]}
-                        className="group bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl p-5 transition-colors"
+                        className="group bg-slate-800 border border-white/[0.08] hover:border-white/[0.18] rounded-xl p-5 transition-all duration-150 hover:shadow-md hover:shadow-black/40"
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div className="min-w-0">
@@ -165,11 +163,11 @@ export default function EmployeeDashboardsPage() {
                               <ShieldCheck className={`w-4 h-4 ${category.color} flex-shrink-0`} />
                               <h4 className="text-white font-semibold text-sm truncate">{ROLE_LABELS[role]}</h4>
                             </div>
-                            <p className="text-slate-500 text-xs mt-2">
+                            <p className="text-slate-400 text-xs mt-2">
                               {loading ? 'Loading employees...' : `${count.active} active of ${count.total} employees`}
                             </p>
                           </div>
-                          <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white transition-colors flex-shrink-0" />
+                          <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-white transition-all duration-150 flex-shrink-0" />
                         </div>
 
                         <div className="mt-4 flex items-center gap-2 text-xs text-slate-400">

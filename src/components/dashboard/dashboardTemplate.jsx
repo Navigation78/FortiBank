@@ -5,7 +5,6 @@
 
 
 import { useEffect, useState } from 'react'
-import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import StatsCard from '@/components/dashboard/StatsCard'
 import RiskScoreGauge from '@/components/dashboard/RiskScoreGauge'
@@ -125,9 +124,7 @@ export default function DashboardTemplate({
   ]
 
   return (
-    <>
-      <Topbar title={title} />
-      <PageWrapper>
+    <PageWrapper>
 
         {/* Alert banner */}
         {alert && (
@@ -173,7 +170,7 @@ export default function DashboardTemplate({
           {/* Threat focus areas */}
           {focusAreas && (
             <div className="lg:col-span-1">
-              <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-sm shadow-black/20">
+              <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 shadow-sm shadow-black/30 transition-all duration-150 hover:border-white/[0.14] hover:shadow-md hover:shadow-black/40">
                 <h3 className="text-slate-100 font-semibold mb-4">Your Risk Focus Areas</h3>
                 <div className="space-y-3">
                   {focusAreas.map((area, i) => {
@@ -187,9 +184,9 @@ export default function DashboardTemplate({
                             <Icon className="w-4 h-4" />
                           )}
                         </div>
-                      <div>
-                        <p className="text-slate-300 text-sm font-medium">{area.title}</p>
-                        <p className="text-slate-500 text-xs mt-0.5">{area.description}</p>
+                        <div>
+                          <p className="text-slate-200 text-sm font-medium">{area.title}</p>
+                          <p className="text-slate-400 text-xs mt-0.5">{area.description}</p>
                         </div>
                       </div>
                     )
@@ -201,8 +198,7 @@ export default function DashboardTemplate({
         </div>
 
       </PageWrapper>
-    </>
-  )
+    )
 }
 
 function getTimeOfDay() {

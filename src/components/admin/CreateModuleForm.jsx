@@ -139,20 +139,20 @@ export default function CreateModuleForm({ existingModule }) {
       )}
 
       {/* Module details */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-4">
+      <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 space-y-4">
         <h3 className="text-white font-semibold">Module Details</h3>
         <div>
           <label className="block text-slate-300 text-sm font-medium mb-1.5">Title *</label>
           <input name="title" value={form.title} onChange={handleFormChange} required
             placeholder="e.g. Introduction to Cybersecurity"
-            className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+            className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
           />
         </div>
         <div>
           <label className="block text-slate-300 text-sm font-medium mb-1.5">Description</label>
           <textarea name="description" value={form.description} onChange={handleFormChange} rows={3}
             placeholder="Brief description of what this module covers..."
-            className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors resize-none"
+            className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150 resize-none"
           />
         </div>
         <div className="grid grid-cols-2 gap-4">
@@ -160,13 +160,13 @@ export default function CreateModuleForm({ existingModule }) {
             <label className="block text-slate-300 text-sm font-medium mb-1.5">Duration (minutes)</label>
             <input name="duration_mins" type="number" value={form.duration_mins} onChange={handleFormChange}
               placeholder="e.g. 30"
-              className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
             />
           </div>
           <div>
             <label className="block text-slate-300 text-sm font-medium mb-1.5">Status</label>
             <select name="status" value={form.status} onChange={handleFormChange}
-              className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
             >
               <option value="draft">Draft</option>
               <option value="published">Published</option>
@@ -176,7 +176,7 @@ export default function CreateModuleForm({ existingModule }) {
       </div>
 
       {/* Role access */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+      <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
         <h3 className="text-white font-semibold mb-4">Role Access</h3>
         <p className="text-slate-400 text-sm mb-4">Select which roles can see this module.</p>
         <div className="space-y-4">
@@ -205,13 +205,13 @@ export default function CreateModuleForm({ existingModule }) {
       </div>
 
       {/* Content blocks */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+      <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-white font-semibold">Content Sections</h3>
           <button
             type="button"
             onClick={addBlock}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-600/30 text-blue-400 rounded-lg text-xs font-medium transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-600/30 text-blue-400 rounded-lg text-xs font-medium transition-all duration-150"
           >
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -222,7 +222,7 @@ export default function CreateModuleForm({ existingModule }) {
 
         <div className="space-y-4">
           {contentBlocks.map((block, idx) => (
-            <div key={idx} className="bg-slate-800 border border-slate-700 rounded-xl p-4 space-y-3">
+            <div key={idx} className="bg-slate-700/40 border border-white/[0.08] rounded-xl p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-slate-400 text-xs font-medium">Section {idx + 1}</span>
                 {contentBlocks.length > 1 && (
@@ -244,7 +244,7 @@ export default function CreateModuleForm({ existingModule }) {
                     onChange={e => handleBlockChange(idx, 'title', e.target.value)}
                     required
                     placeholder="e.g. What is Phishing?"
-                    className="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                    className="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
                   />
                 </div>
                 <div>
@@ -252,7 +252,7 @@ export default function CreateModuleForm({ existingModule }) {
                   <select
                     value={block.content_type}
                     onChange={e => handleBlockChange(idx, 'content_type', e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                    className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
                   >
                     {CONTENT_TYPES.map(t => (
                       <option key={t.value} value={t.value}>{t.label}</option>
@@ -269,7 +269,7 @@ export default function CreateModuleForm({ existingModule }) {
                     onChange={e => handleBlockChange(idx, 'content_body', e.target.value)}
                     rows={5}
                     placeholder="Type your content here. You can use basic HTML tags."
-                    className="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors resize-y"
+                    className="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150 resize-y"
                   />
                 </div>
               ) : (
@@ -281,7 +281,7 @@ export default function CreateModuleForm({ existingModule }) {
                     value={block.content_url}
                     onChange={e => handleBlockChange(idx, 'content_url', e.target.value)}
                     placeholder={CONTENT_TYPES.find(t => t.value === block.content_type)?.placeholder}
-                    className="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                    className="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
                   />
                 </div>
               )}
@@ -295,14 +295,14 @@ export default function CreateModuleForm({ existingModule }) {
         <button
           type="submit"
           disabled={loading}
-          className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-lg text-sm font-medium transition-colors"
+          className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-lg text-sm font-medium transition-all duration-150"
         >
           {loading ? (existingModule ? 'Updating...' : 'Creating...') : existingModule ? 'Update Module' : 'Create Module'}
         </button>
         <button
           type="button"
           onClick={() => router.back()}
-          className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm font-medium transition-colors"
+          className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm font-medium transition-all duration-150"
         >
           Cancel
         </button>

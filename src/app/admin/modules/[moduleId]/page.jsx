@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import CreateModuleForm from '@/components/admin/CreateModuleForm'
 import { createClient } from '@/lib/supabase'
@@ -29,9 +28,8 @@ export default function EditModulePage() {
   if (loading) {
     return (
       <>
-        <Topbar title="Edit Module" />
         <PageWrapper>
-          <div className="animate-pulse h-64 bg-slate-900 border border-slate-800 rounded-xl" />
+          <div className="animate-pulse h-64 bg-slate-800 border border-white/[0.08] rounded-xl" />
         </PageWrapper>
       </>
     )
@@ -39,7 +37,6 @@ export default function EditModulePage() {
 
   return (
     <>
-      <Topbar title={module?.title || 'Edit Module'} />
       <PageWrapper>
         <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
           <Link href="/admin/modules" className="hover:text-slate-300">Modules</Link>

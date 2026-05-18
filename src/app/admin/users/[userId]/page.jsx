@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import AssignRoleForm from '@/components/admin/AssignRoleForm'
 import { createClient } from '@/lib/supabase'
@@ -43,10 +42,9 @@ export default function UserDetailPage() {
   if (loading) {
     return (
       <>
-        <Topbar title="Employee Details" />
         <PageWrapper>
           <div className="animate-pulse space-y-4 max-w-3xl">
-            <div className="h-32 bg-slate-900 border border-slate-800 rounded-xl" />
+            <div className="h-32 bg-slate-800 border border-white/[0.08] rounded-xl" />
           </div>
         </PageWrapper>
       </>
@@ -56,7 +54,6 @@ export default function UserDetailPage() {
   if (!user) {
     return (
       <>
-        <Topbar title="Not Found" />
         <PageWrapper>
           <p className="text-slate-400">User not found.</p>
         </PageWrapper>
@@ -68,7 +65,6 @@ export default function UserDetailPage() {
 
   return (
     <>
-      <Topbar title={user.full_name} />
       <PageWrapper>
 
         <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
@@ -81,7 +77,7 @@ export default function UserDetailPage() {
 
           {/* Profile card */}
           <div className="lg:col-span-2 space-y-5">
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+            <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
@@ -96,7 +92,7 @@ export default function UserDetailPage() {
                 <button
                   onClick={toggleActive}
                   disabled={toggling}
-                  className={`text-xs font-medium px-3 py-1.5 rounded-lg transition-colors ${
+                  className={`text-xs font-medium px-3 py-1.5 rounded-lg transition-all duration-150 ${
                     user.is_active
                       ? 'bg-red-500/15 text-red-400 hover:bg-red-500/25'
                       : 'bg-green-500/15 text-green-400 hover:bg-green-500/25'
@@ -132,11 +128,11 @@ export default function UserDetailPage() {
 
             {/* Recent quiz attempts */}
             {attempts.length > 0 && (
-              <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+              <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-5">
                 <h3 className="text-white font-semibold mb-3">Recent Quiz Attempts</h3>
                 <div className="space-y-2">
                   {attempts.map(a => (
-                    <div key={a.id} className="flex items-center justify-between py-2 border-b border-slate-800 last:border-0">
+                    <div key={a.id} className="flex items-center justify-between py-2 border-b border-white/[0.06] last:border-0">
                       <div>
                         <p className="text-slate-300 text-sm">{a.quizzes?.modules?.title}</p>
                         <p className="text-slate-500 text-xs">{new Date(a.submitted_at).toLocaleDateString('en-KE')}</p>
@@ -154,7 +150,7 @@ export default function UserDetailPage() {
           {/* Sidebar */}
           <div className="space-y-5">
             {/* Assign role */}
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+            <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-5">
               <h3 className="text-white font-semibold mb-4">Change Role</h3>
               <AssignRoleForm
                 userId={userId}
@@ -165,7 +161,7 @@ export default function UserDetailPage() {
 
             {/* Risk score history */}
             {scores.length > 0 && (
-              <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+              <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-5">
                 <h3 className="text-white font-semibold mb-3">Risk Score History</h3>
                 <div className="space-y-2">
                   {scores.map(s => (

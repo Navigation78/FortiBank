@@ -2,7 +2,6 @@
 
 // src/app/(dashboard)/modules/page.jsx
 // Shows all modules assigned to the current user's role
-import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import ModuleList from '@/components/modules/ModuleList'
 import StatsCard from '@/components/dashboard/StatsCard'
@@ -12,9 +11,7 @@ export default function ModulesPage() {
   const { modules, loading, stats } = useModules()
 
   return (
-    <>
-      <Topbar title="My Training Modules" />
-      <PageWrapper>
+    <PageWrapper>
 
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -48,6 +45,5 @@ export default function ModulesPage() {
         <ModuleList modules={modules} loading={loading} />
 
       </PageWrapper>
-    </>
   )
 }

@@ -3,6 +3,7 @@
 // src/components/layout/Sidebar.jsx
 // Role-aware sidebar navigation.
 // Shows different menu items based on the user's role.
+// Collapse/expand controlled by navbar hamburger (single source of truth).
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -11,7 +12,6 @@ import { useAuth } from '@/hooks/useAuth'
 import { useRole } from '@/hooks/useRole'
 import { getDashboardUrl } from '@/utils/roleRedirect'
 
-// Icons as simple SVG components
 function Icon({ path, className = "w-5 h-5" }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
@@ -35,23 +35,20 @@ const ICONS = {
   close:     "M6 18L18 6M6 6l12 12",
 }
 
-// Navigation items available to all employee roles
 const NAV_ITEMS = [
-  { label: 'Dashboard',    icon: 'dashboard', href: null },  // href set dynamically
-  { label: 'My Modules',   icon: 'modules',   href: '/modules' },
-  { label: 'Phishing Tests', icon: 'phishing', href: '/phishing' },
-  { label: 'Risk Score',   icon: 'risk',      href: '/risk-score' },
-  { label: 'Results',      icon: 'results',   href: '/results' },
-  { label: 'Certificates', icon: 'cert',      href: '/certificates' },
-  { label: 'Profile',      icon: 'profile',   href: '/profile' },
+  { label: 'Dashboard',      icon: 'dashboard', href: null },
+  { label: 'My Modules',     icon: 'modules',   href: '/modules' },
+  { label: 'Phishing Tests', icon: 'phishing',  href: '/phishing' },
+  { label: 'Risk Score',     icon: 'risk',      href: '/risk-score' },
+  { label: 'Results',        icon: 'results',   href: '/results' },
+  { label: 'Certificates',   icon: 'cert',      href: '/certificates' },
+  { label: 'Profile',        icon: 'profile',   href: '/profile' },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ isCollapsed, isMobileOpen, setIsMobileOpen }) {
   const pathname = usePathname()
   const { signOut } = useAuth()
   const { role } = useRole()
-  const [collapsed, setCollapsed] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false)
 
   const dashboardUrl = getDashboardUrl(role)
 
@@ -67,115 +64,57 @@ export default function Sidebar() {
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
-      {/* Logo + collapse button */}
-      <div className="flex items-center justify-between px-4 h-[90px] border-b border-slate-700">
-        {!collapsed && (
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
-              <Icon path={ICONS.shield} className="w-4 h-4 text-white" />
-            </div>
-            <div>
-              <p className="text-white font-bold text-sm leading-tight">FortiBank</p>
-              <p className="text-blue-400 text-[10px] tracking-widest uppercase">Security</p>
-            </div>
-          </div>
-        )}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="text-slate-400 hover:text-white transition-colors ml-auto hidden lg:block"
-        >
-          <Icon path={collapsed ? ICONS.menu : ICONS.close} className="w-5 h-5" />
-        </button>
-      </div>
-  
-
-      {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
         {navItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            onClick={() => setMobileOpen(false)}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+            onClick={() => setIsMobileOpen(false)}
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
               isActive(item.href)
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800'
-            } ${collapsed ? 'justify-center' : ''}`}
-            title={collapsed ? item.label : undefined}
+                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
+                : 'text-slate-300 hover:text-white hover:bg-white/[0.06]'
+            } ${isCollapsed ? 'justify-center' : ''}`}
+            title={isCollapsed ? item.label : undefined}
           >
             <Icon path={ICONS[item.icon]} className="w-5 h-5 flex-shrink-0" />
-            {!collapsed && <span>{item.label}</span>}
+            {!isCollapsed && <span>{item.label}</span>}
           </Link>
         ))}
       </nav>
-
-      {/* Sign out */}
-      <div className="px-3 py-4 border-t border-slate-700">
-        <button
-          onClick={signOut}
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-red-400 hover:bg-red-400/10 transition-all w-full ${
-            collapsed ? 'justify-center' : ''
-          }`}
-          title={collapsed ? 'Sign out' : undefined}
-        >
-          <Icon path={ICONS.logout} className="w-5 h-5 flex-shrink-0" />
-          {!collapsed && <span>Sign out</span>}
-        </button>
-      </div>
     </div>
   )
 
   return (
     <>
-      {/* Mobile toggle button */}
-      <button
-        onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-50 w-10 h-10 bg-slate-900 border border-slate-700 rounded-lg flex items-center justify-center text-slate-400"
-      >
-        <Icon path={ICONS.menu} className="w-5 h-5" />
-      </button>
-
       {/* Mobile overlay */}
-      {mobileOpen && (
+      {isMobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black/60 z-40"
-          onClick={() => setMobileOpen(false)}
+          className="lg:hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-40"
+          onClick={() => setIsMobileOpen(false)}
         />
       )}
 
       {/* Mobile sidebar */}
       <aside className={`
         lg:hidden fixed top-0 left-0 h-full z-50 w-64
-        bg-slate-900 border-r border-slate-700
+        bg-slate-900
+        shadow-[4px_0_32px_rgba(0,0,0,0.6)]
         transform transition-transform duration-200
-        ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
+        ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        <button
-          onClick={() => setMobileOpen(false)}
-          className="absolute top-4 right-4 text-slate-400 hover:text-white"
-        >
-          <Icon path={ICONS.close} className="w-5 h-5" />
-        </button>
         <SidebarContent />
       </aside>
 
       {/* Desktop sidebar */}
       <aside className={`
         hidden lg:flex flex-col relative flex-shrink-0
-        bg-slate-900 border-r border-slate-700
+        bg-slate-900
+        shadow-[4px_0_24px_rgba(0,0,0,0.5)]
         h-screen
         transition-all duration-200
-        ${collapsed ? 'w-16' : 'w-64'}
+        ${isCollapsed ? 'w-16' : 'w-64'}
       `}>
-        <button
-          type="button"
-          onClick={() => setCollapsed(!collapsed)}
-          className="absolute -right-3 top-20 z-40 w-7 h-7 rounded-full bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:border-blue-500/60 hover:bg-slate-700 transition-colors flex items-center justify-center shadow-lg"
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          <Icon path={collapsed ? 'M9 5l7 7-7 7' : 'M15 19l-7-7 7-7'} className="w-4 h-4" />
-        </button>
         <SidebarContent />
       </aside>
     </>

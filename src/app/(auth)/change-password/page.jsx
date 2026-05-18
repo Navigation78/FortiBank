@@ -63,7 +63,7 @@ export default function ChangePasswordPage() {
   if (success) {
     return (
       <main className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
-        <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl text-center">
+        <div className="w-full max-w-md bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl text-center">
           <div className="w-14 h-14 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-7 h-7 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -80,7 +80,7 @@ export default function ChangePasswordPage() {
 
   return (
     <main className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl">
+      <div className="w-full max-w-md bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl">
         <div className="mb-6">
           <h1 className="text-white text-2xl font-bold">Set your new password</h1>
           <p className="text-slate-400 text-sm mt-1">
@@ -117,7 +117,7 @@ export default function ChangePasswordPage() {
                 placeholder="At least 8 characters"
                 required
                 minLength={8}
-                className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 pr-10 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 pr-10 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 transition-all duration-150"
               />
               <button
                 type="button"
@@ -154,7 +154,7 @@ export default function ChangePasswordPage() {
               onChange={e => setConfirmPassword(e.target.value)}
               placeholder="Repeat your new password"
               required
-              className={`w-full bg-slate-800 border text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-1 transition-colors ${
+              className={`w-full bg-slate-800 border text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-1 transition-all duration-150 ${
                 confirmPassword && password !== confirmPassword
                   ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                   : 'border-slate-700 focus:border-blue-500 focus:ring-blue-500'
@@ -165,7 +165,7 @@ export default function ChangePasswordPage() {
           <button
             type="submit"
             disabled={loading || (confirmPassword && password !== confirmPassword)}
-            className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 disabled:cursor-not-allowed text-white font-medium rounded-lg py-2.5 text-sm transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 disabled:cursor-not-allowed text-white font-medium rounded-lg py-2.5 text-sm transition-all duration-150 flex items-center justify-center gap-2"
           >
             {loading ? 'Updating...' : 'Save new password'}
           </button>

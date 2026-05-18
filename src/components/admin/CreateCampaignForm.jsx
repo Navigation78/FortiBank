@@ -111,13 +111,13 @@ export default function CreateCampaignForm() {
             disabled={sending}
             className="w-full bg-red-600 hover:bg-red-500 disabled:bg-red-600/50 text-white font-medium rounded-lg py-2.5 text-sm transition-all duration-150"
           >
-            {sending ? 'Sending emails...' : '🚀 Send Campaign Now'}
+            {sending ? 'Sending emails...' : 'Send Campaign Now'}
           </button>
           <button
             onClick={() => router.push('/admin/phishing')}
             className="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-all duration-150"
           >
-            Save as Draft — Send Later
+            Save as Draft - Send Later
           </button>
         </div>
       </div>
@@ -193,7 +193,7 @@ export default function CreateCampaignForm() {
       <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
         <h3 className="text-white font-semibold mb-1">Target Roles</h3>
         <p className="text-slate-400 text-sm mb-4">
-          {selectedRoles.length === 0 ? 'No roles selected — campaign will target ALL employees.' : `${selectedRoles.length} role(s) selected.`}
+          {selectedRoles.length === 0 ? 'No roles selected - campaign will target ALL employees.' : `${selectedRoles.length} role(s) selected.`}
         </p>
         <div className="space-y-4">
           {Object.entries(rolesByCategory).map(([category, categoryRoles]) => (

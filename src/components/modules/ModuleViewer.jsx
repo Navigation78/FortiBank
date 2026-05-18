@@ -343,7 +343,7 @@ export default function ModuleViewer({ module, nextModule }) {
               </button>
 
               {isLastSec ? (
-                // Last section — show complete / start quiz button
+                // Last section - show complete / start quiz button
                 moduleComplete ? (
                   quiz ? (
                     <button
@@ -523,7 +523,7 @@ export default function ModuleViewer({ module, nextModule }) {
               {result.score_pct}%
             </p>
             <p className={`font-semibold text-lg mb-2 ${result.passed ? 'text-green-300' : 'text-red-300'}`}>
-              {result.passed ? 'You passed!' : 'Not quite — keep going.'}
+              {result.passed ? 'You passed!' : 'Not quite - keep going.'}
             </p>
             <p className="text-slate-400 text-sm">
               Pass mark: {result.pass_score}% · Attempt {result.attempt_number} of {result.max_attempts}

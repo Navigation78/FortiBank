@@ -44,7 +44,7 @@ const FEATURES = [
 ]
 
 const STEPS = [
-  { n: '1', t: 'Admin creates users', d: 'IT admin invites employees by email and assigns their role. No self-signup — full access control.' },
+  { n: '1', t: 'Admin creates users', d: 'IT admin invites employees by email and assigns their role. No self-signup - full access control.' },
   { n: '2', t: 'Modules auto-assign', d: 'The platform assigns the correct training curriculum based on each employee\'s role automatically.' },
   { n: '3', t: 'Employees train', d: 'Staff complete interactive modules, watch embedded videos, and pass graded quizzes at their own pace.' },
   { n: '4', t: 'Compliance confirmed', d: 'Risk scores update, certificates are issued, and compliance reports are ready for CBK audit.' },
@@ -134,9 +134,9 @@ export default function LandingPage() {
           <div style={{ fontSize: 12, color: '#3b82f6', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12, fontWeight: 500 }}>
             Platform features
           </div>
-          <h2 style={{ fontSize: 36, fontWeight: 500, color: '#f1f5f9', marginBottom: 16, letterSpacing: '-0.01em' }}>
+          <h4 style={{ fontSize: 36, fontWeight: 500, color: '#f1f5f9', marginBottom: 16, letterSpacing: '-0.01em' }}>
             Everything your bank needs to stay secure
-          </h2>
+          </h4>
           <p style={{ fontSize: 16, color: '#94a3b8', maxWidth: 520, lineHeight: 1.7, marginBottom: 52 }}>
             A complete cybersecurity training ecosystem designed around how banks actually operate.
           </p>
@@ -178,9 +178,9 @@ export default function LandingPage() {
           <div style={{ fontSize: 12, color: '#3b82f6', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12, fontWeight: 500 }}>
             How it works
           </div>
-          <h2 style={{ fontSize: 36, fontWeight: 500, color: '#f1f5f9', marginBottom: 16, letterSpacing: '-0.01em' }}>
+          <h4 style={{ fontSize: 36, fontWeight: 500, color: '#f1f5f9', marginBottom: 16, letterSpacing: '-0.01em' }}>
             From onboarding to certification
-          </h2>
+          </h4>
           <p style={{ fontSize: 16, color: '#94a3b8', maxWidth: 480, lineHeight: 1.7, marginBottom: 64 }}>
             A simple, structured flow for both admins and employees.
           </p>
@@ -230,9 +230,9 @@ export default function LandingPage() {
             CBK & Kenya Data Protection Act compliant
           </div>
 
-          <h2 style={{ fontSize: 40, fontWeight: 500, color: '#f1f5f9', marginBottom: 20, letterSpacing: '-0.01em', lineHeight: 1.2 }}>
+          <h4 style={{ fontSize: 40, fontWeight: 500, color: '#f1f5f9', marginBottom: 20, letterSpacing: '-0.01em', lineHeight: 1.2 }}>
             Ready to protect your bank from the inside out?
-          </h2>
+          </h4>
           <p style={{ fontSize: 16, color: '#94a3b8', marginBottom: 40, lineHeight: 1.75 }}>
             FortiBank LMS gives your security team full visibility over staff cyber awareness
              and gives employees the tools to stay one step ahead of threats.

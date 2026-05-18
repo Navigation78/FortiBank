@@ -1,6 +1,6 @@
 // ============================================================
 // src/app/api/quiz/route.js
-// GET /api/quiz?quizId=xxx — returns quiz with all questions,
+// GET /api/quiz?quizId=xxx - returns quiz with all questions,
 // options, and the user's attempt count.
 // ============================================================
 

@@ -30,7 +30,7 @@ export default function RelationshipManagerDashboard() {
           icon: Lock,
           iconBg: 'bg-purple-500/15',
           title: 'Data Confidentiality',
-          description: 'Client portfolio data is highly sensitive — handle with strict protocols.',
+          description: 'Client portfolio data is highly sensitive - handle with strict protocols.',
         },
       ]}
     />

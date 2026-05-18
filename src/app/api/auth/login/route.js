@@ -1,5 +1,5 @@
 // src/app/api/auth/login/route.js
-// POST — signs in a user with email and password
+// POST - signs in a user with email and password
 // Returns the user's role so the client can redirect correctly
 
 import { createClient } from '@supabase/supabase-js'

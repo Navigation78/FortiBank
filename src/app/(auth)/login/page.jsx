@@ -50,7 +50,7 @@ function LoginForm() {
   return (
     <div className="bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl">
       <div className="mb-6">
-        <h2 className="text-white text-2xl font-bold">Welcome back</h2>
+        <h4 className="text-white text-2xl font-bold">Welcome back</h4>
         <p className="text-slate-400 text-sm mt-1">Sign in to your training portal</p>
       </div>
 

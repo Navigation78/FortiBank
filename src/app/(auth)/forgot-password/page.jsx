@@ -39,7 +39,7 @@ export default function ForgotPasswordPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
           </svg>
         </div>
-        <h2 className="text-white text-xl font-bold mb-2">Check your email</h2>
+        <h4 className="text-white text-xl font-bold mb-2">Check your email</h4>
         <p className="text-slate-400 text-sm mb-6">
           We sent a password reset link to <span className="text-white font-medium">{email}</span>.
           The link expires in 1 hour.
@@ -68,7 +68,7 @@ export default function ForgotPasswordPage() {
   return (
     <div className="bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl">
       <div className="mb-6">
-        <h2 className="text-white text-2xl font-bold">Reset your password</h2>
+        <h4 className="text-white text-2xl font-bold">Reset your password</h4>
         <p className="text-slate-400 text-sm mt-1">
           Enter your email and we'll send you a reset link.
         </p>

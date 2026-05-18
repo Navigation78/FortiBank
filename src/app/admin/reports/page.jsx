@@ -110,7 +110,7 @@ export default function EmployeeDashboardsPage() {
       <PageWrapper>
 
         <div className="mb-6">
-          <h2 className="text-white text-xl font-bold">Employee Dashboards</h2>
+          <h4 className="text-white text-xl font-bold">Employee Dashboards</h4>
           <p className="text-slate-400 text-sm mt-1">Open the role-specific dashboard views used across FortiBank teams.</p>
         </div>
 

@@ -140,7 +140,7 @@ export default function CampaignDetailAdminPage() {
                       </td>
                       <td className="px-5 py-3 hidden sm:table-cell">
                         <span className="text-slate-400 text-xs">
-                          {t.sent_at ? new Date(t.sent_at).toLocaleDateString('en-KE') : '—'}
+                          {t.sent_at ? new Date(t.sent_at).toLocaleDateString('en-KE') : '-'}
                         </span>
                       </td>
                     </tr>

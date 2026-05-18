@@ -31,7 +31,7 @@ export default function AdminPhishingPage() {
       <PageWrapper>
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-white text-xl font-bold">Phishing Campaigns</h2>
+            <h4 className="text-white text-xl font-bold">Phishing Campaigns</h4>
             <p className="text-slate-400 text-sm mt-0.5">{campaigns.length} total campaigns</p>
           </div>
           <Link
@@ -80,7 +80,7 @@ export default function AdminPhishingPage() {
                         c.click_rate_pct > 30 ? 'text-red-400' :
                         c.click_rate_pct > 10 ? 'text-orange-400' : 'text-green-400'
                       }`}>
-                        {c.click_rate_pct ?? '—'}%
+                        {c.click_rate_pct ?? '-'}%
                       </span>
                     </td>
                     <td className="px-5 py-3">

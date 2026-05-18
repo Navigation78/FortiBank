@@ -78,7 +78,7 @@ export default function UserRiskTable({ users = [], loading = false }) {
                 <tr key={user.id} className={`border-b border-white/[0.06] last:border-0 ${i % 2 === 0 ? '' : 'bg-slate-900/50'}`}>
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-2">
-                      {isCrit && <span className="text-xs">🚨</span>}
+                      {isCrit && <span className="text-xs">!</span>}
                       <div>
                         <p className="text-white text-sm font-medium">{user.full_name}</p>
                         <p className="text-slate-500 text-xs hidden sm:block">{user.email}</p>
@@ -86,7 +86,7 @@ export default function UserRiskTable({ users = [], loading = false }) {
                     </div>
                   </td>
                   <td className="px-5 py-3 hidden sm:table-cell">
-                    <span className="text-slate-400 text-xs">{user.role_display_name || '—'}</span>
+                    <span className="text-slate-400 text-xs">{user.role_display_name || '-'}</span>
                   </td>
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-2">

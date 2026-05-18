@@ -1,5 +1,5 @@
 // src/app/api/quiz/submit/route.js
-// POST /api/quiz/submit — scores a quiz attempt, saves it,
+// POST /api/quiz/submit - scores a quiz attempt, saves it,
 // and triggers a risk score recalculation.
 
 
@@ -78,7 +78,7 @@ export async function POST(request) {
       const noWrongSelected    = userAnswers.every(id => correctOptionIds.includes(id))
       isCorrect = allCorrectSelected && noWrongSelected
     } else {
-      // Single answer — check if selected option is correct
+      // Single answer - check if selected option is correct
       isCorrect = userAnswers.length === 1 && correctOptionIds.includes(userAnswers[0])
     }
 

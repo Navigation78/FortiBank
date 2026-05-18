@@ -104,11 +104,11 @@ export default function UserTable({ users = [], loading = false, onRefresh: _onR
               </Td>
               <Td className="hidden sm:table-cell">
                 <Badge variant={CATEGORY_VARIANTS[user.role_category] || 'slate'}>
-                  {user.role_display_name || user.role || '—'}
+                  {user.role_display_name || user.role || '-'}
                 </Badge>
               </Td>
               <Td className="hidden md:table-cell">
-                <span className="text-slate-300 text-sm">{user.department || '—'}</span>
+                <span className="text-slate-300 text-sm">{user.department || '-'}</span>
               </Td>
               <Td className="hidden lg:table-cell">
                 <Badge variant={user.is_active ? 'green' : 'slate'}>

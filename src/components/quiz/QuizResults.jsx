@@ -36,11 +36,11 @@ export default function QuizResults({
           )}
         </div>
 
-        <h2 className={`text-3xl font-bold mb-1 ${passed ? 'text-green-400' : 'text-red-400'}`}>
+        <h4 className={`text-3xl font-bold mb-1 ${passed ? 'text-green-400' : 'text-red-400'}`}>
           {score_pct}%
-        </h2>
+        </h4>
         <p className={`font-semibold text-lg mb-2 ${passed ? 'text-green-300' : 'text-red-300'}`}>
-          {passed ? 'Congratulations! You passed.' : 'Not quite — keep trying.'}
+          {passed ? 'Congratulations! You passed.' : 'Not quite - keep trying.'}
         </p>
         <p className="text-slate-400 text-sm">
           Pass mark: {pass_score}% · Attempt {attempt_number} of {max_attempts}

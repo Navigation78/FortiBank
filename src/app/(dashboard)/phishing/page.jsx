@@ -43,7 +43,7 @@ export default function PhishingPage() {
         {/* Header */}
         <div className="flex items-start justify-between mb-6">
           <div>
-            <h2 className="text-white text-xl font-bold">My Phishing Test History</h2>
+            <h4 className="text-white text-xl font-bold">My Phishing Test History</h4>
             <p className="text-slate-400 text-sm mt-1">
               These are simulated phishing tests conducted by your organization.
             </p>
@@ -61,7 +61,7 @@ export default function PhishingPage() {
           <p className="text-blue-400 text-sm font-semibold mb-1">About phishing simulations</p>
           <p className="text-slate-400 text-sm">
             Your organization regularly sends simulated phishing emails to test your awareness.
-            These are not real attacks — they are training exercises. Clicking a link in a
+            These are not real attacks - they are training exercises. Clicking a link in a
             simulation is recorded and affects your risk score. The goal is to help you
             recognise and avoid real phishing attacks.
           </p>

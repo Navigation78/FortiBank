@@ -1,5 +1,5 @@
 // src/app/api/phishing/route.js
-// GET  — employee: their own phishing results
+// GET  - employee: their own phishing results
 //        admin: all campaigns
 
 
@@ -15,7 +15,7 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // Employee view — their own phishing results
+  // Employee view - their own phishing results
   const { data: targets, error } = await supabase
     .from('phishing_targets')
     .select(`

@@ -1,5 +1,5 @@
 // src/app/api/modules/route.js
-// GET — returns published modules assigned to the current user's role
+// GET - returns published modules assigned to the current user's role
 // Includes their progress on each module
 
 import { NextResponse } from 'next/server'

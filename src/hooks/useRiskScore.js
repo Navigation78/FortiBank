@@ -38,7 +38,7 @@ export function useRiskScore() {
       .maybeSingle()
 
     if (latestError && latestError.code !== 'PGRST116') {
-      // PGRST116 = no rows found — that's fine for new users
+      // PGRST116 = no rows found - that's fine for new users
       setError(latestError.message)
     }
 

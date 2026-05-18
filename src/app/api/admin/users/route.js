@@ -1,5 +1,5 @@
 // src/app/api/admin/users/route.js
-// POST — creates a new employee (auth + profile + role)
+// POST - creates a new employee (auth + profile + role)
 // Uses supabaseAdmin to bypass RLS for user creation
 
 

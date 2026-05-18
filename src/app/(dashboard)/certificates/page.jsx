@@ -47,7 +47,7 @@ export default function CertificatesPage() {
         {/* Header */}
         <div className="flex items-start justify-between mb-6">
           <div>
-            <h2 className="text-white text-xl font-bold">My Certificates</h2>
+            <h4 className="text-white text-xl font-bold">My Certificates</h4>
             <p className="text-slate-400 text-sm mt-1">
               Certificates are awarded when you complete all modules and pass all quizzes.
             </p>
@@ -114,7 +114,7 @@ export default function CertificatesPage() {
                     </div>
                     <div>
                       <p className="text-white font-semibold">
-                        {cert.roles?.display_name} — Cybersecurity Certificate
+                        {cert.roles?.display_name} - Cybersecurity Certificate
                       </p>
                       <p className="text-slate-400 text-sm mt-0.5">
                         Certificate No: <span className="text-green-400 font-mono">{cert.certificate_no}</span>

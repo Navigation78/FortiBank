@@ -1,7 +1,7 @@
 // src/lib/riskCalculator.js
 // Client-side risk score helpers.
 // The actual calculation happens in the database via
-// calculate_user_risk_score() — this file handles UI logic.
+// calculate_user_risk_score() - this file handles UI logic.
 
 import { ROLE_THRESHOLDS } from '@/constants/roles'
 

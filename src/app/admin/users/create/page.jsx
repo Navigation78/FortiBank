@@ -14,7 +14,7 @@ export default function CreateUserPage() {
           <span className="text-slate-300">Add Employee</span>
         </div>
         <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 max-w-2xl">
-          <h2 className="text-white font-semibold mb-1">Create Employee Account</h2>
+          <h4 className="text-white font-semibold mb-1">Create Employee Account</h4>
           <p className="text-slate-400 text-sm mb-6">
             Creates a Supabase auth account and assigns the employee their training role.
             They will receive a welcome email with login instructions.

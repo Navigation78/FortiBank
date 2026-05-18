@@ -12,7 +12,7 @@ export default function TellerDashboard() {
           icon: Theater,
           iconBg: 'bg-red-500/15',
           title: 'Social Engineering',
-          description: 'You are the most targeted frontline staff — always verify before acting.',
+          description: 'You are the most targeted frontline staff - always verify before acting.',
         },
         {
           icon: Banknote,
@@ -30,7 +30,7 @@ export default function TellerDashboard() {
           icon: Lock,
           iconBg: 'bg-purple-500/15',
           title: 'System Credentials',
-          description: 'Never share your teller system password — not even with supervisors.',
+          description: 'Never share your teller system password - not even with supervisors.',
         },
       ]}
     />

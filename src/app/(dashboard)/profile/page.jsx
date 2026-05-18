@@ -100,7 +100,7 @@ export default function ProfilePage() {
         <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
           <div className="flex items-start gap-5">
 
-            {/* Avatar — clickable upload zone */}
+            {/* Avatar - clickable upload zone */}
             <div className="flex flex-col items-center gap-2 flex-shrink-0">
               <button
                 type="button"
@@ -152,7 +152,7 @@ export default function ProfilePage() {
 
             {/* Info */}
             <div className="flex-1 min-w-0">
-              <h2 className="text-white text-xl font-bold">{profile?.full_name || '—'}</h2>
+              <h4 className="text-white text-xl font-bold">{profile?.full_name || '-'}</h4>
               <p className="text-slate-400 text-sm mt-0.5">{profile?.email}</p>
               <div className="flex flex-wrap items-center gap-2 mt-3">
                 <span className={`text-xs font-medium px-2.5 py-1 rounded-lg border ${categoryColor}`}>
@@ -180,7 +180,7 @@ export default function ProfilePage() {
           <div className="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-slate-700">
             <div>
               <p className="text-slate-500 text-xs">Role category</p>
-              <p className="text-slate-300 text-sm mt-1">{profile?.role_category || '—'}</p>
+              <p className="text-slate-300 text-sm mt-1">{profile?.role_category || '-'}</p>
             </div>
             <div>
               <p className="text-slate-500 text-xs">Account status</p>
@@ -193,7 +193,7 @@ export default function ProfilePage() {
               <p className="text-slate-300 text-sm mt-1">
                 {profile?.created_at
                   ? new Date(profile.created_at).toLocaleDateString('en-KE', { dateStyle: 'medium' })
-                  : '—'}
+                  : '-'}
               </p>
             </div>
             <div>

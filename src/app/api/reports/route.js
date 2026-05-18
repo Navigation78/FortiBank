@@ -1,5 +1,5 @@
 // src/app/api/reports/route.js
-// GET — generates CSV reports for admin export
+// GET - generates CSV reports for admin export
 // Query params: type = 'users' | 'risk' | 'phishing' | 'completion'
 
 import { NextResponse } from 'next/server'

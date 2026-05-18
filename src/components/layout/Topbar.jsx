@@ -40,7 +40,7 @@ export default function Topbar({ toggleSidebar, isCollapsed, toggleMobileSidebar
     <header className="h-73px bg-slate-900 border-b border-white/[0.06] flex items-center px-4 sticky top-0 z-30 shadow-sm shadow-black/40">
       {/* Left: Hamburger, Logo, name */}
       <div className="flex items-center gap-4">
-        {/* Mobile only — desktop hamburger lives in the sidebar */}
+        {/* Mobile only - desktop hamburger lives in the sidebar */}
         <button
           onClick={handleSidebarToggle}
           className="lg:hidden flex items-center justify-center text-slate-400 hover:text-white transition-all duration-150 p-1 rounded-lg hover:bg-white/[0.06]"

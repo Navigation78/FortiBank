@@ -26,7 +26,7 @@ export default function StatsCard({
   }
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 flex items-start gap-4">
+    <div className="bg-slate-800 border border-slate-700 rounded-xl p-5 flex items-start gap-4 shadow-sm shadow-black/20">
       {icon && (
         <div className={`w-11 h-11 rounded-lg ${c.bg} border ${c.border} flex items-center justify-center flex-shrink-0`}>
           {renderIcon()}
@@ -34,7 +34,7 @@ export default function StatsCard({
       )}
       <div className="min-w-0 flex-1">
         <p className="text-slate-400 text-sm">{title}</p>
-        <p className="text-white text-2xl font-bold mt-0.5">{value}</p>
+        <p className="text-slate-100 text-2xl font-bold mt-0.5">{value}</p>
         {subtitle && (
           <p className="text-slate-500 text-xs mt-1">{subtitle}</p>
         )}

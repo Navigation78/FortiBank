@@ -53,10 +53,7 @@ const NAV_ITEMS = [
 
 function AdminSidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
   const pathname = usePathname()
-  const { profile, signOut } = useAuth()
-  const adminDisplayName = profile?.full_name === 'New User'
-    ? 'System Admin'
-    : profile?.full_name || 'System Admin'
+  const { signOut } = useAuth()
 
   function isActive(item) {
     if (item.exact) return pathname === item.href
@@ -66,7 +63,7 @@ function AdminSidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
   const Content = () => (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="flex items-center justify-between px-4 h-[90px] border-b border-slate-800">
+      <div className="flex items-center justify-between px-4 h-[90px] border-b border-slate-700">
         {!collapsed && (
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -108,7 +105,7 @@ function AdminSidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
       </nav>
 
       {/* Bottom links */}
-      <div className="px-3 py-4 border-t border-slate-800">
+      <div className="px-3 py-4 border-t border-slate-700">
         <button
           onClick={signOut}
           className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-red-400 hover:bg-red-400/10 transition-all w-full ${collapsed ? 'justify-center' : ''}`}
@@ -136,7 +133,7 @@ function AdminSidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
       )}
 
       {/* Mobile sidebar */}
-      <aside className={`lg:hidden fixed top-0 left-0 h-full z-50 w-64 bg-slate-900 border-r border-slate-800 transform transition-transform duration-200 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <aside className={`lg:hidden fixed top-0 left-0 h-full z-50 w-64 bg-slate-900 border-r border-slate-700 transform transition-transform duration-200 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <button onClick={() => setMobileOpen(false)} className="absolute top-4 right-4 text-slate-400 hover:text-white">
           <Icon path="M6 18L18 6M6 6l12 12" className="w-5 h-5" />
         </button>
@@ -144,7 +141,7 @@ function AdminSidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
       </aside>
 
       {/* Desktop sidebar */}
-      <aside className={`hidden lg:flex flex-col relative flex-shrink-0 bg-slate-900 border-r border-slate-800 h-screen transition-all duration-200 ${collapsed ? 'w-16' : 'w-64'}`}>
+      <aside className={`hidden lg:flex flex-col relative flex-shrink-0 bg-slate-900 border-r border-slate-700 h-screen transition-all duration-200 ${collapsed ? 'w-16' : 'w-64'}`}>
         <button
           type="button"
           onClick={() => setCollapsed(!collapsed)}
@@ -165,7 +162,7 @@ export default function AdminLayout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-950">
+    <div className="flex h-screen overflow-hidden bg-slate-900">
       <AdminSidebar
         collapsed={collapsed}
         setCollapsed={setCollapsed}

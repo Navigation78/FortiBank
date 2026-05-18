@@ -5,6 +5,9 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Button from '@/components/ui/Button'
+import Input  from '@/components/ui/Input'
+import Alert  from '@/components/ui/Alert'
 
 export default function CreateUserForm() {
   const router = useRouter()
@@ -17,12 +20,12 @@ export default function CreateUserForm() {
   const [showPassword, setShowPassword] = useState(false)
 
   const [form, setForm] = useState({
-    full_name: '',
-    email: '',
+    full_name:   '',
+    email:       '',
     password:    '',
     employee_id: '',
-    department: '',
-    role_id: '',
+    department:  '',
+    role_id:     '',
   })
 
   useEffect(() => { fetchRoles() }, [])
@@ -30,7 +33,7 @@ export default function CreateUserForm() {
   async function fetchRoles() {
     setRolesLoading(true)
 
-    const res = await fetch('/api/admin/roles')
+    const res  = await fetch('/api/admin/roles')
     const data = await res.json()
 
     if (!res.ok) {
@@ -53,12 +56,11 @@ export default function CreateUserForm() {
     setError('')
     setLoading(true)
 
-    const res = await fetch('/api/admin/users', {
+    const res  = await fetch('/api/admin/users', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify(form),
     })
-
     const data = await res.json()
 
     if (!res.ok) {
@@ -72,12 +74,31 @@ export default function CreateUserForm() {
     setTimeout(() => router.push('/admin/users'), 1500)
   }
 
-  // Group roles by category for the select
   const rolesByCategory = roles.reduce((acc, role) => {
     if (!acc[role.category]) acc[role.category] = []
     acc[role.category].push(role)
     return acc
   }, {})
+
+  const EyeToggle = (
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="text-slate-400 hover:text-slate-300"
+      aria-label={showPassword ? 'Hide password' : 'Show password'}
+    >
+      {showPassword ? (
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+        </svg>
+      ) : (
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+      )}
+    </button>
+  )
 
   if (success) {
     return (
@@ -95,89 +116,69 @@ export default function CreateUserForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5 max-w-lg">
-      {error && (
-        <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-          <p className="text-red-400 text-sm">{error}</p>
-        </div>
-      )}
+      {error && <Alert variant="error">{error}</Alert>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-slate-300 text-sm font-medium mb-1.5">Full Name *</label>
-          <input name="full_name" value={form.full_name} onChange={handleChange} required
-            placeholder="e.g. James Kamau"
-            className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-          />
-        </div>
-        <div>
-          <label className="block text-slate-300 text-sm font-medium mb-1.5">Employee ID</label>
-          <input name="employee_id" value={form.employee_id} onChange={handleChange}
-            placeholder="e.g. FB012"
-            className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-slate-300 text-sm font-medium mb-1.5">Email Address *</label>
-        <input name="email" type="email" value={form.email} onChange={handleChange} required
-          placeholder="employee@fortibank.com"
-          className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+        <Input
+          label="Full Name *"
+          name="full_name"
+          value={form.full_name}
+          onChange={handleChange}
+          required
+          placeholder="e.g. James Kamau"
+        />
+        <Input
+          label="Employee ID"
+          name="employee_id"
+          value={form.employee_id}
+          onChange={handleChange}
+          placeholder="e.g. FB012"
         />
       </div>
 
-      <div>
-        <label className="block text-slate-300 text-sm font-medium mb-1.5">
-          Temporary Password *
-          <span className="text-slate-500 font-normal ml-2 text-xs">Employee can change this after first login</span>
-        </label>
-        <div className="relative">
-          <input
-            name="password"
-            type={showPassword ? 'text' : 'password'}
-            value={form.password}
-            onChange={handleChange}
-            required
-            minLength={8}
-            placeholder="Min. 8 characters"
-            className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 pr-10 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300"
-            aria-label={showPassword ? 'Hide temporary password' : 'Show temporary password'}
-          >
-            {showPassword ? (
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-              </svg>
-            ) : (
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
-            )}
-          </button>
-        </div>
-      </div>
+      <Input
+        label="Email Address *"
+        name="email"
+        type="email"
+        value={form.email}
+        onChange={handleChange}
+        required
+        placeholder="employee@fortibank.com"
+      />
+
+      <Input
+        label="Temporary Password *"
+        hint="Employee can change this after first login"
+        name="password"
+        type={showPassword ? 'text' : 'password'}
+        value={form.password}
+        onChange={handleChange}
+        required
+        minLength={8}
+        placeholder="Min. 8 characters"
+        rightElement={EyeToggle}
+      />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-slate-300 text-sm font-medium mb-1.5">Department</label>
-          <input name="department" value={form.department} onChange={handleChange}
-            placeholder="e.g. Credit, Operations"
-            className="w-full bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-          />
-        </div>
-        <div>
-          <label className="block text-slate-300 text-sm font-medium mb-1.5">Role *</label>
-          <select name="role_id" value={form.role_id} onChange={handleChange} required disabled={rolesLoading}
+        <Input
+          label="Department"
+          name="department"
+          value={form.department}
+          onChange={handleChange}
+          placeholder="e.g. Credit, Operations"
+        />
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-slate-300 text-sm font-medium">Role *</label>
+          <select
+            name="role_id"
+            value={form.role_id}
+            onChange={handleChange}
+            required
+            disabled={rolesLoading}
             className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
           >
-            <option value="">
-              {rolesLoading ? 'Loading roles...' : 'Select a role...'}
-            </option>
+            <option value="">{rolesLoading ? 'Loading roles...' : 'Select a role...'}</option>
             {Object.entries(rolesByCategory).map(([category, categoryRoles]) => (
               <optgroup key={category} label={category}>
                 {categoryRoles.map(role => (
@@ -187,34 +188,18 @@ export default function CreateUserForm() {
             ))}
           </select>
           {!rolesLoading && roles.length === 0 && (
-            <p className="text-red-400 text-xs mt-1">No roles are available yet.</p>
+            <p className="text-red-400 text-xs">No roles are available yet.</p>
           )}
         </div>
       </div>
 
       <div className="flex gap-3 pt-2">
-        <button
-          type="submit"
-          disabled={loading}
-          className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-lg text-sm font-medium transition-colors"
-        >
-          {loading ? (
-            <>
-              <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-              </svg>
-              Creating...
-            </>
-          ) : 'Create Employee'}
-        </button>
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm font-medium transition-colors"
-        >
+        <Button type="submit" loading={loading}>
+          {loading ? 'Creating...' : 'Create Employee'}
+        </Button>
+        <Button type="button" variant="secondary" onClick={() => router.back()}>
           Cancel
-        </button>
+        </Button>
       </div>
     </form>
   )

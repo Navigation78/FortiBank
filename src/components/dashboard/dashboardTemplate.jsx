@@ -14,7 +14,7 @@ import ProgressChart from '@/components/dashboard/ProgressChart'
 import RecentActivity from '@/components/dashboard/RecentActivity'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { useModules } from '@/hooks/useModules'
-import { BookOpen, CheckCircle2, Shield, BarChart3, Hand } from 'lucide-react'
+import { BookOpen, CheckCircle2, Shield, BarChart3 } from 'lucide-react'
 
 export default function DashboardTemplate({
   title,
@@ -139,7 +139,7 @@ export default function DashboardTemplate({
 
         {/* Welcome */}
         <div className="mb-6">
-          <h2 className="text-white text-2xl font-bold">
+          <h2 className="text-slate-100 text-2xl font-bold">
             Good {getTimeOfDay()}, {firstName}
           </h2>
           <p className="text-slate-400 text-sm mt-1">
@@ -148,7 +148,7 @@ export default function DashboardTemplate({
         </div>
 
         {/* Stats row */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           {realStats.map((stat, i) => (
             <StatsCard key={i} {...stat} />
           ))}
@@ -173,8 +173,8 @@ export default function DashboardTemplate({
           {/* Threat focus areas */}
           {focusAreas && (
             <div className="lg:col-span-1">
-              <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
-                <h3 className="text-white font-semibold mb-4">Your Risk Focus Areas</h3>
+              <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-sm shadow-black/20">
+                <h3 className="text-slate-100 font-semibold mb-4">Your Risk Focus Areas</h3>
                 <div className="space-y-3">
                   {focusAreas.map((area, i) => {
                     const Icon = area.icon

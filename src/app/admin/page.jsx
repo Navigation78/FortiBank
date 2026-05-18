@@ -72,7 +72,7 @@ export default function AdminHomePage() {
         )}
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatsCard title="Active Employees" value={loading ? '—' : stats?.totalUsers}        icon={Users}      color="blue"   />
           <StatsCard title="Published Modules" value={loading ? '—' : stats?.publishedModules} icon={BookOpen}  color="green"  />
           <StatsCard title="Active Campaigns"  value={loading ? '—' : stats?.activeCampaigns}  icon={Fish}      color="yellow" />
@@ -83,8 +83,8 @@ export default function AdminHomePage() {
 
           {/* Quick actions */}
           <div className="lg:col-span-1">
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
-              <h3 className="text-white font-semibold mb-4">Quick Actions</h3>
+            <div className="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-sm shadow-black/20">
+              <h3 className="text-slate-100 font-semibold mb-4">Quick Actions</h3>
               <div className="space-y-2">
                 {quickActions.map(action => {
                   const Icon = action.icon
@@ -92,7 +92,7 @@ export default function AdminHomePage() {
                     <Link
                       key={action.href}
                       href={action.href}
-                      className="flex items-center gap-3 px-4 py-3 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors"
+                      className="flex items-center gap-3 px-4 py-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-colors"
                     >
                       <Icon className="w-5 h-5 text-slate-400" />
                       <span className="text-slate-300 text-sm font-medium">{action.label}</span>
@@ -106,8 +106,8 @@ export default function AdminHomePage() {
 
           {/* Platform summary */}
           <div className="lg:col-span-2">
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-5">
-              <h3 className="text-white font-semibold mb-4">Platform Summary</h3>
+            <div className="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-sm shadow-black/20">
+              <h3 className="text-slate-100 font-semibold mb-4">Platform Summary</h3>
               {loading ? (
                 <div className="space-y-3 animate-pulse">
                   {[...Array(4)].map((_, i) => (
@@ -122,12 +122,12 @@ export default function AdminHomePage() {
                     { label: 'Average risk score',     value: stats?.avgRiskScore,    sub: 'across all employees' },
                     { label: 'Employees at critical',  value: stats?.criticalUsers,   sub: 'require immediate attention', alert: stats?.criticalUsers > 0 },
                   ].map((item, i) => (
-                    <div key={i} className={`flex items-center justify-between px-4 py-3 rounded-lg ${item.alert ? 'bg-red-500/10 border border-red-500/20' : 'bg-slate-800'}`}>
+                    <div key={i} className={`flex items-center justify-between px-4 py-3 rounded-lg ${item.alert ? 'bg-red-500/10 border border-red-500/20' : 'bg-slate-700/50'}`}>
                       <div>
                         <p className="text-slate-300 text-sm font-medium">{item.label}</p>
                         <p className="text-slate-500 text-xs">{item.sub}</p>
                       </div>
-                      <span className={`font-bold text-xl ${item.alert ? 'text-red-400' : 'text-white'}`}>
+                      <span className={`font-bold text-xl ${item.alert ? 'text-red-400' : 'text-slate-100'}`}>
                         {item.value ?? '—'}
                       </span>
                     </div>

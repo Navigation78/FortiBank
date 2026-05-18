@@ -1,7 +1,5 @@
 // src/app/page.jsx
-// FortiBank LMS — Public Landing Page
-// Dark, professional, cybersecurity-themed
-// Sections: Hero → Features → How it Works → CTA → Footer
+// FortiBank LMS Public Landing Page
 
 import Link from 'next/link'
 
@@ -10,7 +8,7 @@ const FEATURES = [
     color: '#60a5fa', bg: 'rgba(37,99,235,0.12)',
     icon: 'M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z',
     title: 'Role-based training paths',
-    desc: 'Each of the 12 staff roles sees only modules relevant to their function and risk exposure — from teller to branch manager.',
+    desc: 'Each of the 12 staff roles sees only modules relevant to their function and risk exposure from teller to branch manager.',
   },
   {
     color: '#4ade80', bg: 'rgba(34,197,94,0.1)',
@@ -28,7 +26,7 @@ const FEATURES = [
     color: '#fb923c', bg: 'rgba(249,115,22,0.1)',
     icon: 'M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5',
     title: 'Verifiable certificates',
-    desc: 'Employees earn downloadable PDF certificates upon passing each quiz — fully auditable for CBK compliance reviews.',
+    desc: 'Employees earn downloadable PDF certificates upon passing each quiz fully auditable for CBK compliance reviews.',
   },
   {
     color: '#facc15', bg: 'rgba(234,179,8,0.1)',
@@ -73,14 +71,10 @@ export default function LandingPage() {
             <div style={{ fontSize: 10, color: '#3b82f6', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: 2 }}>Security Training</div>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
-          <a href="#features" style={{ color: '#64748b', fontSize: 14, textDecoration: 'none' }}>Features</a>
-          <a href="#how-it-works" style={{ color: '#64748b', fontSize: 14, textDecoration: 'none' }}>How it works</a>
-          <Link href="/login" style={{
-            background: '#2563eb', color: 'white', padding: '8px 20px',
-            borderRadius: 8, fontSize: 14, fontWeight: 500, textDecoration: 'none',
-          }}>Sign in</Link>
-        </div>
+        <Link href="/login" style={{
+          background: '#2563eb', color: 'white', padding: '8px 20px',
+          borderRadius: 8, fontSize: 14, fontWeight: 500, textDecoration: 'none',
+        }}>Sign in</Link>
       </nav>
 
       {/* HERO */}
@@ -101,28 +95,9 @@ export default function LandingPage() {
 
         <p style={{ fontSize: 18, color: '#475569', maxWidth: 560, margin: '0 auto 44px', lineHeight: 1.75 }}>
           Role-based cybersecurity training, live phishing simulations, and real-time
-          risk scoring — purpose-built for the financial sector.
+          risk scoring purpose-built for the financial sector.
         </p>
 
-        <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
-          <Link href="/login" style={{
-            background: '#2563eb', color: 'white', padding: '13px 28px',
-            borderRadius: 8, fontSize: 15, fontWeight: 500, textDecoration: 'none',
-            display: 'inline-flex', alignItems: 'center', gap: 8,
-          }}>
-            Access the platform
-            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
-          </Link>
-          <a href="#features" style={{
-            background: 'transparent', color: '#94a3b8', padding: '13px 28px',
-            borderRadius: 8, fontSize: 15, border: '0.5px solid rgba(255,255,255,0.1)',
-            textDecoration: 'none',
-          }}>
-            See how it works
-          </a>
-        </div>
 
         {/* Stats row */}
         <div style={{
@@ -248,7 +223,7 @@ export default function LandingPage() {
           </h2>
           <p style={{ fontSize: 16, color: '#475569', marginBottom: 40, lineHeight: 1.75 }}>
             FortiBank LMS gives your security team full visibility over staff cyber awareness
-            — and gives employees the tools to stay one step ahead of threats.
+             and gives employees the tools to stay one step ahead of threats.
           </p>
 
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -257,18 +232,11 @@ export default function LandingPage() {
               borderRadius: 8, fontSize: 15, fontWeight: 500, textDecoration: 'none',
               display: 'inline-flex', alignItems: 'center', gap: 8,
             }}>
-              Sign in to the platform
+              Sign in
               <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
             </Link>
-            <a href="#features" style={{
-              background: 'transparent', color: '#94a3b8', padding: '14px 32px',
-              borderRadius: 8, fontSize: 15, border: '0.5px solid rgba(255,255,255,0.1)',
-              textDecoration: 'none',
-            }}>
-              View all features
-            </a>
           </div>
         </div>
       </section>
@@ -279,11 +247,10 @@ export default function LandingPage() {
         padding: '28px 48px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
-        <div style={{ fontSize: 13, color: '#1e293b' }}>© 2026 FortiBank Security Training. All rights reserved.</div>
+        <div style={{ fontSize: 13, color: '#475569' }}>© 2026 FortiBank Security Training. All rights reserved.</div>
         <div style={{ display: 'flex', gap: 24 }}>
-          <a href="#" style={{ fontSize: 13, color: '#1e293b', textDecoration: 'none' }}>Privacy policy</a>
-          <a href="#" style={{ fontSize: 13, color: '#1e293b', textDecoration: 'none' }}>Terms of use</a>
-          <Link href="/login" style={{ fontSize: 13, color: '#3b82f6', textDecoration: 'none' }}>Sign in</Link>
+          <Link href="/privacy-policy" style={{ fontSize: 13, color: '#475569', textDecoration: 'underline' }}>Privacy policy</Link>
+          <Link href="/terms-of-use" style={{ fontSize: 13, color: '#475569', textDecoration: 'underline' }}>Terms of use</Link>
         </div>
       </footer>
 

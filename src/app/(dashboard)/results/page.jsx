@@ -217,6 +217,5 @@ export default function ResultsPage() {
         )}
 
       </PageWrapper>
-    </>
   )
 }

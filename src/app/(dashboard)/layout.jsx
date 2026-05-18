@@ -21,6 +21,7 @@ export default function DashboardLayout({ children }) {
     <div className="flex h-screen overflow-hidden bg-[#080f1e]">
       <Sidebar
         isCollapsed={isCollapsed}
+        onToggle={toggleSidebar}
         isMobileOpen={isMobileOpen}
         setIsMobileOpen={setIsMobileOpen}
       />

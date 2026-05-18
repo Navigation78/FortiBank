@@ -99,6 +99,5 @@ export default function PhishingPage() {
         )}
 
       </PageWrapper>
-    </>
   )
 }

@@ -278,6 +278,15 @@ export function AuthProvider({ children }) {
     return { error }
   }
 
+  async function updateAvatarUrl(url) {
+    const { data, error } = await supabase.auth.updateUser({ data: { avatar_url: url } })
+    if (!error && data?.user) {
+      setUser(data.user)
+      setProfile(prev => prev ? { ...prev, avatar_url: url } : prev)
+    }
+    return { error }
+  }
+
   async function updatePassword(newPassword) {
     const { data, error } = await supabase.auth.updateUser({
       password: newPassword,
@@ -323,6 +332,7 @@ export function AuthProvider({ children }) {
     signOut,
     sendPasswordResetEmail,
     updatePassword,
+    updateAvatarUrl,
     authenticatedFetch,
     supabase,
   }

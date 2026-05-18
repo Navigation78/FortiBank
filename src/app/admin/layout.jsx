@@ -66,7 +66,7 @@ function AdminSidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
   const Content = () => (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="flex items-center justify-between px-4 py-5 border-b border-slate-800">
+      <div className="flex items-center justify-between px-4 h-[90px] border-b border-slate-800">
         {!collapsed && (
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -86,31 +86,15 @@ function AdminSidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
         </button>
       </div>
 
-      {/* Admin badge */}
-      {!collapsed && (
-        <div className="px-4 py-3 border-b border-slate-800">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-green-500/20 border border-green-500/30 flex items-center justify-center flex-shrink-0">
-              <span className="text-green-400 font-semibold text-sm">
-                {adminDisplayName.charAt(0)}
-              </span>
-            </div>
-            <div className="min-w-0">
-              <p className="text-white text-sm font-medium truncate">{adminDisplayName}</p>
-              <p className="text-green-400 text-xs">System Administrator</p>
-            </div>
-          </div>
-        </div>
-      )}
-
+    
       {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-3 py-5 space-y-2 overflow-y-auto">
         {NAV_ITEMS.map(item => (
           <Link
             key={item.href}
             href={item.href}
             onClick={() => setMobileOpen(false)}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+            className={`flex items-center gap-3.5 px-4 py-3 rounded-lg text-base font-medium transition-all ${
               isActive(item)
                 ? 'bg-green-600 text-white shadow-lg shadow-green-600/20'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800'
@@ -124,15 +108,7 @@ function AdminSidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
       </nav>
 
       {/* Bottom links */}
-      <div className="px-3 py-4 border-t border-slate-800 space-y-1">
-        <Link
-          href="/admin/reports"
-          className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-slate-800 transition-all ${collapsed ? 'justify-center' : ''}`}
-          title={collapsed ? 'Employee dashboards' : undefined}
-        >
-          <Icon path="M15 12a3 3 0 11-6 0 3 3 0 016 0z" className="w-4 h-4" />
-          {!collapsed && <span className="text-xs">Employee dashboards</span>}
-        </Link>
+      <div className="px-3 py-4 border-t border-slate-800">
         <button
           onClick={signOut}
           className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-red-400 hover:bg-red-400/10 transition-all w-full ${collapsed ? 'justify-center' : ''}`}

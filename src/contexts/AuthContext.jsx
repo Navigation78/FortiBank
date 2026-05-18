@@ -174,7 +174,7 @@ export function AuthProvider({ children }) {
     if (!authInitialized || loading) return
     if (!pathname) return
 
-    const publicRoutes = ['/', '/login', '/forgot-password', '/reset-password', '/unauthorized']
+    const publicRoutes = ['/', '/login', '/forgot-password', '/reset-password', '/unauthorized', '/privacy-policy', '/terms-of-use']
     const isPublicRoute = publicRoutes.some(route =>
       route === '/' ? pathname === '/' : pathname.startsWith(route)
     )

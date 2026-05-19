@@ -109,7 +109,7 @@ export default function CreateCampaignForm() {
           <button
             onClick={handleSendNow}
             disabled={sending}
-            className="w-full bg-red-600 hover:bg-red-500 disabled:bg-red-600/50 text-white font-medium rounded-lg py-2.5 text-sm transition-all duration-150"
+            className="w-full bg-green-600 hover:bg-green-500 disabled:bg-green-600/50 text-white font-medium rounded-lg py-2.5 text-sm transition-all duration-150"
           >
             {sending ? 'Sending emails...' : 'Send Campaign Now'}
           </button>
@@ -207,7 +207,7 @@ export default function CreateCampaignForm() {
                     onClick={() => toggleRole(role.id)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
                       selectedRoles.includes(role.id)
-                        ? 'bg-red-600/20 border-red-500/40 text-red-300'
+                        ? 'bg-green-600/20 border-green-500/40 text-green-300'
                         : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white'
                     }`}
                   >

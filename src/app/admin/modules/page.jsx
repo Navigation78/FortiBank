@@ -15,7 +15,6 @@ export default function AdminModulesPage() {
   const supabase        = createClient()
   const [modules, setModules] = useState([])
   const [loading, setLoading] = useState(true)
-  const [resequenceLoading, setResequenceLoading] = useState(false)
 
   useEffect(() => { fetchModules() }, [])
 
@@ -46,26 +45,6 @@ export default function AdminModulesPage() {
     }
   }
 
-  async function resequenceModules() {
-    const confirmed = confirm(
-      'This will renumber all module codes from FBM001 upward using the current list order. Continue?'
-    )
-    if (!confirmed) return
-
-    setResequenceLoading(true)
-    const response = await fetch('/api/admin/modules/resequence', {
-      method: 'POST',
-    })
-    setResequenceLoading(false)
-
-    if (response.ok) {
-      fetchModules()
-    } else {
-      const data = await response.json()
-      alert(data.error || 'Failed to resequence modules')
-    }
-  }
-
   function formatModuleCode(orderIndex) {
     return orderIndex ? `FBM${String(orderIndex).padStart(3, '0')}` : '-'
   }
@@ -79,14 +58,6 @@ export default function AdminModulesPage() {
             <p className="text-slate-400 text-sm mt-0.5">{modules.length} total modules</p>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={resequenceModules}
-              disabled={resequenceLoading}
-              className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-60 text-slate-300 rounded-lg text-sm font-medium transition-all duration-150"
-            >
-              {resequenceLoading ? 'Resequencing...' : 'Resequence Codes'}
-            </button>
             <Link
               href="/admin/modules/create"
               className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-all duration-150"

@@ -13,8 +13,9 @@ const STATUS_COLORS = {
 }
 
 export default function AdminPhishingPage() {
-  const [campaigns, setCampaigns] = useState([])
-  const [loading, setLoading]     = useState(true)
+  const [campaigns, setCampaigns]   = useState([])
+  const [loading, setLoading]       = useState(true)
+  const [resending, setResending]   = useState({})
 
   useEffect(() => { fetchCampaigns() }, [])
 
@@ -24,6 +25,15 @@ export default function AdminPhishingPage() {
     const data = await res.json()
     setCampaigns(data.campaigns || [])
     setLoading(false)
+  }
+
+  async function handleResend(campaignId) {
+    setResending(prev => ({ ...prev, [campaignId]: true }))
+    const res  = await fetch(`/api/admin/campaigns/${campaignId}/resend`, { method: 'POST' })
+    const data = await res.json()
+    setResending(prev => ({ ...prev, [campaignId]: false }))
+    alert(data.message || (res.ok ? 'Resend complete.' : 'Resend failed.'))
+    if (res.ok) fetchCampaigns()
   }
 
   return (
@@ -36,7 +46,7 @@ export default function AdminPhishingPage() {
           </div>
           <Link
             href="/admin/phishing/create"
-            className="flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm font-medium transition-all duration-150"
+            className="flex items-center gap-2 px-4 py-2.5 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm font-medium transition-all duration-150"
           >
             <Plus className="w-4 h-4" />
             New Campaign
@@ -84,10 +94,21 @@ export default function AdminPhishingPage() {
                       </span>
                     </td>
                     <td className="px-5 py-3">
-                      <Link href={`/admin/phishing/${c.campaign_id}`} className="text-blue-400 hover:text-blue-300 text-xs font-medium flex items-center gap-1">
-                        View
-                        <ArrowRight className="w-3 h-3" />
-                      </Link>
+                      <div className="flex items-center gap-3">
+                        <Link href={`/admin/phishing/${c.campaign_id}`} className="text-blue-400 hover:text-blue-300 text-xs font-medium flex items-center gap-1">
+                          View
+                          <ArrowRight className="w-3 h-3" />
+                        </Link>
+                        {c.status !== 'draft' && (
+                          <button
+                            onClick={() => handleResend(c.campaign_id)}
+                            disabled={resending[c.campaign_id]}
+                            className="text-green-400 hover:text-green-300 disabled:opacity-50 text-xs font-medium transition-all duration-150"
+                          >
+                            {resending[c.campaign_id] ? 'Sending...' : 'Resend'}
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}

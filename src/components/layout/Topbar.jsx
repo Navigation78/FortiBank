@@ -19,7 +19,9 @@ function Icon({ path, className = "w-5 h-5" }) {
   )
 }
 
-export default function Topbar({ toggleSidebar, isCollapsed, toggleMobileSidebar }) {
+const SEARCH_ICON = 'M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z'
+
+export default function Topbar({ toggleSidebar, isCollapsed, toggleMobileSidebar, search = '', setSearch }) {
   const { profile, signOut } = useAuth()
   const { role } = useRole()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -64,8 +66,45 @@ export default function Topbar({ toggleSidebar, isCollapsed, toggleMobileSidebar
         </div>
       </div>
 
-      {/* Right: Risk score + profile */}
+      {/* Right: Search + Risk score + profile */}
       <div className="ml-auto flex items-center gap-3">
+        {/* Search bar */}
+        <div className="hidden sm:block" style={{ position: 'relative', width: 200 }}>
+          <input
+            type="text"
+            value={search}
+            onChange={e => setSearch?.(e.target.value)}
+            placeholder="Search"
+            style={{
+              width: '100%', boxSizing: 'border-box',
+              background: 'rgba(255,255,255,0.07)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              borderRadius: 10,
+              padding: '8px 36px 8px 14px',
+              color: '#fff',
+              fontSize: 13,
+              outline: 'none',
+              transition: 'border-color 0.2s, background 0.2s',
+              letterSpacing: '0.01em',
+            }}
+            onFocus={e => {
+              e.target.style.borderColor = 'rgba(59,111,240,0.7)'
+              e.target.style.background  = 'rgba(255,255,255,0.10)'
+            }}
+            onBlur={e => {
+              e.target.style.borderColor = 'rgba(255,255,255,0.12)'
+              e.target.style.background  = 'rgba(255,255,255,0.07)'
+            }}
+          />
+          <div style={{
+            position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
+            color: 'rgba(255,255,255,0.35)', pointerEvents: 'none',
+            display: 'flex', alignItems: 'center',
+          }}>
+            <Icon path={SEARCH_ICON} className="w-3.5 h-3.5" />
+          </div>
+        </div>
+
         <Link
           href="/risk-score"
           className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-white/[0.14] rounded-lg transition-all duration-150"

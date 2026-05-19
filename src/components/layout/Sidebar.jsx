@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useAuth } from '@/hooks/useAuth'
 import { useRole } from '@/hooks/useRole'
 import { getDashboardUrl } from '@/utils/roleRedirect'
 
@@ -67,9 +66,7 @@ function IconBtn({ onClick, title, children }) {
   )
 }
 
-function SidebarInner({ collapsed, onToggle, navItems, isActive, darkMode, setDarkMode, onSignOut, onCloseMobile }) {
-  const [search, setSearch] = useState('')
-
+function SidebarInner({ collapsed, onToggle, navItems, isActive, darkMode, setDarkMode, onCloseMobile, search = '' }) {
   const filtered = search.trim()
     ? navItems.filter(item => item.label.toLowerCase().includes(search.toLowerCase()))
     : navItems
@@ -81,52 +78,12 @@ function SidebarInner({ collapsed, onToggle, navItems, isActive, darkMode, setDa
       <div style={{
         padding: '16px 10px 8px',
         display: 'flex',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         flexShrink: 0,
       }}>
         <IconBtn onClick={onToggle} title="Toggle sidebar">
           <Icon path={ICONS.menu} className="w-5 h-5" />
         </IconBtn>
-      </div>
-
-      {/* Search */}
-      <div style={{ padding: '0 10px 10px', flexShrink: 0 }}>
-        {collapsed ? (
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <IconBtn onClick={onToggle} title="Search (expand sidebar)">
-              <Icon path={ICONS.search} className="w-4 h-4" />
-            </IconBtn>
-          </div>
-        ) : (
-          <div style={{ position: 'relative' }}>
-            <div style={{
-              position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)',
-              color: 'rgba(255,255,255,0.4)', pointerEvents: 'none',
-              display: 'flex', alignItems: 'center',
-            }}>
-              <Icon path={ICONS.search} className="w-3.5 h-3.5" />
-            </div>
-            <input
-              type="text"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Search menu..."
-              style={{
-                width: '100%', boxSizing: 'border-box',
-                background: 'rgba(255,255,255,0.05)',
-                border: '0.5px solid rgba(255,255,255,0.1)',
-                borderRadius: 8,
-                padding: '7px 10px 7px 30px',
-                color: '#fff',
-                fontSize: 12,
-                outline: 'none',
-                transition: 'border-color 0.15s',
-              }}
-              onFocus={e => { e.target.style.borderColor = 'rgba(59,111,240,0.6)' }}
-              onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.1)' }}
-            />
-          </div>
-        )}
       </div>
 
       {/* Nav items */}
@@ -172,7 +129,7 @@ function SidebarInner({ collapsed, onToggle, navItems, isActive, darkMode, setDa
       <Divider />
 
       {/* Theme toggle */}
-      <div style={{ padding: '8px 10px', flexShrink: 0 }}>
+      <div style={{ padding: '8px 10px', paddingBottom: 20, flexShrink: 0 }}>
         {collapsed ? (
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <IconBtn
@@ -209,47 +166,12 @@ function SidebarInner({ collapsed, onToggle, navItems, isActive, darkMode, setDa
         )}
       </div>
 
-      <Divider />
-
-      {/* Logout */}
-      <div style={{ padding: '8px 10px', paddingBottom: 20, flexShrink: 0 }}>
-        <button
-          onClick={onSignOut}
-          title={collapsed ? 'Logout' : undefined}
-          style={{
-            width: '100%', background: 'none', border: 'none', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            gap: collapsed ? 0 : 10,
-            padding: '10px 12px',
-            borderRadius: 10,
-            color: '#fff',
-            fontSize: 14,
-            transition: 'background 0.15s',
-            opacity: 0.7,
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.background = 'rgba(239,68,68,0.12)'
-            e.currentTarget.style.opacity = '1'
-            e.currentTarget.style.color = '#f87171'
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.background = 'transparent'
-            e.currentTarget.style.opacity = '0.7'
-            e.currentTarget.style.color = '#fff'
-          }}
-        >
-          <Icon path={ICONS.logout} className="w-5 h-5 flex-shrink-0" />
-          {!collapsed && <span style={{ flex: 1 }}>Logout</span>}
-        </button>
-      </div>
-
     </div>
   )
 }
 
-export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, setIsMobileOpen }) {
+export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, setIsMobileOpen, search = '' }) {
   const pathname = usePathname()
-  const { signOut } = useAuth()
   const { role } = useRole()
   const [darkMode, setDarkMode] = useState(true)
 
@@ -267,8 +189,8 @@ export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, setIsMobi
 
   const sharedProps = {
     navItems, isActive, darkMode, setDarkMode,
-    onSignOut: signOut,
     onCloseMobile: () => setIsMobileOpen(false),
+    search,
   }
 
   return (
@@ -290,7 +212,7 @@ export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, setIsMobi
 
       {/* Desktop sidebar */}
       <aside
-        className={`hidden lg:flex flex-col relative flex-shrink-0 h-screen transition-all duration-200 ${isCollapsed ? 'w-[68px]' : 'w-64'}`}
+        className={`hidden lg:flex flex-col relative flex-shrink-0 h-full transition-all duration-200 ${isCollapsed ? 'w-[68px]' : 'w-64'}`}
         style={{ background: '#1a2035' }}
       >
         <SidebarInner {...sharedProps} collapsed={isCollapsed} onToggle={onToggle} />

@@ -49,7 +49,6 @@ const NAV_ITEMS = [
 
 const ICONS = {
   menu:   'M4 6h16M4 12h16M4 18h16',
-  logout: 'M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1',
   sun:    'M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z',
   moon:   'M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z',
   search: 'M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z',
@@ -82,9 +81,7 @@ function IconBtn({ onClick, title, children }) {
   )
 }
 
-function SidebarInner({ collapsed, onToggle, isActive, darkMode, setDarkMode, onSignOut, onCloseMobile }) {
-  const [search, setSearch] = useState('')
-
+function SidebarInner({ collapsed, onToggle, isActive, darkMode, setDarkMode, onCloseMobile, search }) {
   const filtered = search.trim()
     ? NAV_ITEMS.filter(item => item.label.toLowerCase().includes(search.toLowerCase()))
     : NAV_ITEMS
@@ -92,56 +89,16 @@ function SidebarInner({ collapsed, onToggle, isActive, darkMode, setDarkMode, on
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
 
-      {/* Hamburger */}
+      {/* Hamburger — pinned to far left */}
       <div style={{
         padding: '16px 10px 8px',
         display: 'flex',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         flexShrink: 0,
       }}>
         <IconBtn onClick={onToggle} title="Toggle sidebar">
           <Icon path={ICONS.menu} className="w-5 h-5" />
         </IconBtn>
-      </div>
-
-      {/* Search */}
-      <div style={{ padding: '0 10px 10px', flexShrink: 0 }}>
-        {collapsed ? (
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <IconBtn onClick={onToggle} title="Search (expand sidebar)">
-              <Icon path={ICONS.search} className="w-4 h-4" />
-            </IconBtn>
-          </div>
-        ) : (
-          <div style={{ position: 'relative' }}>
-            <div style={{
-              position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)',
-              color: 'rgba(255,255,255,0.4)', pointerEvents: 'none',
-              display: 'flex', alignItems: 'center',
-            }}>
-              <Icon path={ICONS.search} className="w-3.5 h-3.5" />
-            </div>
-            <input
-              type="text"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Search menu..."
-              style={{
-                width: '100%', boxSizing: 'border-box',
-                background: 'rgba(255,255,255,0.05)',
-                border: '0.5px solid rgba(255,255,255,0.1)',
-                borderRadius: 8,
-                padding: '7px 10px 7px 30px',
-                color: '#fff',
-                fontSize: 12,
-                outline: 'none',
-                transition: 'border-color 0.15s',
-              }}
-              onFocus={e => { e.target.style.borderColor = 'rgba(59,111,240,0.6)' }}
-              onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.1)' }}
-            />
-          </div>
-        )}
       </div>
 
       {/* Nav items */}
@@ -163,7 +120,7 @@ function SidebarInner({ collapsed, onToggle, isActive, darkMode, setDarkMode, on
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
+                justifyContent: collapsed ? 'center' : 'flex-start',
                 gap: collapsed ? 0 : 10,
                 padding: '10px 12px',
                 borderRadius: 10,
@@ -187,7 +144,7 @@ function SidebarInner({ collapsed, onToggle, isActive, darkMode, setDarkMode, on
       <Divider />
 
       {/* Theme toggle */}
-      <div style={{ padding: '8px 10px', flexShrink: 0 }}>
+      <div style={{ padding: '8px 10px', paddingBottom: 20, flexShrink: 0 }}>
         {collapsed ? (
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <IconBtn
@@ -224,45 +181,11 @@ function SidebarInner({ collapsed, onToggle, isActive, darkMode, setDarkMode, on
         )}
       </div>
 
-      <Divider />
-
-      {/* Logout */}
-      <div style={{ padding: '8px 10px', paddingBottom: 20, flexShrink: 0 }}>
-        <button
-          onClick={onSignOut}
-          title={collapsed ? 'Logout' : undefined}
-          style={{
-            width: '100%', background: 'none', border: 'none', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            gap: collapsed ? 0 : 10,
-            padding: '10px 12px',
-            borderRadius: 10,
-            color: '#fff',
-            fontSize: 14,
-            transition: 'background 0.15s',
-            opacity: 0.7,
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.background = 'rgba(239,68,68,0.12)'
-            e.currentTarget.style.opacity = '1'
-            e.currentTarget.style.color = '#f87171'
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.background = 'transparent'
-            e.currentTarget.style.opacity = '0.7'
-            e.currentTarget.style.color = '#fff'
-          }}
-        >
-          <Icon path={ICONS.logout} className="w-5 h-5 flex-shrink-0" />
-          {!collapsed && <span style={{ flex: 1 }}>Logout</span>}
-        </button>
-      </div>
-
     </div>
   )
 }
 
-function AdminSidebar({ isCollapsed, onToggle, isMobileOpen, setIsMobileOpen }) {
+function AdminSidebar({ isCollapsed, onToggle, isMobileOpen, setIsMobileOpen, search }) {
   const pathname = usePathname()
   const { signOut } = useAuth()
   const [darkMode, setDarkMode] = useState(true)
@@ -274,8 +197,8 @@ function AdminSidebar({ isCollapsed, onToggle, isMobileOpen, setIsMobileOpen }) 
 
   const sharedProps = {
     isActive, darkMode, setDarkMode,
-    onSignOut: signOut,
     onCloseMobile: () => setIsMobileOpen(false),
+    search,
   }
 
   return (
@@ -287,7 +210,7 @@ function AdminSidebar({ isCollapsed, onToggle, isMobileOpen, setIsMobileOpen }) 
         />
       )}
 
-      {/* Mobile sidebar - hamburger closes the drawer */}
+      {/* Mobile sidebar */}
       <aside
         className={`lg:hidden fixed top-0 left-0 h-full z-50 w-64 transform transition-transform duration-200 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
         style={{ background: '#1a2035' }}
@@ -295,9 +218,9 @@ function AdminSidebar({ isCollapsed, onToggle, isMobileOpen, setIsMobileOpen }) 
         <SidebarInner {...sharedProps} collapsed={false} onToggle={() => setIsMobileOpen(false)} />
       </aside>
 
-      {/* Desktop sidebar - hamburger toggles collapse */}
+      {/* Desktop sidebar — h-full so it only occupies space below the topbar */}
       <aside
-        className={`hidden lg:flex flex-col relative flex-shrink-0 h-screen transition-all duration-200 ${isCollapsed ? 'w-[68px]' : 'w-64'}`}
+        className={`hidden lg:flex flex-col relative flex-shrink-0 h-full transition-all duration-200 ${isCollapsed ? 'w-[68px]' : 'w-64'}`}
         style={{ background: '#1a2035' }}
       >
         <SidebarInner {...sharedProps} collapsed={isCollapsed} onToggle={onToggle} />
@@ -306,17 +229,17 @@ function AdminSidebar({ isCollapsed, onToggle, isMobileOpen, setIsMobileOpen }) 
   )
 }
 
-function AdminTopbar({ toggleMobileSidebar }) {
+function AdminTopbar({ toggleMobileSidebar, search, setSearch }) {
   const { profile, signOut } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
 
-  const firstName  = profile?.full_name?.split(' ')[0] || 'User'
+  const firstName   = profile?.full_name?.split(' ')[0] || 'User'
   const userInitial = profile?.full_name?.charAt(0) || 'U'
 
   return (
-    <header className="bg-slate-900 border-b border-white/[0.06] flex items-center px-4 py-3 sticky top-0 z-30 shadow-sm shadow-black/40">
+    <header className="bg-slate-900 border-b border-white/[0.06] flex items-center px-4 py-3 z-30 shadow-sm shadow-black/40 flex-shrink-0">
       <div className="flex items-center gap-4">
-        {/* Mobile-only hamburger - desktop one lives in the sidebar */}
+        {/* Mobile-only hamburger */}
         <button
           onClick={toggleMobileSidebar}
           className="lg:hidden flex items-center justify-center text-white transition-all duration-150 p-1 rounded-lg hover:bg-white/[0.08]"
@@ -342,6 +265,42 @@ function AdminTopbar({ toggleMobileSidebar }) {
       </div>
 
       <div className="ml-auto flex items-center gap-3">
+        {/* Search bar — right side of nav */}
+        <div className="hidden sm:block" style={{ position: 'relative', width: 200 }}>
+          <input
+            type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search"
+            style={{
+              width: '100%', boxSizing: 'border-box',
+              background: 'rgba(255,255,255,0.07)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              borderRadius: 10,
+              padding: '8px 36px 8px 14px',
+              color: '#fff',
+              fontSize: 13,
+              outline: 'none',
+              transition: 'border-color 0.2s, background 0.2s',
+              letterSpacing: '0.01em',
+            }}
+            onFocus={e => {
+              e.target.style.borderColor = 'rgba(59,111,240,0.7)'
+              e.target.style.background  = 'rgba(255,255,255,0.10)'
+            }}
+            onBlur={e => {
+              e.target.style.borderColor = 'rgba(255,255,255,0.12)'
+              e.target.style.background  = 'rgba(255,255,255,0.07)'
+            }}
+          />
+          <div style={{
+            position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
+            color: 'rgba(255,255,255,0.35)', pointerEvents: 'none',
+            display: 'flex', alignItems: 'center',
+          }}>
+            <Icon path={ICONS.search} className="w-3.5 h-3.5" />
+          </div>
+        </div>
         <div className="relative">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -385,20 +344,28 @@ function AdminTopbar({ toggleMobileSidebar }) {
 export default function AdminLayout({ children }) {
   const [isCollapsed, setIsCollapsed]   = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const [search, setSearch]             = useState('')
 
-  const toggleSidebar = () => setIsCollapsed(c => !c)
+  const toggleSidebar       = () => setIsCollapsed(c => !c)
   const toggleMobileSidebar = () => setIsMobileOpen(o => !o)
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#080f1e]">
-      <AdminSidebar
-        isCollapsed={isCollapsed}
-        onToggle={toggleSidebar}
-        isMobileOpen={isMobileOpen}
-        setIsMobileOpen={setIsMobileOpen}
+    <div className="flex flex-col h-screen overflow-hidden bg-[#080f1e]">
+      {/* Topbar spans full width at the top — FortiBank logo always far left */}
+      <AdminTopbar
+        toggleMobileSidebar={toggleMobileSidebar}
+        search={search}
+        setSearch={setSearch}
       />
-      <div className="flex flex-col flex-1 min-w-0 min-h-0">
-        <AdminTopbar toggleMobileSidebar={toggleMobileSidebar} />
+      {/* Sidebar + content row sits below the topbar */}
+      <div className="flex flex-1 min-h-0">
+        <AdminSidebar
+          isCollapsed={isCollapsed}
+          onToggle={toggleSidebar}
+          isMobileOpen={isMobileOpen}
+          setIsMobileOpen={setIsMobileOpen}
+          search={search}
+        />
         <div className="flex-1 overflow-y-auto">
           {children}
         </div>

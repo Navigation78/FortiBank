@@ -21,7 +21,7 @@ export async function POST(request, { params }) {
   const admin = await verifyAdmin(request)
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { campaignId } = params
+  const { campaignId } = await params
 
   const { data: campaign, error: campaignError } = await supabaseAdmin
     .from('phishing_campaigns')

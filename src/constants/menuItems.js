@@ -32,11 +32,6 @@ export const EMPLOYEE_NAV_ITEMS = [
     icon:  'cert',
     href:  '/certificates',
   },
-  {
-    label: 'Profile',
-    icon:  'profile',
-    href:  '/profile',
-  },
 ]
 
 export const ADMIN_NAV_ITEMS = [

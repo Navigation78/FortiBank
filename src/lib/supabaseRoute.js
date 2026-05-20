@@ -1,6 +1,4 @@
-import { createServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
-import { cookies } from 'next/headers'
 
 export function getBearerToken(request) {
   const authHeader = request?.headers?.get('Authorization')
@@ -8,48 +6,26 @@ export function getBearerToken(request) {
   return authHeader.slice('Bearer '.length)
 }
 
-export async function createRouteClient(request) {
-  const token = getBearerToken(request)
-
-  if (token) {
-    return {
-      token,
-      tabId: request.headers.get('X-Tab-ID'),
-      supabase: createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-        {
-          auth: {
-            persistSession: false,
-            autoRefreshToken: false,
-          },
-          global: {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        }
-      ),
-    }
-  }
-
-  const cookieStore = await cookies()
-  const supabase = createServerClient(
+function makeSupabaseClient(bearerToken) {
+  return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
-      cookies: {
-        getAll: () => cookieStore.getAll(),
-        setAll: (cookiesToSet) => {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
-          )
-        },
-      },
+      auth: { persistSession: false, autoRefreshToken: false },
+      ...(bearerToken && {
+        global: { headers: { Authorization: `Bearer ${bearerToken}` } },
+      }),
     }
   )
+}
 
-  return { token: null, tabId: request?.headers?.get('X-Tab-ID') ?? null, supabase }
+export async function createRouteClient(request) {
+  const token = getBearerToken(request)
+  return {
+    token,
+    tabId: request?.headers?.get('X-Tab-ID') ?? null,
+    supabase: makeSupabaseClient(token),
+  }
 }
 
 export async function getRouteUser(request) {

@@ -54,60 +54,30 @@ const ICONS = {
   search: 'M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z',
 }
 
-const ACTIVE_BG   = '#3B6FF0'
-const HOVER_BG    = 'rgba(59,111,240,0.15)'
-const DIVIDER_CLR = 'rgba(255,255,255,0.08)'
-
-function Divider() {
-  return <div style={{ height: '0.5px', background: DIVIDER_CLR, margin: '6px 12px' }} />
-}
-
-function IconBtn({ onClick, title, children }) {
-  return (
-    <button
-      onClick={onClick}
-      title={title}
-      style={{
-        background: 'none', border: 'none', cursor: 'pointer',
-        color: '#fff', display: 'flex', alignItems: 'center',
-        justifyContent: 'center', borderRadius: 8, padding: 7,
-        transition: 'background 0.15s',
-      }}
-      onMouseEnter={e => { e.currentTarget.style.background = HOVER_BG }}
-      onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
-    >
-      {children}
-    </button>
-  )
-}
-
 function SidebarInner({ collapsed, onToggle, isActive, darkMode, setDarkMode, onCloseMobile, search }) {
   const filtered = search.trim()
     ? NAV_ITEMS.filter(item => item.label.toLowerCase().includes(search.toLowerCase()))
     : NAV_ITEMS
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <div className="flex flex-col h-full">
 
-      {/* Hamburger — pinned to far left */}
-      <div style={{
-        padding: '16px 10px 8px',
-        display: 'flex',
-        justifyContent: 'flex-start',
-        flexShrink: 0,
-      }}>
-        <IconBtn onClick={onToggle} title="Toggle sidebar">
+      {/* Hamburger */}
+      <div className="flex justify-start px-2.5 pt-4 pb-2 flex-shrink-0">
+        <button
+          onClick={onToggle}
+          title="Toggle sidebar"
+          className="flex items-center justify-center text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-white/[0.06] transition-all duration-150"
+        >
           <Icon path={ICONS.menu} className="w-5 h-5" />
-        </IconBtn>
+        </button>
       </div>
 
       {/* Nav items */}
-      <nav style={{ flex: 1, padding: '0 10px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <nav className="flex-1 px-2.5 overflow-y-auto flex flex-col gap-0.5">
         {filtered.length === 0 ? (
           !collapsed && (
-            <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, textAlign: 'center', padding: '12px 0' }}>
-              No results
-            </p>
+            <p className="text-slate-500 text-xs text-center py-3">No results</p>
           )
         ) : filtered.map(item => {
           const active = isActive(item)
@@ -117,45 +87,37 @@ function SidebarInner({ collapsed, onToggle, isActive, darkMode, setDarkMode, on
               href={item.href}
               onClick={onCloseMobile}
               title={collapsed ? item.label : undefined}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: collapsed ? 'center' : 'flex-start',
-                gap: collapsed ? 0 : 10,
-                padding: '10px 12px',
-                borderRadius: 10,
-                textDecoration: 'none',
-                background: active ? ACTIVE_BG : 'transparent',
-                color: '#fff',
-                fontWeight: active ? 500 : 400,
-                fontSize: 14,
-                transition: 'background 0.15s',
-              }}
-              onMouseEnter={e => { if (!active) e.currentTarget.style.background = HOVER_BG }}
-              onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent' }}
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 no-underline
+                ${collapsed ? 'justify-center' : ''}
+                ${active
+                  ? 'bg-blue-600 text-white'
+                  : 'text-slate-400 hover:text-white hover:bg-white/[0.06]'
+                }`}
             >
               <Icon path={item.icon} className="w-5 h-5 flex-shrink-0" />
-              {!collapsed && <span style={{ flex: 1 }}>{item.label}</span>}
+              {!collapsed && <span className="flex-1">{item.label}</span>}
             </Link>
           )
         })}
       </nav>
 
-      <Divider />
+      {/* Divider */}
+      <div className="mx-3 my-1.5 border-t border-white/[0.06]" />
 
       {/* Theme toggle */}
-      <div style={{ padding: '8px 10px', paddingBottom: 20, flexShrink: 0 }}>
+      <div className="px-2.5 pb-5 flex-shrink-0">
         {collapsed ? (
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <IconBtn
+          <div className="flex justify-center">
+            <button
               onClick={() => setDarkMode(d => !d)}
               title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+              className="flex items-center justify-center text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-white/[0.06] transition-all duration-150"
             >
               <Icon path={darkMode ? ICONS.moon : ICONS.sun} className="w-4 h-4" />
-            </IconBtn>
+            </button>
           </div>
         ) : (
-          <div style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', borderRadius: 8, padding: 3, gap: 2 }}>
+          <div className="flex bg-white/[0.04] border border-white/[0.08] rounded-lg p-0.5 gap-0.5">
             {[
               { label: 'Light', icon: 'sun',  value: false },
               { label: 'Dark',  icon: 'moon', value: true  },
@@ -164,15 +126,11 @@ function SidebarInner({ collapsed, onToggle, isActive, darkMode, setDarkMode, on
                 key={opt.label}
                 onClick={() => setDarkMode(opt.value)}
                 title={`${opt.label} mode`}
-                style={{
-                  flex: 1, border: 'none', cursor: 'pointer',
-                  background: darkMode === opt.value ? 'rgba(255,255,255,0.1)' : 'transparent',
-                  color: '#fff',
-                  borderRadius: 6, padding: '6px 0',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  transition: 'background 0.15s',
-                  opacity: darkMode === opt.value ? 1 : 0.45,
-                }}
+                className={`flex-1 flex items-center justify-center py-1.5 rounded-md transition-all duration-150
+                  ${darkMode === opt.value
+                    ? 'bg-white/[0.1] text-white'
+                    : 'text-slate-500 hover:text-slate-300'
+                  }`}
               >
                 <Icon path={ICONS[opt.icon]} className="w-4 h-4" />
               </button>
@@ -187,7 +145,6 @@ function SidebarInner({ collapsed, onToggle, isActive, darkMode, setDarkMode, on
 
 function AdminSidebar({ isCollapsed, onToggle, isMobileOpen, setIsMobileOpen, search }) {
   const pathname = usePathname()
-  const { signOut } = useAuth()
   const [darkMode, setDarkMode] = useState(true)
 
   function isActive(item) {
@@ -212,16 +169,14 @@ function AdminSidebar({ isCollapsed, onToggle, isMobileOpen, setIsMobileOpen, se
 
       {/* Mobile sidebar */}
       <aside
-        className={`lg:hidden fixed top-0 left-0 h-full z-50 w-64 transform transition-transform duration-200 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
-        style={{ background: '#1a2035' }}
+        className={`lg:hidden fixed top-0 left-0 h-full z-50 w-60 bg-slate-900 border-r border-white/[0.06] transform transition-transform duration-200 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         <SidebarInner {...sharedProps} collapsed={false} onToggle={() => setIsMobileOpen(false)} />
       </aside>
 
-      {/* Desktop sidebar — h-full so it only occupies space below the topbar */}
+      {/* Desktop sidebar */}
       <aside
-        className={`hidden lg:flex flex-col relative flex-shrink-0 h-full transition-all duration-200 ${isCollapsed ? 'w-[68px]' : 'w-64'}`}
-        style={{ background: '#1a2035' }}
+        className={`hidden lg:flex flex-col relative flex-shrink-0 h-full bg-slate-900 border-r border-white/[0.06] transition-all duration-200 ${isCollapsed ? 'w-[60px]' : 'w-60'}`}
       >
         <SidebarInner {...sharedProps} collapsed={isCollapsed} onToggle={onToggle} />
       </aside>

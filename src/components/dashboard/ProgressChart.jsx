@@ -6,8 +6,8 @@ import Link from 'next/link'
 
 export default function ProgressChart({ modules = [], loading = false }) {
   const total = modules.length
-  const completed = modules.filter(m => m.status === 'completed').length
-  const inProgress = modules.filter(m => m.status === 'in_progress').length
+  const completed = modules.filter(m => (m.progress?.status ?? m.status) === 'completed').length
+  const inProgress = modules.filter(m => (m.progress?.status ?? m.status) === 'in_progress').length
   const pct = total > 0 ? Math.round((completed / total) * 100) : 0
 
   if (loading) {
@@ -52,33 +52,35 @@ export default function ProgressChart({ modules = [], loading = false }) {
 
       {modules.length > 0 ? (
         <div className="space-y-2.5">
-          {modules.slice(0, 5).map((module) => (
-            <div key={module.id} className="flex items-center gap-3">
-              <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                module.status === 'completed'  ? 'bg-green-400' :
-                module.status === 'in_progress' ? 'bg-yellow-400' :
-                'bg-slate-600'
-              }`} />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-slate-300 text-xs truncate">{module.title}</p>
-                  <span className="text-slate-400 text-xs flex-shrink-0">
-                    {module.progress_pct || 0}%
-                  </span>
-                </div>
-                <div className="h-1 bg-slate-700 rounded-full mt-1 overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all ${
-                      module.status === 'completed'  ? 'bg-green-500' :
-                      module.status === 'in_progress' ? 'bg-yellow-500' :
-                      'bg-slate-600'
-                    }`}
-                    style={{ width: `${module.progress_pct || 0}%` }}
-                  />
+          {modules.slice(0, 5).map((module) => {
+            const status = module.progress?.status ?? module.status
+            const progressPct = module.progress?.progress_pct ?? module.progress_pct ?? 0
+            return (
+              <div key={module.id} className="flex items-center gap-3">
+                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                  status === 'completed'   ? 'bg-green-400' :
+                  status === 'in_progress' ? 'bg-yellow-400' :
+                  'bg-slate-600'
+                }`} />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-slate-300 text-xs truncate">{module.title}</p>
+                    <span className="text-slate-400 text-xs flex-shrink-0">{progressPct}%</span>
+                  </div>
+                  <div className="h-1 bg-slate-700 rounded-full mt-1 overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        status === 'completed'   ? 'bg-green-500' :
+                        status === 'in_progress' ? 'bg-yellow-500' :
+                        'bg-slate-600'
+                      }`}
+                      style={{ width: `${progressPct}%` }}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       ) : (
         <div className="text-center py-4">

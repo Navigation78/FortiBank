@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import Sidebar from '@/components/layout/Sidebar'
 import Topbar from '@/components/layout/Topbar'
-import Footer from '@/components/layout/Footer'
 
 export default function DashboardLayout({ children }) {
   const [isCollapsed, setIsCollapsed] = useState(false)
@@ -34,7 +33,6 @@ export default function DashboardLayout({ children }) {
           <div className="flex-1 overflow-y-auto">
             {children}
           </div>
-          <Footer />
         </div>
       </div>
     </div>

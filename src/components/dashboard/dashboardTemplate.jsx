@@ -177,13 +177,11 @@ export default function DashboardTemplate({
                     const Icon = area.icon
                     return (
                       <div key={i} className="flex items-start gap-3">
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${area.iconBg}`}>
-                          {typeof area.icon === 'string' ? (
-                            <span className="text-sm">{area.icon}</span>
-                          ) : (
-                            <Icon className="w-4 h-4" />
-                          )}
-                        </div>
+                        {typeof area.icon === 'string' ? (
+                          <span className="text-sm flex-shrink-0">{area.icon}</span>
+                        ) : (
+                          <Icon className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
+                        )}
                         <div>
                           <p className="text-slate-200 text-sm font-medium">{area.title}</p>
                           <p className="text-slate-400 text-xs mt-0.5">{area.description}</p>

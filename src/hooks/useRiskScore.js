@@ -21,14 +21,10 @@ export function useRiskScore() {
 
   useEffect(() => {
     if (!user) return
-    fetchRiskScore()
+    loadRiskScore()
   }, [user])
 
-  async function fetchRiskScore() {
-    setLoading(true)
-    setError(null)
-
-    // Latest score
+  async function fetchFromDB() {
     const { data: latestData, error: latestError } = await supabase
       .from('risk_scores')
       .select('*')
@@ -38,8 +34,24 @@ export function useRiskScore() {
       .maybeSingle()
 
     if (latestError && latestError.code !== 'PGRST116') {
-      // PGRST116 = no rows found - that's fine for new users
       setError(latestError.message)
+    }
+
+    return latestData || null
+  }
+
+  async function loadRiskScore() {
+    setLoading(true)
+    setError(null)
+
+    let latestData = await fetchFromDB()
+
+    // No score yet — calculate from real data now
+    if (!latestData) {
+      const res = await fetch('/api/risk-score', { method: 'POST' })
+      if (res.ok) {
+        latestData = await fetchFromDB()
+      }
     }
 
     if (latestData) {
@@ -53,6 +65,36 @@ export function useRiskScore() {
     }
 
     // Score history (last 10)
+    const { data: historyData } = await supabase
+      .from('risk_scores')
+      .select('composite_score, phishing_score, quiz_score, calculated_at')
+      .eq('user_id', user.id)
+      .order('calculated_at', { ascending: false })
+      .limit(10)
+
+    if (historyData) {
+      setHistory(formatScoreHistory(historyData.reverse()))
+    }
+
+    setLoading(false)
+  }
+
+  async function fetchRiskScore() {
+    setLoading(true)
+    setError(null)
+
+    const latestData = await fetchFromDB()
+
+    if (latestData) {
+      setLatest({
+        ...latestData,
+        composite_score: Math.round(latestData.composite_score),
+        phishing_score:  Math.round(latestData.phishing_score),
+        quiz_score:      Math.round(latestData.quiz_score),
+        riskLevel:       getRiskLevel(Math.round(latestData.composite_score), role),
+      })
+    }
+
     const { data: historyData } = await supabase
       .from('risk_scores')
       .select('composite_score, phishing_score, quiz_score, calculated_at')

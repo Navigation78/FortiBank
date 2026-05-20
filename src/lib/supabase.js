@@ -2,7 +2,12 @@ import { createBrowserClient } from '@supabase/ssr'
 import { getTabId } from '@/lib/tabSession'
 
 let browserClient
-const SESSION_STORAGE_KEY = 'supabase-auth-token'
+
+// Per-tab localStorage key: tab ID (from sessionStorage) keeps tabs isolated
+// while localStorage persists the session across F5 reloads and tab reopens.
+function getSessionKey() {
+  return `supabase-auth-token-${getTabId() || 'default'}`
+}
 
 function createRuntimeClientKey() {
   const tabId = getTabId()
@@ -28,21 +33,21 @@ export function createClient() {
         storage: {
           getItem: () => {
             try {
-              return sessionStorage.getItem(SESSION_STORAGE_KEY)
+              return localStorage.getItem(getSessionKey())
             } catch {
               return null
             }
           },
           setItem: (_key, value) => {
             try {
-              sessionStorage.setItem(SESSION_STORAGE_KEY, value)
+              localStorage.setItem(getSessionKey(), value)
             } catch {
               // Ignore storage errors.
             }
           },
           removeItem: () => {
             try {
-              sessionStorage.removeItem(SESSION_STORAGE_KEY)
+              localStorage.removeItem(getSessionKey())
             } catch {
               // Ignore storage errors.
             }

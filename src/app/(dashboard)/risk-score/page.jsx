@@ -3,7 +3,6 @@
 // src/app/(dashboard)/risk-score/page.jsx
 // Full risk score breakdown with history and recommendations
 
-import Topbar from '@/components/layout/Topbar'
 import PageWrapper from '@/components/layout/PageWrapper'
 import RiskScoreGauge from '@/components/dashboard/RiskScoreGauge'
 import { useRiskScore } from '@/hooks/useRiskScore'
@@ -19,9 +18,7 @@ export default function RiskScorePage() {
   const recommendation = getRiskRecommendation(riskLevel?.level || 'low')
 
   return (
-    <>
-      <Topbar title="My Risk Score" />
-      <PageWrapper>
+    <PageWrapper>
 
         <div className="max-w-4xl mx-auto space-y-6">
 
@@ -182,6 +179,5 @@ export default function RiskScorePage() {
 
         </div>
       </PageWrapper>
-    </>
   )
 }

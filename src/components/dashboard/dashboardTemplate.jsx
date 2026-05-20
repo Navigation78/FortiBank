@@ -22,14 +22,13 @@ export default function DashboardTemplate({
   const { profile, user, supabase } = useAuthContext()
   const { modules, loading: modulesLoading, stats } = useModules()
 
-  const [riskScore, setRiskScore]   = useState(0)
-  const [alert, setAlert]           = useState(null)
-  const [activities, setActivities] = useState([])
+  const [riskScore, setRiskScore]     = useState(null)
+  const [alert, setAlert]             = useState(null)
+  const [activities, setActivities]   = useState([])
   const [riskLoading, setRiskLoading] = useState(true)
 
   const firstName = profile?.full_name?.split(' ')[0] || 'there'
 
-  // Fetch latest risk score and alerts
   useEffect(() => {
     if (!user) return
     fetchRiskData()
@@ -38,32 +37,27 @@ export default function DashboardTemplate({
 
   async function fetchRiskData() {
     setRiskLoading(true)
-
-    // Latest risk score
-    const { data: scoreData } = await supabase
-      .from('risk_scores')
-      .select('composite_score, is_warning, is_critical, calculated_at')
-      .eq('user_id', user.id)
-      .order('calculated_at', { ascending: false })
-      .limit(1)
-      .maybeSingle()
-
-    if (scoreData) {
-      setRiskScore(Math.round(scoreData.composite_score))
-
-      // Check for active alert
-      if (scoreData.is_critical) {
-        setAlert({ severity: 'critical', riskScore: Math.round(scoreData.composite_score) })
-      } else if (scoreData.is_warning) {
-        setAlert({ severity: 'warning', riskScore: Math.round(scoreData.composite_score) })
+    try {
+      const res = await fetch('/api/risk-score')
+      if (res.ok) {
+        const { score } = await res.json()
+        if (score) {
+          const value = Math.round(score.composite_score)
+          setRiskScore(value)
+          if (score.is_critical) {
+            setAlert({ severity: 'critical', riskScore: value })
+          } else if (score.is_warning) {
+            setAlert({ severity: 'warning', riskScore: value })
+          }
+        }
       }
+    } catch {
+      // network error — leave riskScore as null
     }
-
     setRiskLoading(false)
   }
 
   async function fetchRecentActivity() {
-    // Fetch recent quiz attempts
     const { data: attempts } = await supabase
       .from('quiz_attempts')
       .select(`
@@ -109,10 +103,10 @@ export default function DashboardTemplate({
     },
     {
       title:    'Risk Score',
-      value:    riskLoading ? '-' : riskScore,
-      subtitle: riskLoading ? 'Loading...' : getRiskLabel(riskScore),
+      value:    riskLoading ? '-' : (riskScore ?? 'N/A'),
+      subtitle: riskLoading ? '' : getRiskLabel(riskScore),
       icon:     Shield,
-      color:    riskScore >= 63 ? 'red' : riskScore >= 45 ? 'yellow' : 'green',
+      color:    riskScore === null ? 'blue' : riskScore >= 63 ? 'red' : riskScore >= 45 ? 'yellow' : 'green',
     },
     {
       title:    'Overall Progress',
@@ -207,8 +201,9 @@ function getTimeOfDay() {
 }
 
 function getRiskLabel(score) {
-  if (score >= 63) return 'High risk - take action'
+  if (score === null) return 'No score yet'
+  if (score >= 63) return 'High risk — take action'
   if (score >= 45) return 'Medium risk'
-  if (score > 0)   return 'Low risk - well done'
-  return 'No data yet'
+  if (score > 0)   return 'Low risk — well done'
+  return 'Score pending'
 }

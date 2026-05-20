@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
+import NotificationBell from '@/components/notifications/NotificationBell'
 
 function Icon({ path, className = 'w-5 h-5' }) {
   return (
@@ -45,6 +46,11 @@ const NAV_ITEMS = [
     href:  '/admin/reports',
     icon:  'M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
   },
+  {
+    label: 'Notifications',
+    href:  '/admin/notifications',
+    icon:  'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9',
+  },
 ]
 
 const ICONS = {
@@ -63,13 +69,13 @@ function SidebarInner({ collapsed, onToggle, isActive, darkMode, setDarkMode, on
     <div className="flex flex-col h-full">
 
       {/* Hamburger */}
-      <div className="flex justify-start px-2.5 pt-4 pb-2 flex-shrink-0">
+      <div className="px-2.5 pt-3 pb-1 flex-shrink-0">
         <button
           onClick={onToggle}
           title="Toggle sidebar"
-          className="flex items-center justify-center text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-white/[0.06] transition-all duration-150"
+          className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-all duration-150 ${collapsed ? 'justify-center' : ''}`}
         >
-          <Icon path={ICONS.menu} className="w-5 h-5" />
+          <Icon path={ICONS.menu} className="w-5 h-5 flex-shrink-0" />
         </button>
       </div>
 
@@ -220,6 +226,8 @@ function AdminTopbar({ toggleMobileSidebar, search, setSearch }) {
       </div>
 
       <div className="ml-auto flex items-center gap-3">
+        <NotificationBell inboxHref="/admin/notifications" />
+
         {/* Search bar — right side of nav */}
         <div className="hidden sm:block" style={{ position: 'relative', width: 200 }}>
           <input

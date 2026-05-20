@@ -9,6 +9,7 @@ import { generateCertificatePDF } from '@/lib/pdfGenerator'
 import { uploadCertificate } from '@/lib/storage'
 import { sendCertificateEmail } from '@/lib/email'
 import { getRouteUser } from '@/lib/supabaseRoute'
+import { createNotification, NOTIFICATION_TYPES } from '@/lib/notificationService'
 
 export async function GET(request) {
   const { user, supabase } = await getRouteUser(request)
@@ -169,6 +170,15 @@ export async function POST(request) {
     roleName:      roleData.display_name,
     certificateNo: certNo,
     issuedAt:      now.toISOString(),
+  })
+
+  // In-app notification for the awarded certificate
+  await createNotification({
+    userId:  user.id,
+    title:   'Certificate awarded!',
+    message: `Congratulations! You have earned your ${roleData.display_name} training certificate (No. ${certNo}). Valid for one year.`,
+    type:    NOTIFICATION_TYPES.CERTIFICATE,
+    link:    '/certificates',
   })
 
   return NextResponse.json({

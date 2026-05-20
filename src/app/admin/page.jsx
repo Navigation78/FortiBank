@@ -73,7 +73,7 @@ export default function AdminHomePage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatsCard title="Active Employees" value={loading ? '-' : stats?.totalUsers}        icon={Users}      color="blue"   />
           <StatsCard title="Published Modules" value={loading ? '-' : stats?.publishedModules} icon={BookOpen}  color="green"  />
-          <StatsCard title="Active Campaigns"  value={loading ? '-' : stats?.activeCampaigns}  icon={Fish}      color="yellow" />
+          <StatsCard title="Active Phishing Campaigns"  value={loading ? '-' : stats?.activeCampaigns}  icon={Fish}      color="yellow" />
           <StatsCard title="Critical Risk Users" value={loading ? '-' : stats?.criticalUsers}  icon={AlertOctagon} color="red"  />
         </div>
 
@@ -116,7 +116,7 @@ export default function AdminHomePage() {
                 <div className="space-y-3">
                   {[
                     { label: 'Total modules',         value: stats?.totalModules,    sub: `${stats?.publishedModules} published` },
-                    { label: 'Total campaigns',        value: stats?.totalCampaigns,  sub: `${stats?.activeCampaigns} active` },
+                    { label: 'Total phishing campaigns',        value: stats?.totalCampaigns,  sub: `${stats?.activeCampaigns} active` },
                     { label: 'Average risk score',     value: stats?.avgRiskScore,    sub: 'across all employees' },
                     { label: 'Employees at critical',  value: stats?.criticalUsers,   sub: 'require immediate attention', alert: stats?.criticalUsers > 0 },
                   ].map((item, i) => (

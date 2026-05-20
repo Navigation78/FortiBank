@@ -7,6 +7,7 @@ import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { sendRiskAlertEmail } from '@/lib/email'
 import { getRouteUser } from '@/lib/supabaseRoute'
+import { createNotification, NOTIFICATION_TYPES } from '@/lib/notificationService'
 
 export async function GET(request) {
   const { user, error: authError, supabase } = await getRouteUser(request)
@@ -59,6 +60,8 @@ export async function POST(request) {
       .single()
 
     if (!recentAlert) {
+      const alertMessage = `Your risk score of ${Math.round(newScore.composite_score)} has exceeded the ${severity} threshold.`
+
       // Create alert record
       const { data: alert } = await supabaseAdmin
         .from('risk_alerts')
@@ -67,10 +70,19 @@ export async function POST(request) {
           risk_score_id: newScore.id,
           severity,
           status:        'active',
-          message:       `Your risk score of ${Math.round(newScore.composite_score)} has exceeded the ${severity} threshold.`,
+          message:       alertMessage,
         })
         .select()
         .single()
+
+      // In-app notification for the risk alert
+      await createNotification({
+        userId:  user.id,
+        title:   severity === 'critical' ? 'Critical risk alert' : 'Risk score warning',
+        message: alertMessage + ' Please complete your training modules to reduce your risk score.',
+        type:    NOTIFICATION_TYPES.RISK_ALERT,
+        link:    '/risk-score',
+      })
 
       // Send alert email
       const { data: profile } = await supabaseAdmin

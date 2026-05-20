@@ -5,6 +5,7 @@
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { getRouteUser } from '@/lib/supabaseRoute'
+import { notifyUsersWithRoles, NOTIFICATION_TYPES } from '@/lib/notificationService'
 
 async function verifyAdmin(request) {
   const { user } = await getRouteUser(request)
@@ -35,7 +36,7 @@ export async function PUT(request, { params }) {
 
   const { data: existingModule, error: fetchError } = await supabaseAdmin
     .from('modules')
-    .select('id')
+    .select('id, status, title')
     .eq('id', moduleId)
     .single()
 
@@ -97,6 +98,19 @@ export async function PUT(request, { params }) {
 
   if (roleAccessError) {
     return NextResponse.json({ error: roleAccessError.message }, { status: 500 })
+  }
+
+  // Notify target role users when a draft is newly published
+  const wasPublished = existingModule.status !== 'published' && (status || 'draft') === 'published'
+  if (wasPublished && uniqueRoleIds.length > 0) {
+    await notifyUsersWithRoles(uniqueRoleIds, {
+      title:   `New module available: ${title}`,
+      message: description
+        ? `A new training module has been assigned to you: "${title}". ${description}`
+        : `A new training module has been assigned to you: "${title}". Log in to start learning.`,
+      type:    NOTIFICATION_TYPES.MODULE,
+      link:    `/modules/${moduleId}`,
+    })
   }
 
   return NextResponse.json({ module: updatedModule })

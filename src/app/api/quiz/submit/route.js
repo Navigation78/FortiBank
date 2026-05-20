@@ -6,6 +6,7 @@
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { getRouteUser } from '@/lib/supabaseRoute'
+import { createNotification, NOTIFICATION_TYPES } from '@/lib/notificationService'
 
 export async function POST(request) {
   const { user, error: authError } = await getRouteUser(request)
@@ -133,6 +134,18 @@ export async function POST(request) {
 
   // 8. Recalculate risk score
   await supabaseAdmin.rpc('calculate_user_risk_score', { p_user_id: user.id })
+
+  // 8b. Notify user of their quiz result
+  const passed = attempt.passed
+  await createNotification({
+    userId:  user.id,
+    title:   passed ? 'Quiz passed!' : 'Quiz submitted',
+    message: passed
+      ? `You scored ${scorePct}% — well done! You have passed this quiz.`
+      : `You scored ${scorePct}%. The passing score is ${quiz.pass_score}%.${attemptNumber < quiz.max_attempts ? ' You may retake the quiz.' : ' No more attempts remaining.'}`,
+    type:    NOTIFICATION_TYPES.QUIZ,
+    link:    `/modules`,
+  })
 
   // 9. Return results with correct answers revealed
   const questionsWithAnswers = quiz.quiz_questions.map(q => ({

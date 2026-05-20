@@ -6,6 +6,7 @@
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
+import { createNotification, NOTIFICATION_TYPES } from '@/lib/notificationService'
 
 export async function POST(request) {
   const body = await request.json()
@@ -52,6 +53,15 @@ export async function POST(request) {
     // Recalculate risk score for this user
     await supabaseAdmin.rpc('calculate_user_risk_score', {
       p_user_id: target.user_id,
+    })
+
+    // Notify the employee — this is a teachable moment
+    await createNotification({
+      userId:  target.user_id,
+      title:   'Phishing simulation alert',
+      message: 'You clicked a simulated phishing link. This was a security awareness test. Please review the phishing awareness module to learn how to spot suspicious emails.',
+      type:    NOTIFICATION_TYPES.PHISHING,
+      link:    '/results',
     })
 
     return NextResponse.json({ recorded: true })

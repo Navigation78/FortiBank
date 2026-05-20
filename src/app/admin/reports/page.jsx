@@ -141,9 +141,7 @@ export default function EmployeeDashboardsPage() {
             return (
               <section key={category.title}>
                 <div className="flex items-center gap-3 mb-3">
-                  <div className={`w-9 h-9 rounded-lg ${category.bg} ${category.border} border flex items-center justify-center`}>
-                    <CategoryIcon className={`w-5 h-5 ${category.color}`} />
-                  </div>
+                  <CategoryIcon className="w-5 h-5 text-white" />
                   <h3 className="text-white font-semibold">{category.title}</h3>
                 </div>
 
@@ -160,7 +158,7 @@ export default function EmployeeDashboardsPage() {
                         <div className="flex items-start justify-between gap-4">
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
-                              <ShieldCheck className={`w-4 h-4 ${category.color} flex-shrink-0`} />
+                              <ShieldCheck className="w-4 h-4 text-white flex-shrink-0" />
                               <h4 className="text-white font-semibold text-sm truncate">{ROLE_LABELS[role]}</h4>
                             </div>
                             <p className="text-slate-400 text-xs mt-2">

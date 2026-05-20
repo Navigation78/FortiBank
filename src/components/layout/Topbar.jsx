@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { useRole } from '@/hooks/useRole'
 import { ROLE_LABELS } from '@/constants/roles'
+import NotificationBell from '@/components/notifications/NotificationBell'
 
 function Icon({ path, className = "w-5 h-5" }) {
   return (
@@ -112,6 +113,8 @@ export default function Topbar({ toggleSidebar, isCollapsed, toggleMobileSidebar
           <div className="w-2 h-2 rounded-full bg-green-400" />
           <span className="text-slate-300 text-xs font-medium">Risk Score</span>
         </Link>
+
+        <NotificationBell inboxHref="/notifications" />
 
         <div className="relative">
           <button

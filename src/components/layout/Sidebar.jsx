@@ -22,6 +22,7 @@ const ICONS = {
   cert:      'M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z',
   profile:   'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
   results:   'M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
+  bell:      'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9',
   logout:    'M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1',
   menu:      'M4 6h16M4 12h16M4 18h16',
   sun:       'M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z',
@@ -35,7 +36,7 @@ const NAV_ITEMS = [
   { label: 'Risk Score',     icon: 'risk',      href: '/risk-score' },
   { label: 'Results',        icon: 'results',   href: '/results' },
   { label: 'Certificates',   icon: 'cert',      href: '/certificates' },
-  { label: 'Profile',        icon: 'profile',   href: '/profile' },
+  { label: 'Notifications',  icon: 'bell',      href: '/notifications' },
 ]
 
 function SidebarInner({ collapsed, onToggle, navItems, isActive, darkMode, setDarkMode, onCloseMobile, search = '' }) {
@@ -47,13 +48,13 @@ function SidebarInner({ collapsed, onToggle, navItems, isActive, darkMode, setDa
     <div className="flex flex-col h-full">
 
       {/* Hamburger */}
-      <div className="flex justify-start px-2.5 pt-4 pb-2 flex-shrink-0">
+      <div className="px-2.5 pt-3 pb-1 flex-shrink-0">
         <button
           onClick={onToggle}
           title="Toggle sidebar"
-          className="flex items-center justify-center text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-white/[0.06] transition-all duration-150"
+          className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-all duration-150 ${collapsed ? 'justify-center' : ''}`}
         >
-          <Icon path={ICONS.menu} className="w-5 h-5" />
+          <Icon path={ICONS.menu} className="w-5 h-5 flex-shrink-0" />
         </button>
       </div>
 

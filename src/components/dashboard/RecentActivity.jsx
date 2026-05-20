@@ -47,20 +47,7 @@ export default function RecentActivity({ activities = [], loading = false }) {
         <div className="space-y-3">
           {activities.map((activity, i) => (
             <div key={i} className="flex items-start gap-3">
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                activity.type === 'quiz_passed'    ? 'bg-green-500/15' :
-                activity.type === 'quiz_failed'    ? 'bg-red-500/15' :
-                activity.type === 'module_done'    ? 'bg-blue-500/15' :
-                activity.type === 'phishing_click' ? 'bg-orange-500/15' :
-                'bg-white/[0.05]'
-              }`}>
-                <svg className={`w-4 h-4 ${
-                  activity.type === 'quiz_passed'    ? 'text-green-400' :
-                  activity.type === 'quiz_failed'    ? 'text-red-400' :
-                  activity.type === 'module_done'    ? 'text-blue-400' :
-                  activity.type === 'phishing_click' ? 'text-orange-400' :
-                  'text-slate-400'
-                }`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4 text-white flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={
                     activity.type === 'quiz_passed'    ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' :
                     activity.type === 'quiz_failed'    ? 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z' :
@@ -68,8 +55,7 @@ export default function RecentActivity({ activities = [], loading = false }) {
                     activity.type === 'phishing_click' ? 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' :
                     'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
                   } />
-                </svg>
-              </div>
+              </svg>
 
               <div className="flex-1 min-w-0">
                 <p className="text-slate-200 text-sm">{activity.title}</p>

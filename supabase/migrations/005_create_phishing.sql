@@ -1,14 +1,86 @@
--- 
+--
+-- 005_create_phishing.sql
+-- Phishing simulation campaigns, targets, click events, and campaign stats view
+--
+
+-- ── Phishing Campaigns ───────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.phishing_campaigns (
+  id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name                TEXT NOT NULL,
+  description         TEXT,
+  email_subject       TEXT NOT NULL,
+  email_sender_name   TEXT NOT NULL DEFAULT 'IT Helpdesk',
+  email_sender_addr   TEXT NOT NULL DEFAULT 'helpdesk@fortibank-it.com',
+  email_body_html     TEXT NOT NULL,
+  target_role_ids     INT[],
+  status              TEXT NOT NULL DEFAULT 'draft'
+                        CHECK (status IN ('draft','scheduled','active','completed')),
+  created_by          UUID REFERENCES public.users(id) ON DELETE SET NULL,
+  started_at          TIMESTAMPTZ,
+  created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- ── Phishing Targets ─────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.phishing_targets (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  campaign_id     UUID NOT NULL REFERENCES public.phishing_campaigns(id) ON DELETE CASCADE,
+  user_id         UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+  result          TEXT NOT NULL DEFAULT 'not_sent'
+                    CHECK (result IN ('not_sent','sent','opened','clicked','reported')),
+  tracking_token  TEXT UNIQUE DEFAULT encode(gen_random_bytes(16), 'hex'),
+  sent_at         TIMESTAMPTZ,
+  opened_at       TIMESTAMPTZ,
+  clicked_at      TIMESTAMPTZ,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE(campaign_id, user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_phishing_targets_user  ON public.phishing_targets (user_id);
+CREATE INDEX IF NOT EXISTS idx_phishing_targets_token ON public.phishing_targets (tracking_token);
+
+-- ── Phishing Click Events ────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.phishing_click_events (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  target_id    UUID NOT NULL REFERENCES public.phishing_targets(id) ON DELETE CASCADE,
+  event_type   TEXT NOT NULL CHECK (event_type IN ('opened','clicked')),
+  occurred_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- ── Campaign Stats View ──────────────────────────────────────
+DROP VIEW IF EXISTS public.campaign_stats;
+CREATE VIEW public.campaign_stats WITH (security_invoker = true) AS
+SELECT
+  c.id                                                        AS campaign_id,
+  c.name,
+  c.description,
+  c.email_subject,
+  c.email_sender_name,
+  c.email_sender_addr,
+  c.status,
+  c.target_role_ids,
+  c.created_by,
+  c.created_at,
+  c.started_at,
+  COUNT(t.id)                                                 AS total_targets,
+  COUNT(t.id) FILTER (WHERE t.result != 'not_sent')          AS sent_count,
+  COUNT(t.id) FILTER (WHERE t.result = 'opened')             AS opened_count,
+  COUNT(t.id) FILTER (WHERE t.result = 'clicked')            AS clicked_count,
+  COUNT(t.id) FILTER (WHERE t.result = 'reported')           AS reported_count
+FROM public.phishing_campaigns c
+LEFT JOIN public.phishing_targets t ON t.campaign_id = c.id
+GROUP BY c.id;
+
+-- ── Risk Score Snapshots (originally in 006 draft) ───────────
 -- 006_create_risk_scores.sql
 -- Risk score calculation, snapshots, alerts, and certificates
--- 
+--
 
 -- ── Risk Score Snapshots ─────────────────────────────────────
 -- Recalculated periodically (e.g. nightly) or on key events
 -- Formula: (phishing_score * 0.6) + (quiz_score * 0.4)
 -- Higher score = higher risk
 
-CREATE TABLE public.risk_scores (
+CREATE TABLE IF NOT EXISTS public.risk_scores (
   id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id             UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
 
@@ -35,14 +107,21 @@ CREATE TABLE public.risk_scores (
 );
 
 -- Index for fast latest-score lookups
-CREATE INDEX idx_risk_scores_user_latest
+CREATE INDEX IF NOT EXISTS idx_risk_scores_user_latest
   ON public.risk_scores (user_id, calculated_at DESC);
 
 -- ── Risk Alerts ──────────────────────────────────────────────
-CREATE TYPE public.alert_severity AS ENUM ('warning', 'critical');
-CREATE TYPE public.alert_status   AS ENUM ('active', 'acknowledged', 'resolved');
+DO $$ BEGIN
+  CREATE TYPE public.alert_severity AS ENUM ('warning', 'critical');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE TABLE public.risk_alerts (
+DO $$ BEGIN
+  CREATE TYPE public.alert_status AS ENUM ('active', 'acknowledged', 'resolved');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+CREATE TABLE IF NOT EXISTS public.risk_alerts (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id         UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
   risk_score_id   UUID NOT NULL REFERENCES public.risk_scores(id) ON DELETE CASCADE,
@@ -61,7 +140,7 @@ CREATE TABLE public.risk_alerts (
 -- Awarded when a user completes all modules assigned to their role
 -- AND has passed all associated quizzes
 
-CREATE TABLE public.certificates (
+CREATE TABLE IF NOT EXISTS public.certificates (
   id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id           UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
   role_id           INT  NOT NULL REFERENCES public.roles(id) ON DELETE RESTRICT,
@@ -85,6 +164,7 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS trg_certificate_valid_until ON public.certificates;
 CREATE TRIGGER trg_certificate_valid_until
   BEFORE INSERT ON public.certificates
   FOR EACH ROW EXECUTE FUNCTION public.set_certificate_valid_until();
@@ -127,12 +207,9 @@ BEGIN
 
   -- 2. Quiz score: inverse of average best score (higher fail rate = higher risk)
   SELECT
-    COUNT(*)                    INTO v_quizzes_taken,
-    COUNT(*) FILTER (WHERE passed) INTO v_quizzes_passed -- placeholder, needs two selects
-  FROM public.user_quiz_best_scores
-  WHERE user_id = p_user_id;
-
-  SELECT COUNT(*) FILTER (WHERE passed) INTO v_quizzes_passed
+    COUNT(*),
+    COUNT(*) FILTER (WHERE passed)
+  INTO v_quizzes_taken, v_quizzes_passed
   FROM public.user_quiz_best_scores
   WHERE user_id = p_user_id;
 

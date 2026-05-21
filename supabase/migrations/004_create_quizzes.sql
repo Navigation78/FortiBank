@@ -1,14 +1,15 @@
--- ============================================================
 -- 004_create_quizzes.sql (Option 2 - Store pass_score locally)
--- ============================================================
 
-CREATE TYPE public.question_type AS ENUM (
-  'multiple_choice',
-  'multi_select',
-  'true_false'
-);
+DO $$ BEGIN
+  CREATE TYPE public.question_type AS ENUM (
+    'multiple_choice',
+    'multi_select',
+    'true_false'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE TABLE public.quizzes (
+CREATE TABLE IF NOT EXISTS public.quizzes (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   module_id       UUID NOT NULL REFERENCES public.modules(id) ON DELETE CASCADE,
   title           TEXT NOT NULL,
@@ -21,11 +22,12 @@ CREATE TABLE public.quizzes (
   UNIQUE(module_id)
 );
 
+DROP TRIGGER IF EXISTS quizzes_updated_at ON public.quizzes;
 CREATE TRIGGER quizzes_updated_at
   BEFORE UPDATE ON public.quizzes
   FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
 
-CREATE TABLE public.quiz_questions (
+CREATE TABLE IF NOT EXISTS public.quiz_questions (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   quiz_id         UUID NOT NULL REFERENCES public.quizzes(id) ON DELETE CASCADE,
   question_text   TEXT NOT NULL,
@@ -36,15 +38,16 @@ CREATE TABLE public.quiz_questions (
   created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE public.quiz_options (
+CREATE TABLE IF NOT EXISTS public.quiz_options (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   question_id     UUID NOT NULL REFERENCES public.quiz_questions(id) ON DELETE CASCADE,
   option_text     TEXT NOT NULL,
   is_correct      BOOLEAN NOT NULL DEFAULT FALSE,
+  explanation     TEXT,
   order_index     INT NOT NULL DEFAULT 0
 );
 
-CREATE TABLE public.quiz_attempts (
+CREATE TABLE IF NOT EXISTS public.quiz_attempts (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id         UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
   quiz_id         UUID NOT NULL REFERENCES public.quizzes(id) ON DELETE CASCADE,
@@ -56,7 +59,7 @@ CREATE TABLE public.quiz_attempts (
   submitted_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE public.quiz_attempt_answers (
+CREATE TABLE IF NOT EXISTS public.quiz_attempt_answers (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   attempt_id      UUID NOT NULL REFERENCES public.quiz_attempts(id) ON DELETE CASCADE,
   question_id     UUID NOT NULL REFERENCES public.quiz_questions(id) ON DELETE CASCADE,
@@ -64,7 +67,7 @@ CREATE TABLE public.quiz_attempt_answers (
   is_correct      BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-CREATE OR REPLACE VIEW public.user_quiz_best_scores AS
+CREATE OR REPLACE VIEW public.user_quiz_best_scores WITH (security_invoker = true) AS
 SELECT DISTINCT ON (user_id, quiz_id)
   user_id,
   quiz_id,

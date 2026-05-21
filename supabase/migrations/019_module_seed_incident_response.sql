@@ -8,13 +8,23 @@
 
 DO $$
 DECLARE
-  v_mod UUID:=gen_random_uuid();
-  v_c10 UUID:=gen_random_uuid(); v_c11 UUID:=gen_random_uuid(); v_c11q UUID:=gen_random_uuid();
-  v_c12 UUID:=gen_random_uuid(); v_c12q UUID:=gen_random_uuid();
-  v_c20 UUID:=gen_random_uuid(); v_c21 UUID:=gen_random_uuid(); v_c21q UUID:=gen_random_uuid();
-  v_c22 UUID:=gen_random_uuid(); v_c22q UUID:=gen_random_uuid();
-  v_cp1 UUID:=gen_random_uuid(); v_cp2 UUID:=gen_random_uuid(); v_fe UUID:=gen_random_uuid();
+  v_mod  UUID := gen_random_uuid();
+  v_c10  UUID := gen_random_uuid();
+  v_c11  UUID := gen_random_uuid();
+  v_c11q UUID := gen_random_uuid();
+  v_c12  UUID := gen_random_uuid();
+  v_c12q UUID := gen_random_uuid();
+  v_c20  UUID := gen_random_uuid();
+  v_c21  UUID := gen_random_uuid();
+  v_c21q UUID := gen_random_uuid();
+  v_c22  UUID := gen_random_uuid();
+  v_c22q UUID := gen_random_uuid();
+  v_cp1  UUID := gen_random_uuid();
+  v_cp2  UUID := gen_random_uuid();
+  v_fe   UUID := gen_random_uuid();
   vq UUID; va UUID; vb UUID; vc UUID; vd UUID;
+  r RECORD;
+  qids UUID[];
 BEGIN
 
 INSERT INTO public.modules (id,title,description,status,order_index,duration_mins) VALUES (
@@ -128,7 +138,7 @@ INSERT INTO public.module_content (id,module_id,title,content_type,content_body,
 );
 
 -- ─── Topic 1 Checkpoint ───────────────────────────────────────────────────────
-INSERT INTO public.quizzes (id,module_id,title,quiz_type,section_number,pass_mark,max_attempts,time_limit_mins) VALUES (
+INSERT INTO public.quizzes (id,module_id,title,quiz_type,section_number,pass_score,max_attempts,time_limit_mins) VALUES (
   v_cp1,v_mod,'Topic 1 Checkpoint: Incident Response Fundamentals','checkpoint','1.0',70,3,null
 );
 INSERT INTO public.quiz_questions (id,quiz_id,question_text,order_index) VALUES
@@ -138,45 +148,40 @@ INSERT INTO public.quiz_questions (id,quiz_id,question_text,order_index) VALUES
   (gen_random_uuid(),v_cp1,'A bank''s Incident Response Plan has not been tested or updated in three years. What is the primary risk this creates?',40),
   (gen_random_uuid(),v_cp1,'Which of the following best describes the purpose of severity classification in incident response?',50);
 
-DO $inner$
-DECLARE
-  r RECORD;
-BEGIN
-  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=(SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Incident Response Procedures') AND quiz_type='checkpoint' AND section_number='1.0') AND order_index=10;
+  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=v_cp1 AND order_index=10;
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),r.id,'Restart the computer to clear any temporary issues',false,'Restarting may destroy forensic evidence and could allow malware to re-establish persistence. Do not restart before the security team assesses.',10),
     (gen_random_uuid(),r.id,'Report it to the security team immediately without touching or powering off the computer',true,'Reporting immediately and leaving the system in its current state preserves forensic evidence. The security team can guide further actions. Taking independent action risks destroying evidence or worsening the situation.',20),
     (gen_random_uuid(),r.id,'Run a personal antivirus scan to confirm whether malware is present',false,'Personal antivirus scans may not detect sophisticated threats and can interfere with forensic investigation. Report first; let the security team investigate.',30),
     (gen_random_uuid(),r.id,'Disconnect the network cable and continue working offline',false,'While network isolation may eventually be appropriate, the employee should not make that decision unilaterally. Reporting to the security team is the correct first action.',40);
 
-  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=(SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Incident Response Procedures') AND quiz_type='checkpoint' AND section_number='1.0') AND order_index=20;
+  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=v_cp1 AND order_index=20;
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),r.id,'A security team member reviews an alert and decides it requires no action',false,'That is the outcome of event triage that results in no incident. An incident is confirmed when impact is established, not when it is ruled out.',10),
     (gen_random_uuid(),r.id,'An event is confirmed to have actually or potentially compromised the confidentiality, integrity, or availability of systems or data',true,'This is the definition of a security incident. The determination of actual or potential compromise moves an event from monitoring to active incident response.',20),
     (gen_random_uuid(),r.id,'The number of affected systems exceeds a defined threshold',false,'Severity thresholds classify incidents, but even a single affected system can constitute a confirmed incident if there is confirmed or potential compromise.',30),
     (gen_random_uuid(),r.id,'A customer reports an issue with their account',false,'Customer reports are one source of incident identification, but a report alone does not confirm an incident. Investigation must establish whether compromise occurred.',40);
 
-  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=(SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Incident Response Procedures') AND quiz_type='checkpoint' AND section_number='1.0') AND order_index=30;
+  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=v_cp1 AND order_index=30;
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),r.id,'Containment',false,'Containment stops spread. Eradication removes the threat itself; these are distinct and sequential phases.',10),
     (gen_random_uuid(),r.id,'Recovery',false,'Recovery restores systems after the threat is removed. Eradication must be completed before recovery begins.',20),
     (gen_random_uuid(),r.id,'Eradication',true,'Eradication is the phase focused on removing the root cause: deleting malware, patching exploited vulnerabilities, revoking unauthorized access, and confirming the threat actor has no remaining foothold.',30),
     (gen_random_uuid(),r.id,'Lessons Learned',false,'Lessons Learned is a retrospective phase that occurs after the incident is fully resolved.',40);
 
-  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=(SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Incident Response Procedures') AND quiz_type='checkpoint' AND section_number='1.0') AND order_index=40;
+  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=v_cp1 AND order_index=40;
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),r.id,'The plan may reference outdated contact details, roles, and systems, rendering it ineffective when needed most',true,'IRPs must reflect the current organization: current staff in defined roles, current systems, current regulatory requirements, and current threat landscape. An untested, outdated plan will not function correctly under the pressure of a real incident.',10),
     (gen_random_uuid(),r.id,'Regulators may fine the organization for the age of the document',false,'While regulators may assess the adequacy of an IRP, the primary risk of an outdated, untested plan is operational failure during an incident, not the document''s age per se.',20),
     (gen_random_uuid(),r.id,'The plan is less likely to be discovered in the event of a breach',false,'Document discoverability is not a security control. An undiscoverable plan is also an unusable plan.',30),
     (gen_random_uuid(),r.id,'There is no significant risk: incident response procedures are largely intuitive',false,'Without documentation, defined roles, and practice, incident response devolves into confusion and ad hoc decision-making under high pressure, with predictably poor outcomes.',40);
 
-  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=(SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Incident Response Procedures') AND quiz_type='checkpoint' AND section_number='1.0') AND order_index=50;
+  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=v_cp1 AND order_index=50;
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),r.id,'To determine which incidents to investigate and which to ignore',false,'All confirmed incidents require a response. Severity classification determines the urgency and scale of response, not whether to respond.',10),
     (gen_random_uuid(),r.id,'To ensure that response resources are scaled appropriately to the nature and impact of each incident',true,'Classification allows the organization to apply the right level of resource, urgency, and escalation to each incident, avoiding both under-response (missing serious incidents) and over-response (treating every alert as a crisis).',20),
     (gen_random_uuid(),r.id,'To rank incidents for annual reporting purposes',false,'While severity data may inform reporting, the primary purpose of real-time classification is operational: guiding the appropriate response.',30),
     (gen_random_uuid(),r.id,'To assign blame and accountability to responsible individuals',false,'Severity classification is an operational decision, not a blame mechanism. Root cause analysis and accountability come later in the Lessons Learned phase.',40);
-END $inner$;
 
 -- ═══ TOPIC 2 ═════════════════════════════════════════════════════════════════
 INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number,learning_objectives) VALUES (
@@ -300,7 +305,7 @@ INSERT INTO public.module_content (id,module_id,title,content_type,content_body,
 );
 
 -- ─── Topic 2 Checkpoint ───────────────────────────────────────────────────────
-INSERT INTO public.quizzes (id,module_id,title,quiz_type,section_number,pass_mark,max_attempts,time_limit_mins) VALUES (
+INSERT INTO public.quizzes (id,module_id,title,quiz_type,section_number,pass_score,max_attempts,time_limit_mins) VALUES (
   v_cp2,v_mod,'Topic 2 Checkpoint: Responding to Incidents','checkpoint','2.0',70,3,null
 );
 INSERT INTO public.quiz_questions (id,quiz_id,question_text,order_index) VALUES
@@ -310,48 +315,43 @@ INSERT INTO public.quiz_questions (id,quiz_id,question_text,order_index) VALUES
   (gen_random_uuid(),v_cp2,'Which of the following actions is explicitly prohibited during an active incident investigation?',40),
   (gen_random_uuid(),v_cp2,'An employee sees a post on social media from a colleague describing details of an ongoing incident at the bank. What is the most significant risk this creates?',50);
 
-DO $inner2$
-DECLARE
-  r RECORD;
-BEGIN
-  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=(SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Incident Response Procedures') AND quiz_type='checkpoint' AND section_number='2.0') AND order_index=10;
+  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=v_cp2 AND order_index=10;
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),r.id,'Nothing: MFA alerts sometimes appear by mistake and can be dismissed',false,'Unsolicited MFA push notifications are a strong indicator of credential compromise. They should never be approved and must always be reported.',10),
     (gen_random_uuid(),r.id,'The employee''s credentials were compromised; approving the push has potentially granted the attacker access. They should have denied the request and immediately reported it to the security team',true,'An unsolicited MFA push means someone knows the employee''s password and is attempting to authenticate. Approving it completes the attacker''s login. The correct response is to deny the push, not touch anything else, and report immediately.',20),
     (gen_random_uuid(),r.id,'The employee should have changed their password before reporting',false,'Changing the password without notifying the security team first disrupts coordinated investigation and may not prevent the attacker''s already-established session.',30),
     (gen_random_uuid(),r.id,'The MFA system has a bug that generates false pushes: IT should be notified',false,'While system bugs are possible, the appropriate response to an unexpected MFA push is always to treat it as a potential credential compromise, not to dismiss it as a technical error.',40);
 
-  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=(SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Incident Response Procedures') AND quiz_type='checkpoint' AND section_number='2.0') AND order_index=20;
+  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=v_cp2 AND order_index=20;
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),r.id,'Eradication delay',false,'Eradication delay would simply mean taking longer to remove the threat; it is not a deliberate strategic technique.',10),
     (gen_random_uuid(),r.id,'Controlled access: monitoring the attacker before intervening to gather intelligence',true,'Sometimes called "controlled observation" or a "honeypot-adjacent" technique, allowing monitored attacker access can reveal the full scope of compromise, the attacker''s objectives, and potentially their identity, before remediation locks them out.',20),
     (gen_random_uuid(),r.id,'Risk acceptance: deciding the account compromise is low severity',false,'This is a specific, active tactical decision to gather intelligence, not a risk acceptance.',30),
     (gen_random_uuid(),r.id,'A violation of incident response procedure: attackers must always be locked out immediately',false,'While many IRPs default to immediate lockout, controlled observation is a legitimate and sometimes valuable technique used by experienced IR teams under controlled conditions.',40);
 
-  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=(SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Incident Response Procedures') AND quiz_type='checkpoint' AND section_number='2.0') AND order_index=30;
+  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=v_cp2 AND order_index=30;
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),r.id,'That the ransom has been paid and decryption keys received',false,'Recovery must not depend on ransom payment. Verified clean backups are the correct restoration source.',10),
     (gen_random_uuid(),r.id,'That eradication is complete and the threat is fully removed from the environment',true,'Beginning recovery while the threat remains active risks re-infection of restored systems. Eradication must be confirmed: the malware removed, the vulnerability patched, the attacker''s access revoked, before any restored system is reconnected.',20),
     (gen_random_uuid(),r.id,'That customer notification has been sent',false,'Customer notification is a parallel obligation, not a prerequisite for technical recovery.',30),
     (gen_random_uuid(),r.id,'That the incident has been closed in the ticketing system',false,'Administrative closure should follow actual recovery, not precede it. The reality of eradication matters, not the ticket status.',40);
 
-  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=(SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Incident Response Procedures') AND quiz_type='checkpoint' AND section_number='2.0') AND order_index=40;
+  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=v_cp2 AND order_index=40;
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),r.id,'Reporting the incident to the security team',false,'Reporting is not just permitted; it is required. This is not a prohibited action.',10),
     (gen_random_uuid(),r.id,'Deleting logs, files, or messages that may be relevant to the investigation',true,'Evidence destruction during an active investigation is legally prohibited and potentially criminal, regardless of who requests it or what the content contains.',20),
     (gen_random_uuid(),r.id,'Changing your own compromised password when instructed by the security team',false,'Password changes directed by the security team as part of a coordinated response are appropriate and expected.',30),
     (gen_random_uuid(),r.id,'Notifying your manager that you have reported a suspected incident',false,'Keeping your manager informed through appropriate channels is acceptable and often encouraged.',40);
 
-  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=(SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Incident Response Procedures') AND quiz_type='checkpoint' AND section_number='2.0') AND order_index=50;
+  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=v_cp2 AND order_index=50;
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),r.id,'It provides useful transparency to the public about the bank''s security practices',false,'Unauthorized disclosure of active incident details is harmful, not helpful. Transparency is managed through authorized communication channels.',10),
     (gen_random_uuid(),r.id,'It may tip off the attacker, compromise the investigation, create regulatory issues, and damage customer trust before the bank can communicate officially',true,'Premature public disclosure of an active incident can: allow the attacker to adapt their tactics; compromise forensic investigation; trigger regulatory scrutiny for unauthorized disclosure; and create panic and reputational damage that authorized communications could have managed.',20),
     (gen_random_uuid(),r.id,'It is only a risk if the post goes viral',false,'Even a small-reach post can reach the wrong person, a journalist, the attacker, or a regulator, and cause disproportionate harm.',30),
     (gen_random_uuid(),r.id,'It is acceptable as long as no customer names are mentioned',false,'Operational details about an active incident are sensitive regardless of whether they include personal data. Disclosing that a bank is currently under a ransomware attack, without naming customers, is itself harmful.',40);
-END $inner2$;
 
 -- ═══ FINAL EXAM ══════════════════════════════════════════════════════════════
-INSERT INTO public.quizzes (id,module_id,title,quiz_type,pass_mark,max_attempts,time_limit_mins) VALUES (
+INSERT INTO public.quizzes (id,module_id,title,quiz_type,pass_score,max_attempts,time_limit_mins) VALUES (
   v_fe,v_mod,'Final Exam: Incident Response Procedures','final_exam',70,2,25
 );
 
@@ -372,14 +372,9 @@ INSERT INTO public.quiz_questions (id,quiz_id,question_text,order_index) VALUES
   (gen_random_uuid(),v_fe,'Recovery must use verified clean backups because:',140),
   (gen_random_uuid(),v_fe,'Which statement about incident response planning is most accurate?',150);
 
-DO $fe$
-DECLARE
-  r RECORD;
-  qids UUID[];
-BEGIN
   SELECT ARRAY_AGG(id ORDER BY order_index) INTO qids
   FROM public.quiz_questions
-  WHERE quiz_id = (SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Incident Response Procedures') AND quiz_type='final_exam');
+  WHERE quiz_id = v_fe;
 
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),qids[1],'Any alert generated by a security monitoring system',false,'Alerts are events, not incidents. An incident requires confirmed or potential compromise of systems, data, or policy.',10),
@@ -470,6 +465,4 @@ BEGIN
     (gen_random_uuid(),qids[15],'An IRP must be kept current and tested regularly; an untested or outdated plan will fail when needed most',true,'Plans that are never tested become outdated (wrong contacts, wrong systems, wrong procedures) and teams that have never rehearsed will underperform under the pressure of a real incident. Regular testing and updating are non-negotiable.',20),
     (gen_random_uuid(),qids[15],'Incident response planning is only required for organizations with dedicated security teams',false,'All organizations that process sensitive data, including every financial institution, require an IRP regardless of the size of their security function.',30),
     (gen_random_uuid(),qids[15],'A well-written IRP eliminates the need for incident response training',false,'Documentation and training are complementary. A plan that no one has practiced will not be executed effectively.',40);
-END $fe$;
-
 END $$;

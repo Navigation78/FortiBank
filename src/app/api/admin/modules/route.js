@@ -76,12 +76,15 @@ export async function POST(request) {
     const blocks = content_blocks
       .filter(b => b.title)
       .map((b, i) => ({
-        module_id:    module.id,
-        title:        b.title,
-        content_type: b.content_type,
-        content_url:  b.content_url || null,
-        content_body: b.content_body || null,
-        order_index:  i,
+        module_id:           module.id,
+        title:               b.title,
+        content_type:        b.content_type,
+        content_url:         b.content_url  || null,
+        content_body:        b.content_body || null,
+        order_index:         i,
+        section_number:      b.section_number      || null,
+        learning_objectives: b.learning_objectives || [],
+        image_caption:       b.image_caption       || null,
       }))
 
     if (blocks.length > 0) {

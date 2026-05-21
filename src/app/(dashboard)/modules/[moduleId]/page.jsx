@@ -1,17 +1,15 @@
 'use client'
 // src/app/(dashboard)/modules/[moduleId]/page.jsx
-// Individual module viewer page - NetAcad style.
-// Passes nextModule to viewer so it can show "Next Module" button.
+// Full-screen LMS viewer – no PageWrapper; uses LMSModuleViewer's own layout.
 
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import PageWrapper from '@/components/layout/PageWrapper'
-import ModuleViewer from '@/components/modules/ModuleViewer'
+import LMSModuleViewer from '@/components/modules/LMSModuleViewer'
 import { useModules } from '@/hooks/useModules'
 
 export default function ModuleViewerPage() {
-  const { moduleId }        = useParams()
+  const { moduleId }            = useParams()
   const { modules, fetchModuleById } = useModules()
 
   const [module, setModule]   = useState(null)
@@ -30,121 +28,65 @@ export default function ModuleViewerPage() {
     setLoading(false)
   }
 
-  // Find the next module in sequence
+  // Find next module in sequence
   const nextModule = (() => {
     if (!module || modules.length === 0) return null
-    const currentOrder = module.order_index
     return modules
-      .filter(m => m.order_index > currentOrder)
+      .filter(m => m.order_index > module.order_index)
       .sort((a, b) => a.order_index - b.order_index)[0] || null
   })()
 
+  // ── Loading skeleton ──────────────────────────────────────────────────────
   if (loading) {
     return (
-      <PageWrapper>
-        <div className="animate-pulse space-y-4 max-w-3xl">
-            <div className="h-5 bg-slate-800 rounded w-1/3" />
-            <div className="h-64 bg-slate-800 rounded-xl" />
+      <div className="flex min-h-full">
+        {/* Sidebar skeleton */}
+        <div className="w-72 flex-shrink-0 bg-slate-900 border-r border-white/[0.06] p-4 animate-pulse space-y-3">
+          <div className="h-3 bg-slate-800 rounded w-1/3 mb-5" />
+          <div className="h-4 bg-slate-800 rounded w-4/5" />
+          <div className="h-1.5 bg-slate-800 rounded mt-3" />
+          <div className="mt-6 space-y-2">
+            {[...Array(4)].map((_, i) => <div key={i} className="h-8 bg-slate-800 rounded-lg" />)}
           </div>
-        </PageWrapper>
+        </div>
+        {/* Content skeleton */}
+        <div className="flex-1 p-8 animate-pulse space-y-4">
+          <div className="h-4 bg-slate-800 rounded w-20 mb-6" />
+          <div className="h-7 bg-slate-800 rounded w-2/3" />
+          <div className="h-3 bg-slate-800 rounded w-1/3 mt-2" />
+          <div className="h-48 bg-slate-800 rounded-xl mt-6" />
+          <div className="space-y-2 mt-4">
+            <div className="h-3 bg-slate-800 rounded w-full" />
+            <div className="h-3 bg-slate-800 rounded w-5/6" />
+            <div className="h-3 bg-slate-800 rounded w-4/6" />
+          </div>
+        </div>
+      </div>
     )
   }
 
+  // ── Error / not found ─────────────────────────────────────────────────────
   if (error || !module) {
     return (
-      <PageWrapper>
-          <div className="text-center py-16">
-            <p className="text-slate-400 mb-4">
-              {error || 'This module could not be found or you do not have access.'}
-            </p>
-            <Link href="/modules" className="text-blue-400 hover:text-blue-300 text-sm">
-              ← Back to modules
-            </Link>
+      <div className="flex items-center justify-center min-h-full">
+        <div className="text-center py-16">
+          <div className="w-14 h-14 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-7 h-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5C3.312 18.333 4.274 20 5.814 20z" />
+            </svg>
           </div>
-        </PageWrapper>
+          <p className="text-slate-400 mb-4">
+            {error || 'This module could not be found or you do not have access.'}
+          </p>
+          <Link href="/modules" className="text-blue-400 hover:text-blue-300 text-sm">
+            ← Back to modules
+          </Link>
+        </div>
+      </div>
     )
   }
 
-  return (
-    <PageWrapper>
-
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-          <Link href="/modules" className="hover:text-slate-300 transition-all duration-150">
-            Modules
-          </Link>
-          <span>/</span>
-          <span className="text-slate-300 truncate">{module.title}</span>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main viewer - 2 columns */}
-          <div className="lg:col-span-2">
-            <ModuleViewer module={module} nextModule={nextModule} />
-          </div>
-
-          {/* Sidebar - 1 column */}
-          <div className="space-y-4">
-            {/* Module info */}
-            <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-5">
-              <h3 className="text-white font-semibold mb-3">About this module</h3>
-              {module.description && (
-                <p className="text-slate-400 text-sm leading-relaxed mb-4">
-                  {module.description}
-                </p>
-              )}
-              <div className="space-y-2 text-sm text-slate-500">
-                {module.duration_mins && (
-                  <div className="flex items-center gap-2">
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {module.duration_mins} minutes
-                  </div>
-                )}
-                <div className="flex items-center gap-2">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
-                  {module.content?.length || 0} sections
-                </div>
-                {module.quiz && (
-                  <div className="flex items-center gap-2 text-blue-400">
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                    </svg>
-                    Quiz included · Pass {module.quiz.pass_score}%
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Next module preview */}
-            {nextModule && (
-              <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-5">
-                <p className="text-slate-500 text-xs mb-2">Up next</p>
-                <p className="text-white text-sm font-medium">{nextModule.title}</p>
-                {nextModule.duration_mins && (
-                  <p className="text-slate-500 text-xs mt-1">{nextModule.duration_mins} min</p>
-                )}
-              </div>
-            )}
-
-            <Link
-              href="/modules"
-              className="flex items-center gap-2 text-slate-500 hover:text-slate-300 text-sm transition-all duration-150"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              Back to all modules
-            </Link>
-          </div>
-        </div>
-
-      </PageWrapper>
-    )
+  // ── LMS viewer ────────────────────────────────────────────────────────────
+  return <LMSModuleViewer module={module} nextModule={nextModule} />
 }

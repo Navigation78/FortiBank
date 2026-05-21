@@ -1,7 +1,7 @@
 // src/app/api/modules/[moduleId]/route.js
-// GET /api/modules/:moduleId - returns a single module with
-// all content blocks, progress, and quiz info.
-
+// GET /api/modules/:moduleId – returns one published module with full content
+// (including LMS fields: section_number, learning_objectives, image_caption),
+// the user's progress, the final-exam quiz, and any checkpoint quizzes.
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
@@ -42,14 +42,19 @@ export async function GET(request, { params }) {
         content_type,
         content_url,
         content_body,
-        order_index
+        order_index,
+        section_number,
+        learning_objectives,
+        image_caption
       ),
       quizzes (
         id,
         title,
         pass_score,
         max_attempts,
-        time_limit_mins
+        time_limit_mins,
+        quiz_type,
+        section_number
       )
     `)
     .eq('id', moduleId)
@@ -76,20 +81,23 @@ export async function GET(request, { params }) {
     .eq('module_id', moduleId)
     .maybeSingle()
 
+  // Separate quizzes by type (quiz_type column added in migration 011)
+  const allQuizzes        = module.quizzes || []
+  const finalExamQuiz     = allQuizzes.find(q => !q.quiz_type || q.quiz_type === 'final_exam') || null
+  const checkpointQuizzes = allQuizzes.filter(q => q.quiz_type === 'checkpoint')
+
   return NextResponse.json({
     module: {
-      id:             module.id,
-      title:          module.title,
-      description:    module.description,
-      thumbnail_url:  module.thumbnail_url,
-      duration_mins:  module.duration_mins,
-      order_index:    module.order_index,
-      content:  module.module_content || [],
-      progress: progress || {
-        status: 'not_started',
-        progress_pct: 0,
-      },
-      quiz: module.quizzes?.[0] || null,
+      id:                 module.id,
+      title:              module.title,
+      description:        module.description,
+      thumbnail_url:      module.thumbnail_url,
+      duration_mins:      module.duration_mins,
+      order_index:        module.order_index,
+      content:            module.module_content || [],
+      progress:           progress || { status: 'not_started', progress_pct: 0 },
+      quiz:               finalExamQuiz,
+      checkpointQuizzes,
     },
   })
 }

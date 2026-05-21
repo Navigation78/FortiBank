@@ -26,8 +26,11 @@ export async function POST(request) {
     .from('quizzes')
     .select(`
       id,
+      module_id,
       pass_score,
       max_attempts,
+      quiz_type,
+      section_number,
       quiz_questions (
         id,
         points,
@@ -132,7 +135,25 @@ export async function POST(request) {
       )
   }
 
-  // 8. Recalculate risk score
+  // 8. If this is a checkpoint quiz, record topic progress
+  if (quiz.quiz_type === 'checkpoint' && quiz.module_id && quiz.section_number) {
+    await supabaseAdmin
+      .from('user_topic_progress')
+      .upsert(
+        {
+          user_id:           user.id,
+          module_id:         quiz.module_id,
+          section_number:    quiz.section_number,
+          checkpoint_passed: attempt.passed,
+          checkpoint_score:  scorePct,
+          completed_at:      attempt.passed ? new Date().toISOString() : null,
+          updated_at:        new Date().toISOString(),
+        },
+        { onConflict: 'user_id,module_id,section_number', ignoreDuplicates: false }
+      )
+  }
+
+  // 8b. Recalculate risk score
   await supabaseAdmin.rpc('calculate_user_risk_score', { p_user_id: user.id })
 
   // 8b. Notify user of their quiz result

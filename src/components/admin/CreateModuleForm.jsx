@@ -1,28 +1,110 @@
 'use client'
 
 // src/components/admin/CreateModuleForm.jsx
-// Form to create a new training module with content blocks and role access assignment
+// Create / edit a training module.
+// Supports the full LMS content model:
+//   · section_number  – e.g. "1.0", "1.1", "1.2" (organises topics & subtopics)
+//   · learning_objectives – shown on topic-header (X.0) sections
+//   · image_caption   – caption shown beneath image sections
+//   · knowledge_check – inline MCQ stored as JSON in content_body
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 
 const CONTENT_TYPES = [
-  { value: 'text',   label: 'Text / HTML',      placeholder: 'Paste HTML content or plain text...' },
-  { value: 'video',  label: 'YouTube Video URL', placeholder: 'https://youtube.com/watch?v=...' },
-  { value: 'pdf',    label: 'PDF URL',           placeholder: 'Supabase Storage URL or external PDF link' },
-  { value: 'image',  label: 'Image URL',         placeholder: 'Supabase Storage URL or external image link' },
-  { value: 'slides', label: 'Slides Embed URL',  placeholder: 'Google Slides embed URL' },
+  { value: 'text',            label: 'Text / HTML' },
+  { value: 'video',           label: 'Video URL (YouTube / direct)' },
+  { value: 'pdf',             label: 'PDF URL' },
+  { value: 'image',           label: 'Image URL' },
+  { value: 'slides',          label: 'Slides Embed URL' },
+  { value: 'knowledge_check', label: 'Inline Knowledge Check (MCQ)' },
 ]
+
+const BLANK_KC = JSON.stringify({
+  question: '',
+  options: [
+    { id: 'a', text: '', correct: true,  explanation: '' },
+    { id: 'b', text: '', correct: false, explanation: '' },
+    { id: 'c', text: '', correct: false, explanation: '' },
+    { id: 'd', text: '', correct: false, explanation: '' },
+  ],
+}, null, 2)
+
+function isTopicHeader(sectionNumber) {
+  return /^\d+\.0$/.test((sectionNumber || '').trim())
+}
+
+// ── Knowledge-check JSON editor ───────────────────────────────────────────────
+
+function KCEditor({ value, onChange }) {
+  let parsed = { question: '', options: [] }
+  try { parsed = JSON.parse(value || BLANK_KC) } catch {}
+
+  const setQuestion  = q  => onChange(JSON.stringify({ ...parsed, question: q }, null, 2))
+  const setOptField  = (i, field, val) => {
+    const opts = parsed.options.map((o, idx) => idx === i ? { ...o, [field]: val } : o)
+    onChange(JSON.stringify({ ...parsed, options: opts }, null, 2))
+  }
+  const markCorrect  = i => {
+    const opts = parsed.options.map((o, idx) => ({ ...o, correct: idx === i }))
+    onChange(JSON.stringify({ ...parsed, options: opts }, null, 2))
+  }
+
+  return (
+    <div className="space-y-3">
+      <div>
+        <label className="block text-slate-400 text-xs mb-1">Question *</label>
+        <input
+          value={parsed.question}
+          onChange={e => setQuestion(e.target.value)}
+          placeholder="e.g. What is a phishing email?"
+          className="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-all"
+        />
+      </div>
+
+      <div>
+        <label className="block text-slate-400 text-xs mb-1">
+          Answer Options&ensp;<span className="text-slate-600">(click the circle to mark correct)</span>
+        </label>
+        <div className="space-y-2">
+          {(parsed.options || []).map((opt, i) => (
+            <div key={opt.id || i} className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => markCorrect(i)}
+                className={`w-4 h-4 rounded-full border-2 flex-shrink-0 transition-all ${opt.correct ? 'bg-green-500 border-green-500' : 'border-slate-600'}`}
+              />
+              <input
+                value={opt.text}
+                onChange={e => setOptField(i, 'text', e.target.value)}
+                placeholder={`Option ${String.fromCharCode(65 + i)}`}
+                className="flex-1 bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500 transition-all"
+              />
+              <input
+                value={opt.explanation}
+                onChange={e => setOptField(i, 'explanation', e.target.value)}
+                placeholder="Explanation (optional)"
+                className="flex-1 bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-blue-500 transition-all"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Main form ─────────────────────────────────────────────────────────────────
 
 export default function CreateModuleForm({ existingModule }) {
   const router   = useRouter()
   const supabase = createClient()
 
-  const [roles, setRoles]         = useState([])
-  const [loading, setLoading]     = useState(false)
-  const [error, setError]         = useState('')
-  const [success, setSuccess]     = useState(false)
+  const [roles, setRoles]     = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError]     = useState('')
+  const [success, setSuccess] = useState(false)
 
   const [form, setForm] = useState({
     title:        existingModule?.title        || '',
@@ -31,12 +113,22 @@ export default function CreateModuleForm({ existingModule }) {
     status:       existingModule?.status       || 'draft',
   })
 
-  const [selectedRoles, setSelectedRoles]   = useState(
-    existingModule?.module_role_access?.map(access => access.role_id) || []
+  const [selectedRoles, setSelectedRoles] = useState(
+    existingModule?.module_role_access?.map(a => a.role_id) || []
   )
-  const [contentBlocks, setContentBlocks]   = useState(
-    existingModule?.content?.slice().sort((a, b) => a.order_index - b.order_index) ||
-      [{ title: '', content_type: 'text', content_url: '', content_body: '' }]
+
+  const [contentBlocks, setContentBlocks] = useState(
+    existingModule?.content?.length
+      ? [...existingModule.content].sort((a, b) => a.order_index - b.order_index).map(b => ({
+          title:               b.title || '',
+          content_type:        b.content_type || 'text',
+          content_url:         b.content_url || '',
+          content_body:        b.content_body || '',
+          section_number:      b.section_number || '',
+          learning_objectives: b.learning_objectives || [],
+          image_caption:       b.image_caption || '',
+        }))
+      : [{ title: '', content_type: 'text', content_url: '', content_body: '', section_number: '', learning_objectives: [], image_caption: '' }]
   )
 
   useEffect(() => { fetchRoles() }, [])
@@ -58,12 +150,46 @@ export default function CreateModuleForm({ existingModule }) {
     setContentBlocks(prev => prev.map((b, i) => i === idx ? { ...b, [field]: value } : b))
   }
 
+  function addObjective(idx) {
+    setContentBlocks(prev => prev.map((b, i) =>
+      i === idx ? { ...b, learning_objectives: [...(b.learning_objectives || []), ''] } : b
+    ))
+  }
+
+  function updateObjective(blockIdx, objIdx, value) {
+    setContentBlocks(prev => prev.map((b, i) => {
+      if (i !== blockIdx) return b
+      const objs = (b.learning_objectives || []).map((o, j) => j === objIdx ? value : o)
+      return { ...b, learning_objectives: objs }
+    }))
+  }
+
+  function removeObjective(blockIdx, objIdx) {
+    setContentBlocks(prev => prev.map((b, i) => {
+      if (i !== blockIdx) return b
+      return { ...b, learning_objectives: (b.learning_objectives || []).filter((_, j) => j !== objIdx) }
+    }))
+  }
+
   function addBlock() {
-    setContentBlocks(prev => [...prev, { title: '', content_type: 'text', content_url: '', content_body: '' }])
+    setContentBlocks(prev => [...prev, {
+      title: '', content_type: 'text', content_url: '', content_body: '',
+      section_number: '', learning_objectives: [], image_caption: '',
+    }])
   }
 
   function removeBlock(idx) {
     setContentBlocks(prev => prev.filter((_, i) => i !== idx))
+  }
+
+  function moveBlock(idx, dir) {
+    setContentBlocks(prev => {
+      const next = [...prev]
+      const target = idx + dir
+      if (target < 0 || target >= next.length) return prev
+      ;[next[idx], next[target]] = [next[target], next[idx]]
+      return next
+    })
   }
 
   function toggleRole(roleId) {
@@ -78,7 +204,7 @@ export default function CreateModuleForm({ existingModule }) {
     setLoading(true)
 
     if (selectedRoles.length === 0) {
-      setError('Select at least one role so this module can appear on employee dashboards.')
+      setError('Select at least one role so this module appears on employee dashboards.')
       setLoading(false)
       return
     }
@@ -92,9 +218,9 @@ export default function CreateModuleForm({ existingModule }) {
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({
         ...form,
-        duration_mins: form.duration_mins ? parseInt(form.duration_mins) : null,
+        duration_mins:  form.duration_mins ? parseInt(form.duration_mins) : null,
         content_blocks: contentBlocks.map((b, i) => ({ ...b, order_index: i })),
-        role_ids: selectedRoles,
+        role_ids:       selectedRoles,
       }),
     })
 
@@ -125,7 +251,7 @@ export default function CreateModuleForm({ existingModule }) {
           </svg>
         </div>
         <p className="text-white font-semibold">Module {existingModule ? 'updated' : 'created'} successfully!</p>
-        <p className="text-slate-400 text-sm mt-1">Redirecting to modules list...</p>
+        <p className="text-slate-400 text-sm mt-1">Redirecting…</p>
       </div>
     )
   }
@@ -138,35 +264,38 @@ export default function CreateModuleForm({ existingModule }) {
         </div>
       )}
 
-      {/* Module details */}
+      {/* ── Module details ──────────────────────────────────────────────── */}
       <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 space-y-4">
         <h3 className="text-white font-semibold">Module Details</h3>
+
         <div>
           <label className="block text-slate-300 text-sm font-medium mb-1.5">Title *</label>
           <input name="title" value={form.title} onChange={handleFormChange} required
-            placeholder="e.g. Introduction to Cybersecurity"
-            className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
+            placeholder="e.g. Cybersecurity Fundamentals"
+            className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all"
           />
         </div>
+
         <div>
           <label className="block text-slate-300 text-sm font-medium mb-1.5">Description</label>
           <textarea name="description" value={form.description} onChange={handleFormChange} rows={3}
-            placeholder="Brief description of what this module covers..."
-            className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150 resize-none"
+            placeholder="Brief summary of what this module covers…"
+            className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all resize-none"
           />
         </div>
+
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-slate-300 text-sm font-medium mb-1.5">Duration (minutes)</label>
             <input name="duration_mins" type="number" value={form.duration_mins} onChange={handleFormChange}
-              placeholder="e.g. 30"
-              className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
+              placeholder="e.g. 45"
+              className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all"
             />
           </div>
           <div>
             <label className="block text-slate-300 text-sm font-medium mb-1.5">Status</label>
             <select name="status" value={form.status} onChange={handleFormChange}
-              className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
+              className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all"
             >
               <option value="draft">Draft</option>
               <option value="published">Published</option>
@@ -175,10 +304,10 @@ export default function CreateModuleForm({ existingModule }) {
         </div>
       </div>
 
-      {/* Role access */}
+      {/* ── Role access ─────────────────────────────────────────────────── */}
       <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
-        <h3 className="text-white font-semibold mb-4">Role Access</h3>
-        <p className="text-slate-400 text-sm mb-4">Select which roles can see this module.</p>
+        <h3 className="text-white font-semibold mb-2">Role Access</h3>
+        <p className="text-slate-400 text-sm mb-4">Select which roles can view this module.</p>
         <div className="space-y-4">
           {Object.entries(rolesByCategory).map(([category, categoryRoles]) => (
             <div key={category}>
@@ -186,9 +315,7 @@ export default function CreateModuleForm({ existingModule }) {
               <div className="flex flex-wrap gap-2">
                 {categoryRoles.map(role => (
                   <button
-                    key={role.id}
-                    type="button"
-                    onClick={() => toggleRole(role.id)}
+                    key={role.id} type="button" onClick={() => toggleRole(role.id)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
                       selectedRoles.includes(role.id)
                         ? 'bg-blue-600 border-blue-500 text-white'
@@ -204,14 +331,19 @@ export default function CreateModuleForm({ existingModule }) {
         </div>
       </div>
 
-      {/* Content blocks */}
+      {/* ── Content sections ─────────────────────────────────────────────── */}
       <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-white font-semibold">Content Sections</h3>
+        <div className="flex items-center justify-between mb-2">
+          <div>
+            <h3 className="text-white font-semibold">Content Sections</h3>
+            <p className="text-slate-500 text-xs mt-0.5">
+              Use <span className="font-mono text-slate-400">1.0</span>, <span className="font-mono text-slate-400">1.1</span>, <span className="font-mono text-slate-400">2.0</span>… section numbers to organise topics (NetAcad style).
+              Topic headers (<span className="font-mono text-slate-400">X.0</span>) show learning objectives in the viewer.
+            </p>
+          </div>
           <button
-            type="button"
-            onClick={addBlock}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-600/30 text-blue-400 rounded-lg text-xs font-medium transition-all duration-150"
+            type="button" onClick={addBlock}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-600/30 text-blue-400 rounded-lg text-xs font-medium transition-all flex-shrink-0"
           >
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -220,89 +352,183 @@ export default function CreateModuleForm({ existingModule }) {
           </button>
         </div>
 
-        <div className="space-y-4">
-          {contentBlocks.map((block, idx) => (
-            <div key={idx} className="bg-slate-700/40 border border-white/[0.08] rounded-xl p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-slate-400 text-xs font-medium">Section {idx + 1}</span>
-                {contentBlocks.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeBlock(idx)}
-                    className="text-red-400 hover:text-red-300 text-xs"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-slate-400 text-xs mb-1">Section Title *</label>
-                  <input
-                    value={block.title}
-                    onChange={e => handleBlockChange(idx, 'title', e.target.value)}
-                    required
-                    placeholder="e.g. What is Phishing?"
-                    className="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
-                  />
+        <div className="mt-5 space-y-4">
+          {contentBlocks.map((block, idx) => {
+            const isHeader = isTopicHeader(block.section_number)
+            return (
+              <div
+                key={idx}
+                className={`border rounded-xl p-4 space-y-3 ${
+                  isHeader
+                    ? 'bg-blue-500/[0.05] border-blue-500/20'
+                    : 'bg-slate-700/40 border-white/[0.08]'
+                }`}
+              >
+                {/* Row 1: label + reorder + remove */}
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400 text-xs font-medium">
+                    Section {idx + 1}
+                    {block.section_number && (
+                      <span className={`ml-2 font-mono px-1.5 py-0.5 rounded text-[10px] ${
+                        isHeader ? 'text-blue-400 bg-blue-500/10' : 'text-slate-500 bg-slate-800'
+                      }`}>
+                        {block.section_number}
+                        {isHeader ? ' — Topic Header' : ''}
+                      </span>
+                    )}
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <button type="button" onClick={() => moveBlock(idx, -1)} disabled={idx === 0}
+                      className="text-slate-500 hover:text-slate-300 disabled:opacity-30 px-1 text-xs transition-all" title="Move up">↑</button>
+                    <button type="button" onClick={() => moveBlock(idx, 1)} disabled={idx === contentBlocks.length - 1}
+                      className="text-slate-500 hover:text-slate-300 disabled:opacity-30 px-1 text-xs transition-all" title="Move down">↓</button>
+                    {contentBlocks.length > 1 && (
+                      <button type="button" onClick={() => removeBlock(idx)}
+                        className="text-red-400 hover:text-red-300 text-xs transition-all ml-1">Remove</button>
+                    )}
+                  </div>
                 </div>
+
+                {/* Row 2: section number + title */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-slate-400 text-xs mb-1">
+                      Section Number
+                      <span className="text-slate-600 ml-1">(e.g. 1.0, 1.1)</span>
+                    </label>
+                    <input
+                      value={block.section_number}
+                      onChange={e => handleBlockChange(idx, 'section_number', e.target.value)}
+                      placeholder="1.0"
+                      className="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-blue-500 transition-all"
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <label className="block text-slate-400 text-xs mb-1">Section Title *</label>
+                    <input
+                      value={block.title}
+                      onChange={e => handleBlockChange(idx, 'title', e.target.value)}
+                      required
+                      placeholder="e.g. What is Phishing?"
+                      className="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-all"
+                    />
+                  </div>
+                </div>
+
+                {/* Row 3: content type selector */}
                 <div>
                   <label className="block text-slate-400 text-xs mb-1">Content Type</label>
                   <select
                     value={block.content_type}
                     onChange={e => handleBlockChange(idx, 'content_type', e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
+                    className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-all"
                   >
                     {CONTENT_TYPES.map(t => (
                       <option key={t.value} value={t.value}>{t.label}</option>
                     ))}
                   </select>
                 </div>
-              </div>
 
-              {block.content_type === 'text' ? (
-                <div>
-                  <label className="block text-slate-400 text-xs mb-1">Content (HTML supported)</label>
-                  <textarea
-                    value={block.content_body}
-                    onChange={e => handleBlockChange(idx, 'content_body', e.target.value)}
-                    rows={5}
-                    placeholder="Type your content here. You can use basic HTML tags."
-                    className="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150 resize-y"
+                {/* Row 4: content input */}
+                {block.content_type === 'text' ? (
+                  <div>
+                    <label className="block text-slate-400 text-xs mb-1">Content (HTML supported)</label>
+                    <textarea
+                      value={block.content_body}
+                      onChange={e => handleBlockChange(idx, 'content_body', e.target.value)}
+                      rows={6}
+                      placeholder="<h2>Introduction</h2><p>Your content here…</p>"
+                      className="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-blue-500 transition-all resize-y"
+                    />
+                  </div>
+                ) : block.content_type === 'knowledge_check' ? (
+                  <KCEditor
+                    value={block.content_body || BLANK_KC}
+                    onChange={v => handleBlockChange(idx, 'content_body', v)}
                   />
-                </div>
-              ) : (
-                <div>
-                  <label className="block text-slate-400 text-xs mb-1">
-                    {CONTENT_TYPES.find(t => t.value === block.content_type)?.label}
-                  </label>
-                  <input
-                    value={block.content_url}
-                    onChange={e => handleBlockChange(idx, 'content_url', e.target.value)}
-                    placeholder={CONTENT_TYPES.find(t => t.value === block.content_type)?.placeholder}
-                    className="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
-                  />
-                </div>
-              )}
-            </div>
-          ))}
+                ) : (
+                  <div>
+                    <label className="block text-slate-400 text-xs mb-1">
+                      {CONTENT_TYPES.find(t => t.value === block.content_type)?.label} URL
+                    </label>
+                    <input
+                      value={block.content_url}
+                      onChange={e => handleBlockChange(idx, 'content_url', e.target.value)}
+                      placeholder="https://…"
+                      className="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-all"
+                    />
+                  </div>
+                )}
+
+                {/* Image caption (image type only) */}
+                {block.content_type === 'image' && (
+                  <div>
+                    <label className="block text-slate-400 text-xs mb-1">Caption (optional)</label>
+                    <input
+                      value={block.image_caption}
+                      onChange={e => handleBlockChange(idx, 'image_caption', e.target.value)}
+                      placeholder="Figure 1: Network topology diagram"
+                      className="w-full bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-all"
+                    />
+                  </div>
+                )}
+
+                {/* Learning objectives (topic-header sections only) */}
+                {isHeader && (
+                  <div className="border-t border-blue-500/20 pt-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-blue-400 text-xs font-semibold uppercase tracking-wide">
+                        Learning Objectives
+                      </label>
+                      <button
+                        type="button" onClick={() => addObjective(idx)}
+                        className="text-blue-400 hover:text-blue-300 text-xs transition-all"
+                      >
+                        + Add objective
+                      </button>
+                    </div>
+                    <p className="text-slate-500 text-xs mb-2">
+                      Shown to learners at the start of this topic.
+                    </p>
+                    <div className="space-y-2">
+                      {(block.learning_objectives || []).map((obj, oi) => (
+                        <div key={oi} className="flex items-center gap-2">
+                          <span className="text-blue-400 text-xs flex-shrink-0">→</span>
+                          <input
+                            value={obj}
+                            onChange={e => updateObjective(idx, oi, e.target.value)}
+                            placeholder="e.g. Identify common phishing indicators"
+                            className="flex-1 bg-slate-900 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500 transition-all"
+                          />
+                          <button type="button" onClick={() => removeObjective(idx, oi)}
+                            className="text-red-400 hover:text-red-300 text-xs transition-all">✕</button>
+                        </div>
+                      ))}
+                      {(block.learning_objectives || []).length === 0 && (
+                        <p className="text-slate-600 text-xs italic">No objectives yet. Click "+ Add objective" above.</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
       </div>
 
-      {/* Submit */}
+      {/* ── Submit ───────────────────────────────────────────────────────── */}
       <div className="flex gap-3">
         <button
-          type="submit"
-          disabled={loading}
-          className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-lg text-sm font-medium transition-all duration-150"
+          type="submit" disabled={loading}
+          className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-lg text-sm font-medium transition-all"
         >
-          {loading ? (existingModule ? 'Updating...' : 'Creating...') : existingModule ? 'Update Module' : 'Create Module'}
+          {loading
+            ? (existingModule ? 'Updating…' : 'Creating…')
+            : (existingModule ? 'Update Module' : 'Create Module')}
         </button>
         <button
-          type="button"
-          onClick={() => router.back()}
-          className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm font-medium transition-all duration-150"
+          type="button" onClick={() => router.back()}
+          className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm font-medium transition-all"
         >
           Cancel
         </button>

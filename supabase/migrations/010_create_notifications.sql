@@ -1,7 +1,5 @@
--- ============================================================
 -- 010_create_notifications.sql
 -- Notification inbox for employees and admins
--- ============================================================
 
 CREATE TABLE public.notifications (
   id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),

@@ -1,7 +1,6 @@
--- ============================================================
+
 -- 007_row_level_security.sql
 -- RLS policies for all tables
--- ============================================================
 
 -- ── Helper: get current user's role name ─────────────────────
 CREATE OR REPLACE FUNCTION public.current_user_role()
@@ -43,30 +42,36 @@ ALTER TABLE public.risk_alerts            ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.certificates           ENABLE ROW LEVEL SECURITY;
 
 -- ── users ────────────────────────────────────────────────────
+DROP POLICY IF EXISTS "Users can read their own profile"  ON public.users;
 CREATE POLICY "Users can read their own profile"
   ON public.users FOR SELECT
   USING (id = auth.uid() OR public.is_admin());
 
+DROP POLICY IF EXISTS "Users can update their own profile" ON public.users;
 CREATE POLICY "Users can update their own profile"
   ON public.users FOR UPDATE
   USING (id = auth.uid())
   WITH CHECK (id = auth.uid());
 
+DROP POLICY IF EXISTS "Admins can insert users" ON public.users;
 CREATE POLICY "Admins can insert users"
   ON public.users FOR INSERT
   WITH CHECK (public.is_admin());
 
 -- ── user_roles ───────────────────────────────────────────────
+DROP POLICY IF EXISTS "Users can read their own role" ON public.user_roles;
 CREATE POLICY "Users can read their own role"
   ON public.user_roles FOR SELECT
   USING (user_id = auth.uid() OR public.is_admin());
 
+DROP POLICY IF EXISTS "Admins can manage roles" ON public.user_roles;
 CREATE POLICY "Admins can manage roles"
   ON public.user_roles FOR ALL
   USING (public.is_admin());
 
 -- ── modules ──────────────────────────────────────────────────
 -- Users can only see published modules assigned to their role
+DROP POLICY IF EXISTS "Users see modules for their role" ON public.modules;
 CREATE POLICY "Users see modules for their role"
   ON public.modules FOR SELECT
   USING (
@@ -83,11 +88,13 @@ CREATE POLICY "Users see modules for their role"
     )
   );
 
+DROP POLICY IF EXISTS "Admins can manage modules" ON public.modules;
 CREATE POLICY "Admins can manage modules"
   ON public.modules FOR ALL
   USING (public.is_admin());
 
 -- ── module_role_access ───────────────────────────────────────
+DROP POLICY IF EXISTS "Users can read their module access" ON public.module_role_access;
 CREATE POLICY "Users can read their module access"
   ON public.module_role_access FOR SELECT
   USING (
@@ -99,11 +106,13 @@ CREATE POLICY "Users can read their module access"
     )
   );
 
+DROP POLICY IF EXISTS "Admins manage module access" ON public.module_role_access;
 CREATE POLICY "Admins manage module access"
   ON public.module_role_access FOR ALL
   USING (public.is_admin());
 
 -- ── module_content ───────────────────────────────────────────
+DROP POLICY IF EXISTS "Users can read content for accessible modules" ON public.module_content;
 CREATE POLICY "Users can read content for accessible modules"
   ON public.module_content FOR SELECT
   USING (
@@ -118,16 +127,19 @@ CREATE POLICY "Users can read content for accessible modules"
     )
   );
 
+DROP POLICY IF EXISTS "Admins manage content" ON public.module_content;
 CREATE POLICY "Admins manage content"
   ON public.module_content FOR ALL
   USING (public.is_admin());
 
 -- ── user_module_progress ─────────────────────────────────────
+DROP POLICY IF EXISTS "Users manage their own progress" ON public.user_module_progress;
 CREATE POLICY "Users manage their own progress"
   ON public.user_module_progress FOR ALL
   USING (user_id = auth.uid() OR public.is_admin());
 
 -- ── quizzes ──────────────────────────────────────────────────
+DROP POLICY IF EXISTS "Users can read quizzes for their modules" ON public.quizzes;
 CREATE POLICY "Users can read quizzes for their modules"
   ON public.quizzes FOR SELECT
   USING (
@@ -142,11 +154,13 @@ CREATE POLICY "Users can read quizzes for their modules"
     )
   );
 
+DROP POLICY IF EXISTS "Admins manage quizzes" ON public.quizzes;
 CREATE POLICY "Admins manage quizzes"
   ON public.quizzes FOR ALL
   USING (public.is_admin());
 
 -- ── quiz_questions & quiz_options ────────────────────────────
+DROP POLICY IF EXISTS "Users can read questions for accessible quizzes" ON public.quiz_questions;
 CREATE POLICY "Users can read questions for accessible quizzes"
   ON public.quiz_questions FOR SELECT
   USING (
@@ -161,10 +175,12 @@ CREATE POLICY "Users can read questions for accessible quizzes"
     )
   );
 
+DROP POLICY IF EXISTS "Admins manage questions" ON public.quiz_questions;
 CREATE POLICY "Admins manage questions"
   ON public.quiz_questions FOR ALL
   USING (public.is_admin());
 
+DROP POLICY IF EXISTS "Users can read options" ON public.quiz_options;
 CREATE POLICY "Users can read options"
   ON public.quiz_options FOR SELECT
   USING (
@@ -180,15 +196,18 @@ CREATE POLICY "Users can read options"
     )
   );
 
+DROP POLICY IF EXISTS "Admins manage options" ON public.quiz_options;
 CREATE POLICY "Admins manage options"
   ON public.quiz_options FOR ALL
   USING (public.is_admin());
 
 -- ── quiz_attempts & answers ──────────────────────────────────
+DROP POLICY IF EXISTS "Users manage their own attempts" ON public.quiz_attempts;
 CREATE POLICY "Users manage their own attempts"
   ON public.quiz_attempts FOR ALL
   USING (user_id = auth.uid() OR public.is_admin());
 
+DROP POLICY IF EXISTS "Users manage their own answers" ON public.quiz_attempt_answers;
 CREATE POLICY "Users manage their own answers"
   ON public.quiz_attempt_answers FOR ALL
   USING (
@@ -202,21 +221,25 @@ CREATE POLICY "Users manage their own answers"
 
 -- ── phishing_campaigns ───────────────────────────────────────
 -- Regular users cannot see campaigns (prevents forewarning)
+DROP POLICY IF EXISTS "Only admins see campaigns" ON public.phishing_campaigns;
 CREATE POLICY "Only admins see campaigns"
   ON public.phishing_campaigns FOR ALL
   USING (public.is_admin());
 
 -- ── phishing_targets ─────────────────────────────────────────
 -- Users can only see their own target records (for results page)
+DROP POLICY IF EXISTS "Users see their own phishing results" ON public.phishing_targets;
 CREATE POLICY "Users see their own phishing results"
   ON public.phishing_targets FOR SELECT
   USING (user_id = auth.uid() OR public.is_admin());
 
+DROP POLICY IF EXISTS "Admins manage targets" ON public.phishing_targets;
 CREATE POLICY "Admins manage targets"
   ON public.phishing_targets FOR ALL
   USING (public.is_admin());
 
 -- ── phishing_click_events ────────────────────────────────────
+DROP POLICY IF EXISTS "Admins manage click events" ON public.phishing_click_events;
 CREATE POLICY "Admins manage click events"
   ON public.phishing_click_events FOR ALL
   USING (public.is_admin());
@@ -225,28 +248,34 @@ CREATE POLICY "Admins manage click events"
 -- No user-facing policy needed here.
 
 -- ── risk_scores ──────────────────────────────────────────────
+DROP POLICY IF EXISTS "Users read their own risk score" ON public.risk_scores;
 CREATE POLICY "Users read their own risk score"
   ON public.risk_scores FOR SELECT
   USING (user_id = auth.uid() OR public.is_admin());
 
+DROP POLICY IF EXISTS "System inserts risk scores" ON public.risk_scores;
 CREATE POLICY "System inserts risk scores"
   ON public.risk_scores FOR INSERT
   WITH CHECK (public.is_admin() OR user_id = auth.uid());
 
 -- ── risk_alerts ──────────────────────────────────────────────
+DROP POLICY IF EXISTS "Users read their own alerts" ON public.risk_alerts;
 CREATE POLICY "Users read their own alerts"
   ON public.risk_alerts FOR SELECT
   USING (user_id = auth.uid() OR public.is_admin());
 
+DROP POLICY IF EXISTS "Admins manage alerts" ON public.risk_alerts;
 CREATE POLICY "Admins manage alerts"
   ON public.risk_alerts FOR ALL
   USING (public.is_admin());
 
 -- ── certificates ─────────────────────────────────────────────
+DROP POLICY IF EXISTS "Users read their own certificates" ON public.certificates;
 CREATE POLICY "Users read their own certificates"
   ON public.certificates FOR SELECT
   USING (user_id = auth.uid() OR public.is_admin());
 
+DROP POLICY IF EXISTS "Admins manage certificates" ON public.certificates;
 CREATE POLICY "Admins manage certificates"
   ON public.certificates FOR ALL
   USING (public.is_admin());

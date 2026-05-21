@@ -4,15 +4,29 @@
 -- Topic 2.0 – Leadership Responsibilities (2 subtopics + checkpoint)
 -- Final Exam: 15 MCQs
 
+ALTER TABLE public.quiz_options
+  ADD COLUMN IF NOT EXISTS explanation TEXT;
+
 DO $$
 DECLARE
-  v_mod UUID:=gen_random_uuid();
-  v_c10 UUID:=gen_random_uuid(); v_c11 UUID:=gen_random_uuid(); v_c11q UUID:=gen_random_uuid();
-  v_c12 UUID:=gen_random_uuid(); v_c12q UUID:=gen_random_uuid();
-  v_c20 UUID:=gen_random_uuid(); v_c21 UUID:=gen_random_uuid(); v_c21q UUID:=gen_random_uuid();
-  v_c22 UUID:=gen_random_uuid(); v_c22q UUID:=gen_random_uuid();
-  v_cp1 UUID:=gen_random_uuid(); v_cp2 UUID:=gen_random_uuid(); v_fe UUID:=gen_random_uuid();
+  v_mod  UUID := gen_random_uuid();
+  v_c10  UUID := gen_random_uuid();
+  v_c11  UUID := gen_random_uuid();
+  v_c11q UUID := gen_random_uuid();
+  v_c12  UUID := gen_random_uuid();
+  v_c12q UUID := gen_random_uuid();
+  v_c20  UUID := gen_random_uuid();
+  v_c21  UUID := gen_random_uuid();
+  v_c21q UUID := gen_random_uuid();
+  v_c22  UUID := gen_random_uuid();
+  v_c22q UUID := gen_random_uuid();
+  v_cp1  UUID := gen_random_uuid();
+  v_cp2  UUID := gen_random_uuid();
+  v_fe   UUID := gen_random_uuid();
   vq UUID; va UUID; vb UUID; vc UUID; vd UUID;
+  r RECORD;
+  qids UUID[];
+  i INT;
 BEGIN
 
 INSERT INTO public.modules (id,title,description,status,order_index,duration_mins) VALUES (
@@ -128,7 +142,7 @@ INSERT INTO public.module_content (id,module_id,title,content_type,content_body,
 );
 
 -- Topic 1 Checkpoint --
-INSERT INTO public.quizzes (id,module_id,title,quiz_type,section_number,pass_mark,max_attempts,time_limit_mins) VALUES (
+INSERT INTO public.quizzes (id,module_id,title,quiz_type,section_number,pass_score,max_attempts,time_limit_mins) VALUES (
   v_cp1,v_mod,'Topic 1 Checkpoint: Cybersecurity as Business Risk','checkpoint','1.0',70,3,null
 );
 INSERT INTO public.quiz_questions (id,quiz_id,question_text,order_index) VALUES
@@ -138,48 +152,41 @@ INSERT INTO public.quiz_questions (id,quiz_id,question_text,order_index) VALUES
   (gen_random_uuid(),v_cp1,'In the risk management lifecycle, what does the "Treat" step involve?',40),
   (gen_random_uuid(),v_cp1,'A board sets the following policy: "No single system failure shall result in customer-facing downtime exceeding 2 hours." This statement is an example of:',50);
 
-DO $inner$
-DECLARE
-  r RECORD;
-  idx INT;
-  opts JSONB[];
-BEGIN
-  -- Q1
-  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=(SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Executive Cybersecurity Risk Management') AND quiz_type='checkpoint' AND section_number='1.0') AND order_index=10;
+  -- CP1 Q1
+  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=v_cp1 AND order_index=10;
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),r.id,'Cyber incidents can only be prevented by technical teams, so executives need not be involved',false,'This view leaves the organization exposed. Executive ownership of cyber risk is now a regulatory and governance expectation.',10),
     (gen_random_uuid(),r.id,'Cyber incidents produce financial losses, operational disruption, regulatory penalties, and reputational damage that affect the entire organization',true,'These impacts span every part of the business and require executive-level decisions about risk appetite, investment, and governance, not just technical responses.',20),
     (gen_random_uuid(),r.id,'Cybersecurity risk is fully managed by insurance, so it requires no executive attention',false,'Insurance transfers financial impact but does not manage the underlying risk. Executives must still govern and mitigate cyber risk.',30),
     (gen_random_uuid(),r.id,'Business risk refers only to financial fraud, which is separate from cybersecurity',false,'Cybersecurity incidents are a primary driver of modern financial fraud. The two are inseparable in a banking context.',40);
-  -- Q2
-  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=(SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Executive Cybersecurity Risk Management') AND quiz_type='checkpoint' AND section_number='1.0') AND order_index=20;
+  -- CP1 Q2
+  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=v_cp1 AND order_index=20;
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),r.id,'Only the ransom payment and IT recovery costs',false,'These are direct and bounded costs. A significant incident creates cascading costs across multiple categories.',10),
     (gen_random_uuid(),r.id,'Incident response fees, regulatory fines, business interruption losses, and long-term reputational damage',true,'A major incident creates simultaneous costs across all these categories. Reputational damage is often the most persistent.',20),
     (gen_random_uuid(),r.id,'No additional costs if the ransom is paid promptly',false,'Payment does not eliminate other costs and may not even restore systems. Paying ransom is also associated with additional regulatory scrutiny.',30),
     (gen_random_uuid(),r.id,'Only regulatory fines, as these are the largest category',false,'Regulatory fines can be significant, but business interruption and reputational damage are often larger in aggregate.',40);
-  -- Q3
-  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=(SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Executive Cybersecurity Risk Management') AND quiz_type='checkpoint' AND section_number='1.0') AND order_index=30;
+  -- CP1 Q3
+  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=v_cp1 AND order_index=30;
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),r.id,'Present the number of threats blocked last quarter',false,'Activity metrics without business context do not inform investment decisions.',10),
     (gen_random_uuid(),r.id,'Show technical vulnerability scores and patch completion percentages',false,'Technical metrics are relevant to operations but do not speak the board''s language of financial exposure and risk appetite.',20),
     (gen_random_uuid(),r.id,'Quantify the current risk exposure in financial terms and show how the investment reduces that exposure',true,'Boards make investment decisions based on cost and risk reduction. Showing that a €500K investment reduces a €5M exposure to €800K is a business case, not a technical request.',30),
     (gen_random_uuid(),r.id,'Reference high-profile breaches at other banks to create urgency',false,'Industry examples can add context but are not a substitute for quantifying your own organization''s specific risk exposure.',40);
-  -- Q4
-  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=(SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Executive Cybersecurity Risk Management') AND quiz_type='checkpoint' AND section_number='1.0') AND order_index=40;
+  -- CP1 Q4
+  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=v_cp1 AND order_index=40;
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),r.id,'Identify all assets and systems in the organization',false,'Asset identification is part of the Identify step, not Treat.',10),
     (gen_random_uuid(),r.id,'Choose a response strategy for each significant risk: mitigate, transfer, accept, or avoid',true,'Treatment is about deciding what to do with identified and assessed risks. Each significant risk requires an explicit, documented response decision.',20),
     (gen_random_uuid(),r.id,'Monitor security controls to ensure they are working effectively',false,'Monitoring is its own step in the lifecycle, following treatment.',30),
     (gen_random_uuid(),r.id,'Report the risk position to the board',false,'Reporting is the final step. Treatment decisions must come before reporting on what has been done.',40);
-  -- Q5
-  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=(SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Executive Cybersecurity Risk Management') AND quiz_type='checkpoint' AND section_number='1.0') AND order_index=50;
+  -- CP1 Q5
+  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=v_cp1 AND order_index=50;
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),r.id,'A technical SLA for IT operations',false,'While it describes a system performance target, its purpose here is to define the threshold at which risk becomes unacceptable: a governance concept.',10),
     (gen_random_uuid(),r.id,'A risk appetite statement',true,'This is a clear expression of how much operational disruption the board is prepared to accept. Any identified risk threatening to breach this boundary must be treated.',20),
     (gen_random_uuid(),r.id,'A business continuity plan',false,'A business continuity plan describes the response to an outage. This statement defines the acceptable threshold, not the response.',30),
     (gen_random_uuid(),r.id,'An incident response policy',false,'Incident response is about how to act during and after an incident. This statement is a pre-incident governance boundary.',40);
-END $inner$;
 
 -- TOPIC 2 --
 INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number,learning_objectives) VALUES (
@@ -291,7 +298,7 @@ INSERT INTO public.module_content (id,module_id,title,content_type,content_body,
 );
 
 --  Topic 2 Checkpoint --
-INSERT INTO public.quizzes (id,module_id,title,quiz_type,section_number,pass_mark,max_attempts,time_limit_mins) VALUES (
+INSERT INTO public.quizzes (id,module_id,title,quiz_type,section_number,pass_score,max_attempts,time_limit_mins) VALUES (
   v_cp2,v_mod,'Topic 2 Checkpoint: Leadership Responsibilities','checkpoint','2.0',70,3,null
 );
 INSERT INTO public.quiz_questions (id,quiz_id,question_text,order_index) VALUES
@@ -301,48 +308,48 @@ INSERT INTO public.quiz_questions (id,quiz_id,question_text,order_index) VALUES
   (gen_random_uuid(),v_cp2,'An internal audit team identifies that a business unit has been bypassing the clean-desk policy for over a year without consequence. This is primarily a failure of:',40),
   (gen_random_uuid(),v_cp2,'The CISO presents to the board that phishing simulation click rates have dropped from 24% to 6% over 18 months while near-miss reporting has tripled. What does this data suggest?',50);
 
-DO $inner2$
-DECLARE
-  r RECORD;
-BEGIN
-  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=(SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Executive Cybersecurity Risk Management') AND quiz_type='checkpoint' AND section_number='2.0') AND order_index=10;
+  -- CP2 Q1
+  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=v_cp2 AND order_index=10;
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),r.id,'The CISO, as the senior security professional',false,'The CISO develops and executes the security strategy but reports to and is governed by the board. Risk appetite is a board-level decision.',10),
     (gen_random_uuid(),r.id,'The board of directors',true,'Risk appetite is a governance decision; it defines what level of risk the organization is willing to accept in pursuit of its objectives. This is a board responsibility, not an operational one.',20),
     (gen_random_uuid(),r.id,'The IT department, as system owners',false,'IT manages technical controls within the risk appetite set above them. They do not set organizational risk appetite.',30),
     (gen_random_uuid(),r.id,'The regulator, through supervisory guidance',false,'Regulators set minimum standards and expectations, but the organization''s risk appetite is its own governance decision, within regulatory boundaries.',40);
 
-  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=(SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Executive Cybersecurity Risk Management') AND quiz_type='checkpoint' AND section_number='2.0') AND order_index=20;
+  -- CP2 Q2
+  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=v_cp2 AND order_index=20;
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),r.id,'The cloud provider bears full responsibility once a contract is signed',false,'Outsourcing a function does not outsource the risk. The bank retains accountability for data it processes and stores, regardless of who operates the infrastructure.',10),
     (gen_random_uuid(),r.id,'The bank''s executive leadership retains accountability and must assess, contract, and monitor the relationship',true,'Third-party risk is an extension of the organization''s own risk. Executives must ensure due diligence before engagement, appropriate contractual protections, and ongoing monitoring of the relationship.',20),
     (gen_random_uuid(),r.id,'The regulator assumes responsibility for approved cloud providers',false,'Regulators may approve certain provider types but do not assume liability for individual organizations'' security outcomes.',30),
     (gen_random_uuid(),r.id,'The IT team is solely responsible for third-party security assessments',false,'IT may conduct technical assessments, but executive and governance accountability for third-party relationships is a leadership responsibility.',40);
 
-  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=(SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Executive Cybersecurity Risk Management') AND quiz_type='checkpoint' AND section_number='2.0') AND order_index=30;
+  -- CP2 Q3
+  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=v_cp2 AND order_index=30;
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),r.id,'100% training completion rates on mandatory courses',false,'Completion rates measure attendance, not behavior. Compliance training can be completed without any change in security behavior.',10),
     (gen_random_uuid(),r.id,'Employees proactively reporting suspicious activity and near-misses without prompting',true,'Voluntary reporting behavior indicates that employees understand threats, feel safe reporting, and believe reporting matters. This is the behavioral outcome that defines real security culture.',20),
     (gen_random_uuid(),r.id,'No security incidents in the past year',false,'Absence of known incidents can indicate good security or simply poor detection. It is not a direct culture measure.',30),
     (gen_random_uuid(),r.id,'A comprehensive, well-documented security policy framework',false,'Policy documentation is an input to culture, not an output. Good policies that no one follows do not create culture.',40);
 
-  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=(SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Executive Cybersecurity Risk Management') AND quiz_type='checkpoint' AND section_number='2.0') AND order_index=40;
+  -- CP2 Q4
+  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=v_cp2 AND order_index=40;
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),r.id,'Technology: the clean-desk policy needed better enforcement software',false,'Physical security policies depend on human behavior and management accountability, not primarily on software enforcement.',10),
     (gen_random_uuid(),r.id,'Governance and accountability: the policy existed but was not enforced, and no leader was held accountable',true,'A policy that exists on paper but is consistently violated without consequence demonstrates a governance failure. Enforcement requires that leaders are held accountable for compliance in their units.',20),
     (gen_random_uuid(),r.id,'The internal audit function, which should have caught this sooner',false,'Audit identifies failures; the root cause is the absence of accountability in the first line and oversight in the second line. Audit finding it late is a secondary issue.',30),
     (gen_random_uuid(),r.id,'The employees, who chose not to follow the policy',false,'Individual non-compliance at scale typically reflects a culture and leadership failure, not widespread individual misconduct. Leaders set and enforce the expectations.',40);
 
-  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=(SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Executive Cybersecurity Risk Management') AND quiz_type='checkpoint' AND section_number='2.0') AND order_index=50;
+  -- CP2 Q5
+  SELECT id INTO r FROM public.quiz_questions WHERE quiz_id=v_cp2 AND order_index=50;
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),r.id,'The phishing simulations were too easy and should be replaced',false,'Declining click rates over 18 months suggest improving staff awareness, not easier tests. Both metrics together tell a coherent improvement story.',10),
     (gen_random_uuid(),r.id,'Security training investment should be reduced since performance is improving',false,'Sustained improvement requires sustained investment. Cutting training because metrics improved is a common error that leads to regression.',20),
     (gen_random_uuid(),r.id,'The organization''s security culture is measurably improving; staff are more resistant to phishing and more willing to report',true,'Declining click rates indicate improved threat recognition. Tripling reporting rates indicates a culture where staff feel safe and empowered to report. Together, these are strong positive culture indicators.',30),
     (gen_random_uuid(),r.id,'The data is insufficient to draw conclusions without knowing the industry benchmark',false,'Internal trend data over 18 months is meaningful in its own right. Benchmarks add context but are not required to interpret directional improvement.',40);
-END $inner2$;
 
 -- FINAL EXAM --
-INSERT INTO public.quizzes (id,module_id,title,quiz_type,pass_mark,max_attempts,time_limit_mins) VALUES (
+INSERT INTO public.quizzes (id,module_id,title,quiz_type,pass_score,max_attempts,time_limit_mins) VALUES (
   v_fe,v_mod,'Final Exam: Executive Cybersecurity Risk Management','final_exam',70,2,25
 );
 
@@ -363,106 +370,99 @@ INSERT INTO public.quiz_questions (id,quiz_id,question_text,order_index) VALUES
   (gen_random_uuid(),v_fe,'Which of the following is NOT a characteristic of effective board-level cyber risk communication?',140),
   (gen_random_uuid(),v_fe,'An executive learns that a business unit leader ignored a second-line risk function''s recommendation to restrict contractor access privileges. The CISO escalates this to the board. What governance mechanism is being used?',150);
 
-DO $fe$
-DECLARE
-  r RECORD;
-  qids UUID[];
-  i INT := 1;
-BEGIN
   SELECT ARRAY_AGG(id ORDER BY order_index) INTO qids
   FROM public.quiz_questions
-  WHERE quiz_id = (SELECT id FROM public.quizzes WHERE module_id=(SELECT id FROM public.modules WHERE title='Executive Cybersecurity Risk Management') AND quiz_type='final_exam');
+  WHERE quiz_id = v_fe;
 
-  -- Q1
+  -- FE Q1
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),qids[1],'Cybersecurity is a subset of IT risk, managed separately from business strategy',false,'This siloed view is outdated and dangerous. Cyber risk affects financial outcomes, operations, reputation, and regulatory standing; it is a core business risk.',10),
     (gen_random_uuid(),qids[1],'Cyber incidents are rare enough that only large organizations need formal risk management',false,'Frequency does not determine the need for risk management. Impact does. A single incident can be existential for any size organization.',20),
     (gen_random_uuid(),qids[1],'Cybersecurity risk produces financial, operational, regulatory, and reputational impacts that require executive governance',true,'This is the correct framing. Cyber risk manifests across all dimensions of business performance and must be governed with the same rigor as financial or operational risk.',30),
     (gen_random_uuid(),qids[1],'Cybersecurity risk is fully transferred to insurers through cyber liability policies',false,'Insurance transfers financial impact, not the underlying risk. Governance, controls, and culture remain the organization''s responsibility.',40);
-  -- Q2
+  -- FE Q2
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),qids[2],'The fine calculation was incorrect and should be disputed',false,'The question assumes the fine is correct. The issue is understanding why total costs exceed the fine.',10),
     (gen_random_uuid(),qids[2],'Incident response costs, business interruption, customer attrition, and reputational damage compound the direct fine',true,'A breach creates simultaneous costs across multiple categories. Regulatory fines are often the smallest component of total breach cost for large incidents.',20),
     (gen_random_uuid(),qids[2],'The CFO is including projected future losses that may not materialize',false,'While future losses are uncertain, the CFO''s estimate reflects real categories of breach cost that are well-documented in incident analysis.',30),
     (gen_random_uuid(),qids[2],'Only the fine is a real cost; the rest are accounting adjustments',false,'Breach costs beyond fines, including investigation, remediation, customer loss, reputational damage, are real economic impacts, not accounting fictions.',40);
-  -- Q3
+  -- FE Q3
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),qids[3],'Conducting network vulnerability scans',false,'FAIR is not a technical scanning tool. It is an analytical framework.',10),
     (gen_random_uuid(),qids[3],'Quantifying cyber risk in financial terms to support business decision-making',true,'FAIR (Factor Analysis of Information Risk) produces estimated annual loss ranges in monetary terms, enabling leaders to compare risk to investment in business language.',20),
     (gen_random_uuid(),qids[3],'Classifying data assets by sensitivity',false,'Data classification uses separate frameworks. FAIR addresses risk quantification.',30),
     (gen_random_uuid(),qids[3],'Assessing employee security awareness scores',false,'FAIR is an organizational risk model, not a personnel measurement tool.',40);
-  -- Q4
+  -- FE Q4
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),qids[4],'Ignoring the risk because it is too difficult to address',false,'Acceptance is a deliberate, documented decision, not neglect. Ignoring a risk without formal decision is not a risk management strategy.',10),
     (gen_random_uuid(),qids[4],'Documenting an explicit decision to carry the risk without additional treatment, because the cost of mitigation exceeds the expected loss',true,'Acceptance is a valid and often appropriate response when the risk is within appetite and the cost of treatment is disproportionate to the benefit. The key is that it is a documented, conscious decision.',20),
     (gen_random_uuid(),qids[4],'Stopping the activity that generates the risk',false,'Stopping the risky activity is avoidance, not acceptance.',30),
     (gen_random_uuid(),qids[4],'Purchasing insurance to cover the risk',false,'Insurance is risk transfer. Acceptance means carrying the risk internally without additional treatment.',40);
-  -- Q5
+  -- FE Q5
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),qids[5],'Identifying threats and classifying assets before an incident occurs',false,'Asset identification and threat mapping belong to the Identify function, which is pre-incident.',10),
     (gen_random_uuid(),qids[5],'Detecting and containing active security events',false,'Detection and containment belong to the Detect and Respond functions.',20),
     (gen_random_uuid(),qids[5],'Restoring systems, services, and capabilities impaired by a cybersecurity incident',true,'Recover addresses the restoration of operations after an incident, including system recovery, communications, and lessons learned integration.',30),
     (gen_random_uuid(),qids[5],'Training staff to recognize phishing attacks',false,'Awareness training is a Protect function activity.',40);
-  -- Q6
+  -- FE Q6
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),qids[6],'Absence of known incidents does not mean absence of risk; threats may be present but undetected',true,'No reported breach may mean strong security, or it may mean poor detection capability. Without active monitoring and threat hunting, the absence of a reported incident is not evidence of safety.',10),
     (gen_random_uuid(),qids[6],'Five years is too short a timeframe for meaningful security assessment',false,'The duration is not the issue; the reasoning is. Five years of no known incident is not equivalent to five years of no risk.',20),
     (gen_random_uuid(),qids[6],'The claim is valid if the organization has not changed its IT systems',false,'Threat landscapes evolve regardless of whether internal systems change. External threats are dynamic.',30),
     (gen_random_uuid(),qids[6],'The organization should increase security spending immediately',false,'The data does not support this conclusion; the reasoning error is about how to interpret the absence of incidents, not necessarily that spend is insufficient.',40);
-  -- Q7
+  -- FE Q7
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),qids[7],'Conducting penetration tests and approving firewall rules',false,'These are operational activities. The board''s role is governance, not technical operations.',10),
     (gen_random_uuid(),qids[7],'Setting risk appetite, approving security strategy, and holding management accountable for cyber risk outcomes',true,'Board governance in cybersecurity means setting the boundaries within which management operates (risk appetite), approving the strategic direction (security strategy), and holding executives accountable for outcomes.',20),
     (gen_random_uuid(),qids[7],'Managing the day-to-day security operations of the organization',false,'Day-to-day management is an executive and operational function. The board provides oversight, not management.',30),
     (gen_random_uuid(),qids[7],'Hiring and supervising the IT security team',false,'The board hires and supervises the CEO. The CEO owns the security function. The board does not directly manage IT staff.',40);
-  -- Q8
+  -- FE Q8
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),qids[8],'First line: business units',false,'Business units own and manage risk. They do not provide independent assurance.',10),
     (gen_random_uuid(),qids[8],'Second line: risk and compliance functions',false,'The second line provides oversight and challenge but is not independent of management in the same way as audit.',20),
     (gen_random_uuid(),qids[8],'Third line: internal audit',true,'Internal audit is independent of management and provides the board with objective assurance that the first and second lines are functioning effectively.',30),
     (gen_random_uuid(),qids[8],'External regulators',false,'Regulators provide external oversight, not the internal assurance function described in the Three Lines model.',40);
-  -- Q9
+  -- FE Q9
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),qids[9],'A technical briefing covering vulnerability counts, patch status, and penetration test findings',false,'Technical detail without business context does not support board-level governance decisions.',10),
     (gen_random_uuid(),qids[9],'A report expressing risk in financial terms, comparing current posture to risk appetite, and linking investments to risk reduction outcomes',true,'This format enables governance decisions: it tells the board where they stand relative to their stated appetite, in terms they can act on.',20),
     (gen_random_uuid(),qids[9],'A list of all security incidents in the past quarter with technical root causes',false,'Incident lists are operational. Board reporting should synthesize, not list, and should connect to risk position and appetite.',30),
     (gen_random_uuid(),qids[9],'An update confirming that no changes were made to security policies',false,'Status quo reporting is not governance. The board needs forward-looking risk position information, not a confirmation that nothing changed.',40);
-  -- Q10
+  -- FE Q10
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),qids[10],'The vendor, as they own and operate the breached systems',false,'While the vendor has operational liability, the bank retains regulatory accountability for data it controls. Regulators will hold the bank responsible.',10),
     (gen_random_uuid(),qids[10],'The bank, as the data controller, retains regulatory accountability regardless of where processing occurs',true,'Under data protection regulations such as GDPR, the data controller, the bank, retains accountability for data it processes. Outsourcing processing does not transfer regulatory liability.',20),
     (gen_random_uuid(),qids[10],'Regulatory accountability is split equally between the bank and the vendor',false,'Regulators look to the data controller. Contractual liability between bank and vendor is a separate matter.',30),
     (gen_random_uuid(),qids[10],'No party is accountable if the contract contained appropriate security warranties',false,'Contractual terms may affect civil liability between parties, but do not eliminate the bank''s regulatory accountability to the data protection authority.',40);
-  -- Q11
+  -- FE Q11
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),qids[11],'The phishing simulations have become too easy; harder scenarios are needed',false,'While simulation difficulty matters, a stagnant rate over three years despite training more likely reflects a training effectiveness or culture problem.',10),
     (gen_random_uuid(),qids[11],'The training approach is ineffective and requires redesign: awareness alone is insufficient without behavioral reinforcement',true,'Annual training that produces no measurable improvement in behavior over three years is not creating behavior change. Effective culture change requires continuous reinforcement, leadership modeling, and consequences, not just annual eLearning.',20),
     (gen_random_uuid(),qids[11],'28% is an acceptable industry standard that should not concern leadership',false,'28% click rates represent significant risk. Even if it were an industry average, acceptable risk is defined by the organization''s risk appetite, not by what is common.',30),
     (gen_random_uuid(),qids[11],'The simulation platform should be replaced',false,'The problem is the training approach and culture, not the platform. Changing platforms without addressing root causes will not improve outcomes.',40);
-  -- Q12
+  -- FE Q12
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),qids[12],'The maximum loss the organization is willing to absorb in any single incident',false,'This describes a risk tolerance threshold, not risk appetite. Risk appetite is a broader strategic concept.',10),
     (gen_random_uuid(),qids[12],'The amount and type of risk an organization is willing to accept in pursuit of its strategic objectives, set by the board',true,'Risk appetite is a strategic governance statement. It defines the boundaries within which the organization is willing to operate, informing investment, treatment, and acceptance decisions.',20),
     (gen_random_uuid(),qids[12],'The residual risk remaining after all controls are applied',false,'Residual risk is what remains after treatment. Risk appetite defines what the organization is willing to accept; it is a target, not a measured outcome.',30),
     (gen_random_uuid(),qids[12],'The likelihood of a significant cyber incident occurring in a given year',false,'Likelihood is a component of risk assessment, not the definition of risk appetite.',40);
-  -- Q13
+  -- FE Q13
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),qids[13],'Regulatory compliance: all executives must complete mandatory training',false,'While compliance is a reason, the CEO doing it first and publicly demonstrates something beyond minimum compliance.',10),
     (gen_random_uuid(),qids[13],'Tone from the top: leaders model the behaviors they expect from the organization',true,'Culture is shaped by what leaders visibly do, not just what they say. A CEO completing training first signals that security applies to everyone, regardless of seniority, one of the most powerful culture-building actions available.',20),
     (gen_random_uuid(),qids[13],'Delegation: the CEO is training so they can delegate security decisions effectively',false,'The behavior is about modeling, not delegation. Delegation is a management action, not a cultural signal.',30),
     (gen_random_uuid(),qids[13],'Risk transfer: trained executives reduce personal liability',false,'The motivation here is cultural signaling, not personal liability management.',40);
-  -- Q14
+  -- FE Q14
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),qids[14],'Expressed in business and financial terms rather than technical jargon',false,'This IS a characteristic of effective board communication. The question asks for what is NOT.',10),
     (gen_random_uuid(),qids[14],'Comprehensive technical detail on every vulnerability discovered in the quarter',true,'Board reporting should be synthesized, strategic, and business-focused. Comprehensive technical vulnerability detail is operational reporting for management, not board governance communication.',20),
     (gen_random_uuid(),qids[14],'Compared against the organization''s defined risk appetite',false,'Comparing to risk appetite IS a characteristic of effective board communication.',30),
     (gen_random_uuid(),qids[14],'Linking security investment to measurable risk reduction outcomes',false,'Linking investment to outcomes IS a characteristic of effective board communication.',40);
-  -- Q15
+  -- FE Q15
   INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,explanation,order_index) VALUES
     (gen_random_uuid(),qids[15],'Technical escalation: the CISO is requesting additional IT resources',false,'This is a governance escalation, not a resource request.',10),
     (gen_random_uuid(),qids[15],'The second line challenging the first line, with escalation to the board as an oversight mechanism',true,'The risk function (second line) challenged business unit behavior, and when the challenge was ignored, the CISO escalated to the board, exactly how the Three Lines model and governance escalation paths are designed to work.',20),
     (gen_random_uuid(),qids[15],'A whistleblowing procedure for reporting unethical behavior',false,'Whistleblowing applies to ethical violations. This is a governance escalation for risk management failure.',30),
     (gen_random_uuid(),qids[15],'Third-line audit asserting findings from an inspection',false,'Internal audit is the third line. The scenario describes the second-line risk function (CISO) escalating a risk decision.',40);
-END $fe$;
 
 END $$;

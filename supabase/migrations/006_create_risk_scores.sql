@@ -1,31 +1,34 @@
--- ============================================================
--- 006_create_risk_scores.sql (Option 2 - Backend/function calculates composite)
--- ============================================================
+-- 006_create_risk_scores.sql
+-- Converts composite_score from a GENERATED column to a plain
+-- column so the function can insert it explicitly.
 
-CREATE TABLE public.risk_scores (
-  id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id             UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+DO $$
+BEGIN
+  -- If composite_score exists as a GENERATED column, drop and re-add as plain
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name   = 'risk_scores'
+      AND column_name  = 'composite_score'
+      AND is_generated = 'ALWAYS'
+  ) THEN
+    ALTER TABLE public.risk_scores DROP COLUMN composite_score;
+    ALTER TABLE public.risk_scores ADD COLUMN composite_score NUMERIC(5,2) NOT NULL DEFAULT 0;
 
-  phishing_score      NUMERIC(5,2) NOT NULL DEFAULT 0 CHECK (phishing_score BETWEEN 0 AND 100),
-  quiz_score          NUMERIC(5,2) NOT NULL DEFAULT 0 CHECK (quiz_score BETWEEN 0 AND 100),
+  -- If the column doesn't exist at all, just add it
+  ELSIF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name   = 'risk_scores'
+      AND column_name  = 'composite_score'
+  ) THEN
+    ALTER TABLE public.risk_scores ADD COLUMN composite_score NUMERIC(5,2) NOT NULL DEFAULT 0;
 
-  composite_score     NUMERIC(5,2) NOT NULL,
+  -- Otherwise it's already a plain column — nothing to do
+  END IF;
+END $$;
 
-  phishing_attempts   INT NOT NULL DEFAULT 0,
-  phishing_clicks     INT NOT NULL DEFAULT 0,
-  quizzes_taken       INT NOT NULL DEFAULT 0,
-  quizzes_passed      INT NOT NULL DEFAULT 0,
-
-  is_warning          BOOLEAN NOT NULL DEFAULT FALSE,
-  is_critical         BOOLEAN NOT NULL DEFAULT FALSE,
-
-  calculated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE INDEX idx_risk_scores_user_latest
-  ON public.risk_scores (user_id, calculated_at DESC);
-
--- FUNCTION UPDATED
+-- FUNCTION: replaces the version from 005 — now inserts composite_score explicitly
 CREATE OR REPLACE FUNCTION public.calculate_user_risk_score(p_user_id UUID)
 RETURNS public.risk_scores AS $$
 DECLARE

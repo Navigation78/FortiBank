@@ -3,7 +3,7 @@
 // Professional, Cisco NetAcad-style LMS viewer.
 // Enforced flow: subtopic content → 3-MCQ quiz → next subtopic → topic checkpoint → final exam
 
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import {
   ArrowLeft, ChevronDown, ChevronRight, Check, Lock,
@@ -11,6 +11,8 @@ import {
 } from 'lucide-react'
 import VideoPlayer from '@/components/modules/VideoPlayer'
 import QuizTimer from '@/components/quiz/QuizTimer'
+import SafeExamBrowser from '@/components/quiz/SafeExamBrowser'
+import QuizResultsCard from '@/components/quiz/QuizResultsCard'
 import { useProgress } from '@/hooks/useProgress'
 import { useAuth } from '@/hooks/useAuth'
 
@@ -481,33 +483,25 @@ function CheckpointQuizPanel({ quiz, onPass, onExhausted }) {
   )
 
   if (state === 'submitted' && result) return (
-    <div className="space-y-6 py-4">
-      <div className={`rounded-lg border p-6 text-center ${result.passed ? 'border-green-800 bg-green-500/[0.06]' : 'border-red-800 bg-red-500/[0.06]'}`}>
-        <p className={`text-4xl font-bold mb-1 ${result.passed ? 'text-green-400' : 'text-red-400'}`}>{result.score_pct}%</p>
-        <p className={`text-sm font-medium ${result.passed ? 'text-green-300' : 'text-red-300'}`}>
-          {result.passed ? 'Checkpoint passed' : 'Checkpoint not passed'}
-        </p>
-        <p className="text-slate-500 text-xs mt-1">Pass mark: {result.pass_score}% · Attempt {result.attempt_number} of {quizMeta?.max_attempts || result.max_attempts}</p>
-      </div>
-
+    <div className="py-4">
+      <QuizResultsCard
+        result={{ ...result, max_attempts: quizMeta?.max_attempts || result.max_attempts }}
+        isExam={false}
+        onRetake={result.can_retake ? retake : null}
+      />
       {result.passed && (
-        <div className="flex items-center gap-2 text-green-400 text-sm">
+        <div className="mt-4 flex items-center gap-2 text-green-400 text-sm">
           <Check className="w-4 h-4" strokeWidth={3} />
-          Next topic unlocked. Press Continue.
+          Next topic unlocked. Press Continue below.
         </div>
-      )}
-      {!result.passed && result.can_retake && (
-        <button onClick={retake} className="px-5 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm rounded transition-colors">
-          Retake Checkpoint
-        </button>
       )}
       {!result.passed && !result.can_retake && (
-        <div className="space-y-3">
-          <p className="text-slate-400 text-sm">No more attempts remaining.</p>
-          <button onClick={onExhausted} className="px-5 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm rounded transition-colors">
-            Continue anyway
-          </button>
-        </div>
+        <button
+          onClick={onExhausted}
+          className="mt-4 px-5 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm rounded transition-colors"
+        >
+          Continue anyway
+        </button>
       )}
     </div>
   )
@@ -587,7 +581,7 @@ function CheckpointQuizPanel({ quiz, onPass, onExhausted }) {
 
 // ─── Final exam panel ─────────────────────────────────────────────────────────
 
-function FinalExamPanel({ quiz, onComplete, nextModule }) {
+function FinalExamPanel({ quiz, moduleId, onComplete, nextModule }) {
   const [state, setState]           = useState('loading')
   const [questions, setQuestions]   = useState([])
   const [meta, setMeta]             = useState(null)
@@ -597,7 +591,9 @@ function FinalExamPanel({ quiz, onComplete, nextModule }) {
   const [submitting, setSubmitting] = useState(false)
   const [result, setResult]         = useState(null)
   const [timeLeft, setTimeLeft]     = useState(null)
-  const timerRef = useRef(null)
+  const [resetting, setResetting]   = useState(false)
+  const timerRef   = useRef(null)
+  const submittingRef = useRef(false)
 
   useEffect(() => {
     fetch(`/api/quiz?quizId=${quiz.id}`)
@@ -607,7 +603,7 @@ function FinalExamPanel({ quiz, onComplete, nextModule }) {
         setQuestions(d.questions || [])
         setAttemptCount(d.attemptCount || 0)
         if (d.quiz?.time_limit_mins) setTimeLeft(d.quiz.time_limit_mins * 60)
-        setState('ready')
+        setState((d.attemptCount || 0) >= (d.quiz?.max_attempts || 3) ? 'exhausted' : 'ready')
       })
       .catch(() => setState('error'))
   }, [quiz.id])
@@ -615,13 +611,17 @@ function FinalExamPanel({ quiz, onComplete, nextModule }) {
   useEffect(() => {
     if (state !== 'ready' || !timeLeft) return
     timerRef.current = setInterval(() => {
-      setTimeLeft(p => { if (p <= 1) { clearInterval(timerRef.current); doSubmit(); return 0 } return p - 1 })
+      setTimeLeft(p => {
+        if (p <= 1) { clearInterval(timerRef.current); doSubmit(); return 0 }
+        return p - 1
+      })
     }, 1000)
     return () => clearInterval(timerRef.current)
-  }, [state, timeLeft])
+  }, [state])
 
-  async function doSubmit() {
-    if (submitting) return
+  const doSubmit = useCallback(async () => {
+    if (submittingRef.current) return
+    submittingRef.current = true
     setSubmitting(true)
     clearInterval(timerRef.current)
     const timeTaken = meta?.time_limit_mins ? (meta.time_limit_mins * 60) - (timeLeft || 0) : null
@@ -631,11 +631,12 @@ function FinalExamPanel({ quiz, onComplete, nextModule }) {
       body: JSON.stringify({ quiz_id: quiz.id, answers, time_taken_secs: timeTaken }),
     })
     const data = await res.json()
+    submittingRef.current = false
     setResult(data)
     setSubmitting(false)
     setState('submitted')
     if (data.passed) onComplete()
-  }
+  }, [quiz.id, answers, meta, timeLeft, onComplete])
 
   function retake() {
     setAnswers({})
@@ -644,6 +645,17 @@ function FinalExamPanel({ quiz, onComplete, nextModule }) {
     if (meta?.time_limit_mins) setTimeLeft(meta.time_limit_mins * 60)
     setAttemptCount(c => c + 1)
     setState('ready')
+  }
+
+  async function handleRedoModule() {
+    setResetting(true)
+    await fetch('/api/progress/reset-module', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ module_id: moduleId, quiz_id: quiz.id }),
+    })
+    // Reload the page so the module viewer resets from page 0
+    window.location.reload()
   }
 
   function select(qId, optId) {
@@ -662,144 +674,122 @@ function FinalExamPanel({ quiz, onComplete, nextModule }) {
       <AlertCircle className="w-4 h-4" /> Failed to load exam.
     </div>
   )
-
-  if (state === 'submitted' && result) return (
-    <div className="space-y-6">
-      <div className={`rounded-lg border p-8 text-center ${result.passed ? 'border-green-800 bg-green-500/[0.05]' : 'border-red-800 bg-red-500/[0.05]'}`}>
-        <p className={`text-5xl font-bold mb-2 ${result.passed ? 'text-green-400' : 'text-red-400'}`}>{result.score_pct}%</p>
-        <p className={`text-lg font-semibold mb-1 ${result.passed ? 'text-green-300' : 'text-red-300'}`}>
-          {result.passed ? 'Exam Passed' : 'Exam Not Passed'}
-        </p>
-        <p className="text-slate-500 text-sm">Pass mark: {result.pass_score}% · Attempt {result.attempt_number} of {result.max_attempts}</p>
+  if (state === 'exhausted') return (
+    <div className="py-8 space-y-4 max-w-md">
+      <div className="flex items-center gap-2 text-amber-400 text-sm">
+        <AlertCircle className="w-4 h-4" />
+        All {meta?.max_attempts || 3} exam attempts used — you did not reach 80%.
       </div>
-
-      {result.questions?.length > 0 && (
-        <div className="border border-slate-800 rounded-lg p-5">
-          <h4 className="text-white text-sm font-semibold mb-4">Question Review</h4>
-          <div className="space-y-2">
-            {result.questions.map((q, i) => (
-              <div key={q.id} className="flex items-center gap-3">
-                <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${q.isCorrect ? 'bg-green-500/15' : 'bg-red-500/15'}`}>
-                  {q.isCorrect
-                    ? <Check className="w-3 h-3 text-green-400" strokeWidth={3} />
-                    : <span className="text-red-400 text-xs font-bold">✕</span>
-                  }
-                </div>
-                <span className="text-slate-400 text-sm">Question {i + 1}</span>
-                <span className={`text-xs ml-auto ${q.isCorrect ? 'text-green-400' : 'text-red-400'}`}>
-                  {q.isCorrect ? 'Correct' : 'Incorrect'}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div className="flex flex-col sm:flex-row gap-3">
-        {result.can_retake && !result.passed && (
-          <button onClick={retake} className="flex-1 py-2.5 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded transition-colors">
-            Retake Exam
-          </button>
-        )}
-        {result.passed && nextModule && (
-          <Link href={`/modules/${nextModule.id}`} className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded transition-colors text-center">
-            Next Module: {nextModule.title}
-          </Link>
-        )}
-        {result.passed && (
-          <Link href="/certificates" className="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded transition-colors text-center">
-            View Certificate
-          </Link>
-        )}
-        <Link href="/modules" className="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-400 text-sm font-medium rounded transition-colors text-center">
-          All Modules
-        </Link>
-      </div>
+      <p className="text-slate-400 text-sm">
+        You need to redo the module content to unlock 3 fresh attempts.
+      </p>
+      <button
+        onClick={handleRedoModule}
+        disabled={resetting}
+        className="flex items-center gap-2 px-5 py-2.5 bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors"
+      >
+        {resetting ? <Loader2 className="w-4 h-4 animate-spin" /> : <BookOpen className="w-4 h-4" />}
+        {resetting ? 'Resetting…' : 'Redo Module'}
+      </button>
     </div>
   )
 
+  if (state === 'submitted' && result) return (
+    <QuizResultsCard
+      result={result}
+      isExam={true}
+      moduleId={moduleId}
+      onRetake={result.can_retake ? retake : null}
+      onRedoModule={!result.passed && !result.can_retake ? handleRedoModule : null}
+      nextModule={nextModule}
+    />
+  )
+
+  // ── Active exam (wrapped in safe browser) ────────────────────
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-slate-500 text-xs font-semibold uppercase tracking-widest mb-1">Final Exam</p>
-          <h2 className="text-white text-xl font-bold">{meta?.title}</h2>
-          <p className="text-slate-500 text-sm mt-1">
-            Pass mark: {meta?.pass_score}% · Attempt {attemptCount + 1} of {meta?.max_attempts}
-          </p>
-        </div>
-        <QuizTimer timeLeft={timeLeft} />
-      </div>
-
-      {/* Question dots */}
-      <div className="flex items-center gap-1.5">
-        {questions.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentQ(i)}
-            className={`rounded-full transition-all ${
-              i === currentQ ? 'w-5 h-1.5 bg-blue-400' : answers[questions[i]?.id] ? 'w-3 h-1.5 bg-green-500' : 'w-3 h-1.5 bg-slate-700'
-            }`}
-          />
-        ))}
-        <span className="text-slate-500 text-xs ml-auto tabular-nums">{Object.keys(answers).length}/{questions.length}</span>
-      </div>
-
-      {questions[currentQ] && (() => {
-        const q = questions[currentQ]
-        return (
-          <div className="space-y-3">
-            <p className="text-white text-sm font-medium leading-relaxed">
-              <span className="text-slate-500 font-mono mr-2">{currentQ + 1}.</span>{q.question_text}
+    <SafeExamBrowser onForceSubmit={doSubmit}>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-slate-500 text-xs font-semibold uppercase tracking-widest mb-1">Final Exam</p>
+            <h2 className="text-white text-xl font-bold">{meta?.title}</h2>
+            <p className="text-slate-500 text-sm mt-1">
+              Pass mark: {meta?.pass_score}% · Attempt {attemptCount + 1} of {meta?.max_attempts}
             </p>
-            <div className="space-y-2">
-              {(q.quiz_options || []).map(opt => {
-                const isSel = answers[q.id]?.includes(opt.id)
-                return (
-                  <button
-                    key={opt.id}
-                    onClick={() => select(q.id, opt.id)}
-                    className={`w-full text-left px-4 py-2.5 rounded border text-sm transition-colors ${
-                      isSel ? 'border-blue-500/60 bg-blue-500/[0.08] text-white'
-                             : 'border-slate-800 text-slate-400 hover:border-slate-600 hover:text-slate-200'
-                    }`}
-                  >
-                    {opt.option_text}
-                  </button>
-                )
-              })}
-            </div>
           </div>
-        )
-      })()}
+          <QuizTimer timeLeft={timeLeft} />
+        </div>
 
-      <div className="flex items-center justify-between gap-3">
-        <button
-          onClick={() => setCurrentQ(p => Math.max(0, p - 1))}
-          disabled={currentQ === 0}
-          className="px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 rounded text-sm transition-colors"
-        >
-          Previous
-        </button>
-        {currentQ < questions.length - 1 ? (
+        {/* Question dots */}
+        <div className="flex items-center gap-1.5">
+          {questions.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentQ(i)}
+              className={`rounded-full transition-all ${
+                i === currentQ ? 'w-5 h-1.5 bg-blue-400' : answers[questions[i]?.id] ? 'w-3 h-1.5 bg-green-500' : 'w-3 h-1.5 bg-slate-700'
+              }`}
+            />
+          ))}
+          <span className="text-slate-500 text-xs ml-auto tabular-nums">{Object.keys(answers).length}/{questions.length}</span>
+        </div>
+
+        {questions[currentQ] && (() => {
+          const q = questions[currentQ]
+          return (
+            <div className="space-y-3">
+              <p className="text-white text-sm font-medium leading-relaxed">
+                <span className="text-slate-500 font-mono mr-2">{currentQ + 1}.</span>{q.question_text}
+              </p>
+              <div className="space-y-2">
+                {(q.quiz_options || []).map(opt => {
+                  const isSel = answers[q.id]?.includes(opt.id)
+                  return (
+                    <button
+                      key={opt.id}
+                      onClick={() => select(q.id, opt.id)}
+                      className={`w-full text-left px-4 py-2.5 rounded border text-sm transition-colors ${
+                        isSel ? 'border-blue-500/60 bg-blue-500/[0.08] text-white'
+                               : 'border-slate-800 text-slate-400 hover:border-slate-600 hover:text-slate-200'
+                      }`}
+                    >
+                      {opt.option_text}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )
+        })()}
+
+        <div className="flex items-center justify-between gap-3">
           <button
-            onClick={() => setCurrentQ(p => p + 1)}
-            className="flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-sm transition-colors"
+            onClick={() => setCurrentQ(p => Math.max(0, p - 1))}
+            disabled={currentQ === 0}
+            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 rounded text-sm transition-colors"
           >
-            Next <ChevronRight className="w-3.5 h-3.5" />
+            Previous
           </button>
-        ) : (
-          <button
-            onClick={doSubmit}
-            disabled={submitting || !allAnswered}
-            className="flex items-center gap-1.5 px-5 py-2 bg-green-700 hover:bg-green-600 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded text-sm font-medium transition-colors"
-          >
-            {submitting ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Submitting…</> : <><Check className="w-3.5 h-3.5" /> Submit Exam</>}
-          </button>
-        )}
+          {currentQ < questions.length - 1 ? (
+            <button
+              onClick={() => setCurrentQ(p => p + 1)}
+              className="flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-sm transition-colors"
+            >
+              Next <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          ) : (
+            <button
+              onClick={doSubmit}
+              disabled={submitting || !allAnswered}
+              className="flex items-center gap-1.5 px-5 py-2 bg-green-700 hover:bg-green-600 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded text-sm font-medium transition-colors"
+            >
+              {submitting ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Submitting…</> : <><Check className="w-3.5 h-3.5" /> Submit Exam</>}
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+    </SafeExamBrowser>
   )
 }
 
@@ -1115,6 +1105,7 @@ export default function LMSModuleViewer({ module, nextModule }) {
                 <FinalExamPanel
                   key={`fe-${pageIdx}`}
                   quiz={currentPage.quiz}
+                  moduleId={module.id}
                   onComplete={onFinalExamComplete}
                   nextModule={nextModule}
                 />

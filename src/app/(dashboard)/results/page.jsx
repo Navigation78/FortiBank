@@ -9,7 +9,7 @@ import { createClient } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import Link from 'next/link'
 
-const TABS = ['Quiz Results', 'Phishing Tests']
+const TABS = ['Quiz & Exam Results', 'Phishing Tests']
 
 export default function ResultsPage() {
   const supabase      = createClient()
@@ -31,7 +31,8 @@ export default function ResultsPage() {
         .from('quiz_attempts')
         .select(`
           id, score_pct, passed, attempt_number, submitted_at, time_taken_secs,
-          quizzes ( title, pass_score, modules ( title ) )
+          quizzes ( title, pass_score, quiz_type, modules ( title ) ),
+          quiz_attempt_answers ( is_correct )
         `)
         .eq('user_id', user.id)
         .order('submitted_at', { ascending: false }),
@@ -100,13 +101,28 @@ export default function ResultsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {quizAttempts.map((attempt, i) => (
+                    {quizAttempts.map((attempt, i) => {
+                      const answers      = attempt.quiz_attempt_answers || []
+                      const correct      = answers.filter(a => a.is_correct).length
+                      const total        = answers.length
+                      const hasFraction  = total > 0
+                      const isExam       = attempt.quizzes?.quiz_type === 'final_exam'
+                      return (
                       <tr key={attempt.id} className={`border-b border-white/[0.06] last:border-0 ${i % 2 === 0 ? '' : 'bg-slate-900/50'}`}>
                         <td className="px-5 py-3">
-                          <p className="text-white text-sm font-medium truncate max-w-48">
-                            {attempt.quizzes?.modules?.title || 'Unknown Module'}
-                          </p>
-                          <p className="text-slate-500 text-xs truncate">
+                          <div className="flex items-center gap-2">
+                            <p className="text-white text-sm font-medium truncate max-w-40">
+                              {attempt.quizzes?.modules?.title || 'Unknown Module'}
+                            </p>
+                            <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded flex-shrink-0 ${
+                              isExam
+                                ? 'bg-purple-500/15 text-purple-400'
+                                : 'bg-blue-500/15 text-blue-400'
+                            }`}>
+                              {isExam ? 'EXAM' : 'QUIZ'}
+                            </span>
+                          </div>
+                          <p className="text-slate-500 text-xs truncate mt-0.5">
                             {attempt.quizzes?.title}
                           </p>
                         </td>
@@ -115,9 +131,12 @@ export default function ResultsPage() {
                         </td>
                         <td className="px-5 py-3">
                           <div className="flex items-center gap-2">
-                            <span className={`font-bold text-sm ${attempt.passed ? 'text-green-400' : 'text-red-400'}`}>
+                            <span className={`font-bold text-sm tabular-nums ${attempt.passed ? 'text-green-400' : 'text-red-400'}`}>
                               {attempt.score_pct}%
                             </span>
+                            {hasFraction && (
+                              <span className="text-slate-600 text-xs tabular-nums">{correct}/{total}</span>
+                            )}
                             <span className={`text-xs px-1.5 py-0.5 rounded ${
                               attempt.passed ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400'
                             }`}>
@@ -134,7 +153,8 @@ export default function ResultsPage() {
                           </span>
                         </td>
                       </tr>
-                    ))}
+                      )
+                    })}
                   </tbody>
                 </table>
               </div>

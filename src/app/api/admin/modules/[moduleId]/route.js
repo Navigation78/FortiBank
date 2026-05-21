@@ -70,12 +70,15 @@ export async function PUT(request, { params }) {
   const blocks = (content_blocks || [])
     .filter(block => block.title)
     .map((block, index) => ({
-      module_id:    moduleId,
-      title:        block.title,
-      content_type: block.content_type,
-      content_url:  block.content_url || null,
-      content_body: block.content_body || null,
-      order_index:  index,
+      module_id:           moduleId,
+      title:               block.title,
+      content_type:        block.content_type,
+      content_url:         block.content_url  || null,
+      content_body:        block.content_body || null,
+      order_index:         index,
+      section_number:      block.section_number      || null,
+      learning_objectives: block.learning_objectives || [],
+      image_caption:       block.image_caption       || null,
     }))
 
   if (blocks.length > 0) {

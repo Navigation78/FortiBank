@@ -69,13 +69,25 @@ CREATE TABLE public.certificates (
                       'CERT-' || TO_CHAR(NOW(), 'YYYY') || '-' ||
                       UPPER(SUBSTRING(encode(gen_random_bytes(4), 'hex'), 1, 8)),
   issued_at         TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  valid_until       TIMESTAMPTZ GENERATED ALWAYS AS (issued_at + INTERVAL '1 year') STORED,
+  valid_until       TIMESTAMPTZ,
   pdf_url           TEXT,                      -- Supabase Storage URL for the PDF
   is_revoked        BOOLEAN NOT NULL DEFAULT FALSE,
   revoked_at        TIMESTAMPTZ,
   revoked_by        UUID REFERENCES public.users(id),
   UNIQUE(user_id, role_id)                    -- one active cert per role per user
 );
+
+CREATE OR REPLACE FUNCTION public.set_certificate_valid_until()
+RETURNS TRIGGER LANGUAGE plpgsql AS $$
+BEGIN
+  NEW.valid_until := NEW.issued_at + INTERVAL '1 year';
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER trg_certificate_valid_until
+  BEFORE INSERT ON public.certificates
+  FOR EACH ROW EXECUTE FUNCTION public.set_certificate_valid_until();
 
 -- ── Helper Function: Calculate & Upsert Risk Score ───────────
 -- Call this after any quiz attempt or phishing click event

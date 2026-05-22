@@ -130,7 +130,7 @@ export default function SafeExamBrowser({ children, onForceSubmit }) {
           className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 text-sm"
         >
           <Monitor className="w-4 h-4" />
-          I Understand — Enter Exam Mode
+          I Understand.Enter Exam Mode
         </button>
       </div>
     )

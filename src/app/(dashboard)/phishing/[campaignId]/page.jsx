@@ -8,7 +8,6 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import PageWrapper from '@/components/layout/PageWrapper'
-import SimulationBadge from '@/components/phishing/SimulationBadge'
 import { createClient } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 
@@ -96,13 +95,12 @@ export default function CampaignDetailPage() {
                 <p className={`font-bold ${clicked ? 'text-red-400' : reported ? 'text-green-400' : 'text-blue-400'}`}>
                   {clicked ? 'You clicked this phishing link' : reported ? 'You correctly reported this' : 'Email received'}
                 </p>
-                <SimulationBadge />
               </div>
             </div>
             {clicked && (
               <p className="text-slate-300 text-sm">
-                This was a simulated phishing test. In a real attack, clicking this link
-                could have resulted in credential theft or malware installation.
+                Clicking this link could result in credential theft or malware installation.
+                Review the red flags below to improve your awareness.
               </p>
             )}
             {reported && (

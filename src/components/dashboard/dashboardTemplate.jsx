@@ -22,10 +22,19 @@ export default function DashboardTemplate({
   const { profile, user, supabase } = useAuthContext()
   const { modules, loading: modulesLoading, stats } = useModules()
 
-  const [riskScore, setRiskScore]     = useState(null)
-  const [alert, setAlert]             = useState(null)
-  const [activities, setActivities]   = useState([])
-  const [riskLoading, setRiskLoading] = useState(true)
+  const [riskScore, setRiskScore]         = useState(null)
+  const [alert, setAlert]                 = useState(null)
+  const [activities, setActivities]       = useState([])
+  const [riskLoading, setRiskLoading]     = useState(true)
+  const [lastActivityModule, setLastActivityModule] = useState(null)
+
+  // Prefer an actively in-progress module; fall back to the last quiz-touched module.
+  // When using the fallback, enrich it with real progress data if already loaded.
+  const lastModule =
+    modules.find(m => m.progress?.status === 'in_progress') ||
+    (lastActivityModule
+      ? (modules.find(m => m.id === lastActivityModule.id) || lastActivityModule)
+      : null)
 
   const firstName = profile?.full_name?.split(' ')[0] || 'there'
 
@@ -67,7 +76,7 @@ export default function DashboardTemplate({
         submitted_at,
         quizzes (
           title,
-          modules ( title )
+          modules ( id, title )
         )
       `)
       .eq('user_id', user.id)
@@ -82,6 +91,16 @@ export default function DashboardTemplate({
         date:  a.submitted_at,
       }))
       setActivities(mapped)
+
+      // Use the most recent quiz's module as the fallback "continue" target
+      const first = attempts.find(a => a.quizzes?.modules?.id)
+      if (first) {
+        setLastActivityModule({
+          id:       first.quizzes.modules.id,
+          title:    first.quizzes.modules.title,
+          progress: null, // no progress_pct available from this path
+        })
+      }
     }
   }
 
@@ -145,25 +164,28 @@ export default function DashboardTemplate({
           ))}
         </div>
 
-        {/* Main grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 items-stretch">
-          <div className="lg:col-span-1 flex flex-col">
+        {/* Main grid — balanced 50/50 */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 items-stretch">
+          <div className="flex flex-col">
             <RiskScoreGauge score={riskScore} loading={riskLoading} />
           </div>
-          <div className="lg:col-span-2 flex flex-col">
+          <div className="flex flex-col">
             <ProgressChart modules={modules} loading={modulesLoading} />
           </div>
         </div>
 
-        {/* Bottom grid */}
-        <div className={`grid grid-cols-1 gap-6 ${focusAreas ? 'lg:grid-cols-3' : ''}`}>
-          <div className={focusAreas ? 'lg:col-span-2' : ''}>
-            <RecentActivity activities={activities} />
+        {/* Bottom grid — balanced 50/50 */}
+        <div className={`grid grid-cols-1 gap-6 ${focusAreas ? 'lg:grid-cols-2' : ''}`}>
+          <div>
+            <RecentActivity
+              activities={activities}
+              lastModule={lastModule}
+            />
           </div>
 
           {/* Threat focus areas */}
           {focusAreas && (
-            <div className="lg:col-span-1">
+            <div>
               <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 shadow-sm shadow-black/30 transition-all duration-150 hover:border-white/[0.14] hover:shadow-md hover:shadow-black/40">
                 <h3 className="text-slate-100 font-semibold mb-4">Your Risk Focus Areas</h3>
                 <div className="space-y-3">

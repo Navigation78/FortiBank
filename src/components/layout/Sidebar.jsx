@@ -36,7 +36,6 @@ const NAV_ITEMS = [
   { label: 'Risk Score',     icon: 'risk',      href: '/risk-score' },
   { label: 'Results',        icon: 'results',   href: '/results' },
   { label: 'Certificates',   icon: 'cert',      href: '/certificates' },
-  { label: 'Notifications',  icon: 'bell',      href: '/notifications' },
 ]
 
 function SidebarInner({ collapsed, onToggle, navItems, isActive, darkMode, setDarkMode, onCloseMobile, search = '' }) {
@@ -162,14 +161,14 @@ export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, setIsMobi
 
       {/* Mobile sidebar */}
       <aside
-        className={`lg:hidden fixed top-0 left-0 h-full z-50 w-64 bg-slate-900 border-r border-white/[0.06] transform transition-transform duration-200 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        className={`lg:hidden fixed top-0 left-0 h-full z-50 w-48 bg-slate-900 border-r border-white/[0.06] transform transition-transform duration-200 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         <SidebarInner {...sharedProps} collapsed={false} onToggle={() => setIsMobileOpen(false)} />
       </aside>
 
       {/* Desktop sidebar */}
       <aside
-        className={`hidden lg:flex flex-col relative flex-shrink-0 h-full bg-slate-900 border-r border-white/[0.06] transition-all duration-200 ${isCollapsed ? 'w-[60px]' : 'w-60'}`}
+        className={`hidden lg:flex flex-col relative flex-shrink-0 h-full bg-slate-900 border-r border-white/[0.06] transition-all duration-200 ${isCollapsed ? 'w-[60px]' : 'w-48'}`}
       >
         <SidebarInner {...sharedProps} collapsed={isCollapsed} onToggle={onToggle} />
       </aside>

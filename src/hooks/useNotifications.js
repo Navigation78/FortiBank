@@ -55,6 +55,16 @@ export function useNotifications({ filter = 'all', type = null, page = 1, enable
     return () => clearInterval(timerRef.current)
   }, [fetchNotifications])
 
+  // Sync across hook instances when any instance marks all as read
+  useEffect(() => {
+    const handleAllRead = () => {
+      setUnreadCount(0)
+      setNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
+    }
+    window.addEventListener('notifications:all-read', handleAllRead)
+    return () => window.removeEventListener('notifications:all-read', handleAllRead)
+  }, [])
+
   const markAsRead = useCallback(async (id, isRead = true) => {
     // Optimistic update
     setNotifications(prev =>
@@ -73,6 +83,7 @@ export function useNotifications({ filter = 'all', type = null, page = 1, enable
     setNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
     setUnreadCount(0)
     await fetch('/api/notifications/read-all', { method: 'PATCH' })
+    window.dispatchEvent(new CustomEvent('notifications:all-read'))
   }, [])
 
   const deleteNotification = useCallback(async (id) => {

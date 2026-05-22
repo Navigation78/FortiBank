@@ -18,16 +18,19 @@ export default function StatsCard({
 
   const c = colors[color] || colors.blue
   const renderIcon = () => {
-    if (typeof icon === 'string') return <span className="text-white">{icon}</span>
-    if (isValidElement(icon)) return <span className="text-white">{icon}</span>
-
+    if (typeof icon === 'string') return <span className={c.icon}>{icon}</span>
+    if (isValidElement(icon)) return <span className={c.icon}>{icon}</span>
     const Icon = icon
-    return <Icon className="w-6 h-6 text-white" />
+    return <Icon className={`w-5 h-5 ${c.icon}`} />
   }
 
   return (
-    <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-5 flex items-start gap-4 shadow-sm shadow-black/30 transition-all duration-150 hover:border-white/[0.14] hover:shadow-md hover:shadow-black/40 hover:-translate-y-0.5">
-      {icon && renderIcon()}
+    <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-5 flex items-center gap-4 shadow-sm shadow-black/30 transition-all duration-150 hover:border-white/[0.14] hover:shadow-md hover:shadow-black/40 hover:-translate-y-0.5">
+      {icon && (
+        <div className={`flex-shrink-0 w-11 h-11 ${c.bg} border ${c.border} rounded-xl flex items-center justify-center`}>
+          {renderIcon()}
+        </div>
+      )}
       <div className="min-w-0 flex-1">
         <p className="text-slate-400 text-sm">{title}</p>
         <p className="text-slate-100 text-2xl font-bold mt-0.5">{value}</p>

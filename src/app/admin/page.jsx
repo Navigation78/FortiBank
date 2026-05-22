@@ -118,18 +118,30 @@ export default function AdminHomePage() {
                     { label: 'Total modules',         value: stats?.totalModules,    sub: `${stats?.publishedModules} published` },
                     { label: 'Total phishing campaigns',        value: stats?.totalCampaigns,  sub: `${stats?.activeCampaigns} active` },
                     { label: 'Average risk score',     value: stats?.avgRiskScore,    sub: 'across all employees' },
-                    { label: 'Employees at critical',  value: stats?.criticalUsers,   sub: 'require immediate attention', alert: stats?.criticalUsers > 0 },
-                  ].map((item, i) => (
-                    <div key={i} className={`flex items-center justify-between px-4 py-3 rounded-lg ${item.alert ? 'bg-red-500/10 border border-red-500/20' : 'bg-white/[0.04]'}`}>
-                      <div>
-                        <p className="text-slate-200 text-sm font-medium">{item.label}</p>
-                        <p className="text-slate-400 text-xs">{item.sub}</p>
+                    { label: 'Employees at critical',  value: stats?.criticalUsers,   sub: 'require immediate attention', alert: stats?.criticalUsers > 0, href: '/admin/notifications' },
+                  ].map((item, i) => {
+                    const rowClass = `flex items-center justify-between px-4 py-3 rounded-lg ${item.alert ? 'bg-red-500/10 border border-red-500/20' : 'bg-white/[0.04]'}`
+                    const inner = (
+                      <>
+                        <div>
+                          <p className="text-slate-200 text-sm font-medium">{item.label}</p>
+                          <p className="text-slate-400 text-xs">{item.sub}</p>
+                        </div>
+                        <span className={`font-bold text-xl ${item.alert ? 'text-red-400' : 'text-slate-100'}`}>
+                          {item.value ?? '-'}
+                        </span>
+                      </>
+                    )
+                    return item.href ? (
+                      <Link key={i} href={item.href} className={`${rowClass} hover:bg-red-500/15 transition-colors`}>
+                        {inner}
+                      </Link>
+                    ) : (
+                      <div key={i} className={rowClass}>
+                        {inner}
                       </div>
-                      <span className={`font-bold text-xl ${item.alert ? 'text-red-400' : 'text-slate-100'}`}>
-                        {item.value ?? '-'}
-                      </span>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               )}
             </div>

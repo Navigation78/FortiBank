@@ -32,6 +32,12 @@ export default function AdminModulesPage() {
     fetchModules()
   }
 
+  async function archiveModule(module) {
+    const newStatus = module.status === 'archived' ? 'draft' : 'archived'
+    await supabase.from('modules').update({ status: newStatus }).eq('id', module.id)
+    fetchModules()
+  }
+
   async function deleteModule(moduleId) {
     if (confirm('Are you sure you want to delete this module?')) {
       const response = await fetch(`/api/admin/modules/${moduleId}`, {
@@ -109,11 +115,19 @@ export default function AdminModulesPage() {
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
                         <Link href={`/admin/modules/${module.id}`} className="text-blue-400 hover:text-blue-300 text-xs font-medium">Edit</Link>
+                        {module.status !== 'archived' && (
+                          <button
+                            onClick={() => togglePublish(module)}
+                            className={`text-xs font-medium transition-all duration-150 ${module.status === 'published' ? 'text-yellow-400 hover:text-yellow-300' : 'text-green-400 hover:text-green-300'}`}
+                          >
+                            {module.status === 'published' ? 'Unpublish' : 'Publish'}
+                          </button>
+                        )}
                         <button
-                          onClick={() => togglePublish(module)}
-                          className={`text-xs font-medium transition-all duration-150 ${module.status === 'published' ? 'text-yellow-400 hover:text-yellow-300' : 'text-green-400 hover:text-green-300'}`}
+                          onClick={() => archiveModule(module)}
+                          className={`text-xs font-medium transition-all duration-150 ${module.status === 'archived' ? 'text-blue-400 hover:text-blue-300' : 'text-orange-400 hover:text-orange-300'}`}
                         >
-                          {module.status === 'published' ? 'Unpublish' : 'Publish'}
+                          {module.status === 'archived' ? 'Unarchive' : 'Archive'}
                         </button>
                         <button
                           onClick={() => deleteModule(module.id)}

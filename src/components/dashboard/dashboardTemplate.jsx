@@ -139,25 +139,25 @@ export default function DashboardTemplate({
         </div>
 
         {/* Stats row */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {realStats.map((stat, i) => (
             <StatsCard key={i} {...stat} />
           ))}
         </div>
 
         {/* Main grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          <div className="lg:col-span-1">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 items-stretch">
+          <div className="lg:col-span-1 flex flex-col">
             <RiskScoreGauge score={riskScore} loading={riskLoading} />
           </div>
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 flex flex-col">
             <ProgressChart modules={modules} loading={modulesLoading} />
           </div>
         </div>
 
         {/* Bottom grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
+        <div className={`grid grid-cols-1 gap-6 ${focusAreas ? 'lg:grid-cols-3' : ''}`}>
+          <div className={focusAreas ? 'lg:col-span-2' : ''}>
             <RecentActivity activities={activities} />
           </div>
 

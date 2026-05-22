@@ -7,10 +7,22 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { useRole } from '@/hooks/useRole'
 import { ROLE_LABELS } from '@/constants/roles'
+import { getDashboardUrl } from '@/utils/roleRedirect'
 import NotificationBell from '@/components/notifications/NotificationBell'
+
+const NAV_LABELS = [
+  { label: 'Dashboard',      href: null,              exact: true  },
+  { label: 'My Modules',     href: '/modules',        exact: false },
+  { label: 'Phishing Tests', href: '/phishing',       exact: false },
+  { label: 'Risk Score',     href: '/risk-score',     exact: false },
+  { label: 'Results',        href: '/results',        exact: false },
+  { label: 'Certificates',   href: '/certificates',   exact: false },
+  { label: 'Notifications',  href: '/notifications',  exact: false },
+]
 
 function Icon({ path, className = "w-5 h-5" }) {
   return (
@@ -25,11 +37,24 @@ const SEARCH_ICON = 'M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0
 export default function Topbar({ toggleSidebar, isCollapsed, toggleMobileSidebar, search = '', setSearch }) {
   const { profile, signOut } = useAuth()
   const { role } = useRole()
+  const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
 
   const roleLabel = ROLE_LABELS[role] || role
   const firstName = profile?.full_name?.split(' ')[0] || 'User'
   const userInitial = profile?.full_name?.charAt(0) || 'U'
+
+  const dashboardUrl = getDashboardUrl(role)
+  const navItems = NAV_LABELS.map(item => item.href === null ? { ...item, href: dashboardUrl } : item)
+  const pageLabel = (() => {
+    if (!pathname) return ''
+    const exact = navItems.find(item => item.exact && pathname === item.href)
+    if (exact) return exact.label
+    const match = [...navItems].filter(item => !item.exact)
+      .sort((a, b) => b.href.length - a.href.length)
+      .find(item => pathname.startsWith(item.href))
+    return match?.label || ''
+  })()
 
   const handleSidebarToggle = () => {
     if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
@@ -63,6 +88,12 @@ export default function Topbar({ toggleSidebar, isCollapsed, toggleMobileSidebar
             <span className="text-slate-100 font-semibold">FortiBank</span>
             <span className="text-slate-600">|</span>
             <span className="text-slate-400">{firstName}</span>
+            {pageLabel && (
+              <>
+                <span className="text-slate-600">|</span>
+                <span className="text-slate-200 font-semibold">{pageLabel}</span>
+              </>
+            )}
           </div>
         </div>
       </div>

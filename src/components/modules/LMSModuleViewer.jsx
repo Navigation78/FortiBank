@@ -413,12 +413,13 @@ function SubtopicQuizPanel({ questions, onComplete }) {
 
 function CheckpointQuizPanel({ quiz, onPass, onExhausted }) {
   const [state, setState] = useState('loading') // loading | ready | submitted
-  const [questions, setQuestions]   = useState([])
-  const [quizMeta, setQuizMeta]     = useState(null)
-  const [currentQ, setCurrentQ]     = useState(0)
-  const [answers, setAnswers]       = useState({})
-  const [submitting, setSubmitting] = useState(false)
-  const [result, setResult]         = useState(null)
+  const [questions, setQuestions]     = useState([])
+  const [quizMeta, setQuizMeta]       = useState(null)
+  const [currentQ, setCurrentQ]       = useState(0)
+  const [answers, setAnswers]         = useState({})
+  const [submitting, setSubmitting]   = useState(false)
+  const [result, setResult]           = useState(null)
+  const [attemptCount, setAttemptCount] = useState(0)
 
   useEffect(() => {
     fetch(`/api/quiz?quizId=${quiz.id}`)

@@ -46,11 +46,6 @@ const NAV_ITEMS = [
     href:  '/admin/reports',
     icon:  'M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
   },
-  {
-    label: 'Notifications',
-    href:  '/admin/notifications',
-    icon:  'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9',
-  },
 ]
 
 const ICONS = {
@@ -175,14 +170,14 @@ function AdminSidebar({ isCollapsed, onToggle, isMobileOpen, setIsMobileOpen, se
 
       {/* Mobile sidebar */}
       <aside
-        className={`lg:hidden fixed top-0 left-0 h-full z-50 w-60 bg-slate-900 border-r border-white/[0.06] transform transition-transform duration-200 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        className={`lg:hidden fixed top-0 left-0 h-full z-50 w-48 bg-slate-900 border-r border-white/[0.06] transform transition-transform duration-200 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         <SidebarInner {...sharedProps} collapsed={false} onToggle={() => setIsMobileOpen(false)} />
       </aside>
 
       {/* Desktop sidebar */}
       <aside
-        className={`hidden lg:flex flex-col relative flex-shrink-0 h-full bg-slate-900 border-r border-white/[0.06] transition-all duration-200 ${isCollapsed ? 'w-[60px]' : 'w-60'}`}
+        className={`hidden lg:flex flex-col relative flex-shrink-0 h-full bg-slate-900 border-r border-white/[0.06] transition-all duration-200 ${isCollapsed ? 'w-[60px]' : 'w-48'}`}
       >
         <SidebarInner {...sharedProps} collapsed={isCollapsed} onToggle={onToggle} />
       </aside>
@@ -192,10 +187,23 @@ function AdminSidebar({ isCollapsed, onToggle, isMobileOpen, setIsMobileOpen, se
 
 function AdminTopbar({ toggleMobileSidebar, search, setSearch }) {
   const { profile, signOut } = useAuth()
+  const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
 
-  const firstName   = profile?.full_name?.split(' ')[0] || 'User'
-  const userInitial = profile?.full_name?.charAt(0) || 'U'
+  const displayName = profile?.full_name === 'New User' || !profile?.full_name
+    ? 'System Admin'
+    : profile?.full_name
+  const firstName   = displayName.split(' ')[0]
+  const userInitial = displayName.charAt(0)
+
+  const pageLabel = (() => {
+    const exact = NAV_ITEMS.find(item => item.exact && pathname === item.href)
+    if (exact) return exact.label
+    const match = [...NAV_ITEMS].filter(item => !item.exact)
+      .sort((a, b) => b.href.length - a.href.length)
+      .find(item => pathname.startsWith(item.href))
+    return match?.label || ''
+  })()
 
   return (
     <header className="bg-slate-900 border-b border-white/[0.06] flex items-center px-4 py-3 z-30 shadow-sm shadow-black/40 flex-shrink-0">
@@ -221,14 +229,18 @@ function AdminTopbar({ toggleMobileSidebar, search, setSearch }) {
             <span className="text-slate-600">|</span>
             <span className="text-slate-400">{firstName}</span>
             <span className="text-green-400 text-[10px] tracking-widest uppercase ml-1 font-medium">Admin</span>
+            {pageLabel && (
+              <>
+                <span className="text-slate-600">|</span>
+                <span className="text-slate-200 font-semibold">{pageLabel}</span>
+              </>
+            )}
           </div>
         </div>
       </div>
 
       <div className="ml-auto flex items-center gap-3">
-        <NotificationBell inboxHref="/admin/notifications" />
-
-        {/* Search bar — right side of nav */}
+        {/* Search bar */}
         <div className="hidden sm:block" style={{ position: 'relative', width: 200 }}>
           <input
             type="text"
@@ -264,6 +276,9 @@ function AdminTopbar({ toggleMobileSidebar, search, setSearch }) {
             <Icon path={ICONS.search} className="w-3.5 h-3.5" />
           </div>
         </div>
+
+        <NotificationBell inboxHref="/admin/notifications" />
+
         <div className="relative">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -283,7 +298,7 @@ function AdminTopbar({ toggleMobileSidebar, search, setSearch }) {
               <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
               <div className="absolute right-0 top-full mt-2 w-52 bg-slate-800 border border-white/[0.08] rounded-xl shadow-xl shadow-black/50 z-20 overflow-hidden">
                 <div className="px-4 py-3 border-b border-white/[0.06]">
-                  <p className="text-slate-100 text-sm font-medium truncate">{profile?.full_name || 'User'}</p>
+                  <p className="text-slate-100 text-sm font-medium truncate">{displayName}</p>
                   <p className="text-slate-400 text-xs truncate mt-0.5">{profile?.email}</p>
                 </div>
                 <div className="py-1 border-t border-white/[0.06]">

@@ -75,7 +75,7 @@ export default function AdminPhishingPage() {
                 {campaigns.map(c => (
                   <tr key={c.campaign_id} className="border-b border-white/[0.06] last:border-0 hover:bg-white/[0.04] transition-all duration-150">
                     <td className="px-5 py-3">
-                      <p className="text-white text-sm font-medium">{c.campaign_name}</p>
+                      <p className="text-white text-sm font-medium">{c.name}</p>
                     </td>
                     <td className="px-5 py-3 hidden sm:table-cell">
                       <span className={`text-xs font-medium px-2 py-1 rounded-lg capitalize ${STATUS_COLORS[c.status]}`}>
@@ -86,12 +86,19 @@ export default function AdminPhishingPage() {
                       <span className="text-slate-400 text-sm">{c.total_targets || 0}</span>
                     </td>
                     <td className="px-5 py-3 hidden lg:table-cell">
-                      <span className={`text-sm font-semibold ${
-                        c.click_rate_pct > 30 ? 'text-red-400' :
-                        c.click_rate_pct > 10 ? 'text-orange-400' : 'text-green-400'
-                      }`}>
-                        {c.click_rate_pct ?? '-'}%
-                      </span>
+                      {(() => {
+                        const rate = c.sent_count > 0
+                          ? Math.round((c.clicked_count / c.sent_count) * 100)
+                          : null
+                        return (
+                          <span className={`text-sm font-semibold ${
+                            rate > 30 ? 'text-red-400' :
+                            rate > 10 ? 'text-orange-400' : 'text-green-400'
+                          }`}>
+                            {rate !== null ? `${rate}%` : '—'}
+                          </span>
+                        )
+                      })()}
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">

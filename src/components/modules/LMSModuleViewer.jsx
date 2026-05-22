@@ -807,23 +807,34 @@ export default function LMSModuleViewer({ module, nextModule }) {
 
   // highWaterMark: the highest page index accessible (next unlocked = highWaterMark)
   const [pageIdx, setPageIdx]           = useState(0)
-  const [highWaterMark, setHwm]         = useState(0)
+  // Initialise from stored progress so reopening a module never resets the watermark to 0
+  const [highWaterMark, setHwm] = useState(() => {
+    if (module.progress?.status === 'completed') return pages.length
+    const savedPct = module.progress?.progress_pct || 0
+    if (savedPct === 0) return 0
+    return Math.max(0, Math.round((savedPct / 100) * pages.length))
+  })
   const [kcComplete, setKcComplete]     = useState(() => new Set()) // set of pageIdx where subtopic quiz is done
   const [moduleComplete, setModuleComplete] = useState(module.progress?.status === 'completed')
   const [sidebarOpen, setSidebarOpen]   = useState(true)
   const mainRef = useRef(null)
   const touchStartX = useRef(null)
 
-  // Start module on first load
+  // Start module on first load (only for truly new modules — never overwrites existing progress)
   useEffect(() => {
     if (module.progress?.status === 'not_started') startModule(module.id)
   }, [])
 
-  // Sync progress
+  // Sync progress — only write when the new value is above the saved baseline
+  const savedPctRef = useRef(module.progress?.progress_pct || 0)
   useEffect(() => {
     if (!pages.length) return
     const pct = Math.round((Math.min(highWaterMark, pages.length) / pages.length) * 100)
-    updateProgress(module.id, moduleComplete ? 100 : pct)
+    const effective = moduleComplete ? 100 : pct
+    // Skip the write if we haven't actually moved forward from the stored value
+    if (!moduleComplete && effective <= savedPctRef.current && effective !== 0) return
+    updateProgress(module.id, effective)
+    if (effective > savedPctRef.current) savedPctRef.current = effective
   }, [highWaterMark, moduleComplete])
 
   // Scroll to top on page change

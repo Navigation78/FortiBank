@@ -8,7 +8,6 @@ import { useState, useEffect } from 'react'
 import PageWrapper from '@/components/layout/PageWrapper'
 import PhishingStats from '@/components/phishing/PhishingStats'
 import CampaignCard from '@/components/phishing/CampaignCard'
-import SimulationBadge from '@/components/phishing/SimulationBadge'
 import { createClient } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 
@@ -45,10 +44,9 @@ export default function PhishingPage() {
           <div>
             <h4 className="text-white text-xl font-bold">My Phishing Test History</h4>
             <p className="text-slate-400 text-sm mt-1">
-              These are simulated phishing tests conducted by your organization.
+              A record of phishing tests your organization has sent you.
             </p>
           </div>
-          <SimulationBadge />
         </div>
 
         {/* Stats */}
@@ -58,11 +56,10 @@ export default function PhishingPage() {
 
         {/* Info banner */}
         <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 mb-6">
-          <p className="text-blue-400 text-sm font-semibold mb-1">About phishing simulations</p>
+          <p className="text-blue-400 text-sm font-semibold mb-1">About phishing tests</p>
           <p className="text-slate-400 text-sm">
-            Your organization regularly sends simulated phishing emails to test your awareness.
-            These are not real attacks - they are training exercises. Clicking a link in a
-            simulation is recorded and affects your risk score. The goal is to help you
+            Your organization regularly sends phishing tests to help you build security awareness.
+            Clicking a link in a test is recorded and affects your risk score. The goal is to help you
             recognise and avoid real phishing attacks.
           </p>
         </div>

@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import PageWrapper from '@/components/layout/PageWrapper'
-import { createClient } from '@/lib/supabase'
 
 const STATUS_COLORS = {
   published: 'bg-green-500/15 text-green-400',
@@ -12,7 +11,6 @@ const STATUS_COLORS = {
 }
 
 export default function AdminModulesPage() {
-  const supabase        = createClient()
   const [modules, setModules] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -24,31 +22,6 @@ export default function AdminModulesPage() {
     const { modules: data } = await response.json()
     setModules(data || [])
     setLoading(false)
-  }
-
-  async function togglePublish(module) {
-    const newStatus = module.status === 'published' ? 'draft' : 'published'
-    await supabase.from('modules').update({ status: newStatus }).eq('id', module.id)
-    fetchModules()
-  }
-
-  async function archiveModule(module) {
-    const newStatus = module.status === 'archived' ? 'draft' : 'archived'
-    await supabase.from('modules').update({ status: newStatus }).eq('id', module.id)
-    fetchModules()
-  }
-
-  async function deleteModule(moduleId) {
-    if (confirm('Are you sure you want to delete this module?')) {
-      const response = await fetch(`/api/admin/modules/${moduleId}`, {
-        method: 'DELETE',
-      })
-      if (response.ok) {
-        fetchModules()
-      } else {
-        alert('Failed to delete module')
-      }
-    }
   }
 
   function formatModuleCode(orderIndex) {
@@ -91,7 +64,7 @@ export default function AdminModulesPage() {
                   <th className="text-left text-slate-400 text-xs font-medium px-5 py-3">Module</th>
                   <th className="text-left text-slate-400 text-xs font-medium px-5 py-3 hidden sm:table-cell">Status</th>
                   <th className="text-left text-slate-400 text-xs font-medium px-5 py-3 hidden md:table-cell">Duration</th>
-                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3">Actions</th>
+                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3"></th>
                 </tr>
               </thead>
               <tbody>
@@ -112,32 +85,16 @@ export default function AdminModulesPage() {
                     <td className="px-5 py-3 hidden md:table-cell">
                       <span className="text-slate-400 text-sm">{module.duration_mins ? `${module.duration_mins} min` : '-'}</span>
                     </td>
-                    <td className="px-5 py-3">
-                      <div className="flex items-center gap-3">
-                        <Link href={`/admin/modules/${module.id}`} className="text-blue-400 hover:text-blue-300 text-xs font-medium">Edit</Link>
-                        {module.status !== 'archived' && (
-                          <button
-                            onClick={() => togglePublish(module)}
-                            className={`text-xs font-medium transition-all duration-150 ${module.status === 'published' ? 'text-yellow-400 hover:text-yellow-300' : 'text-green-400 hover:text-green-300'}`}
-                          >
-                            {module.status === 'published' ? 'Unpublish' : 'Publish'}
-                          </button>
-                        )}
-                        <button
-                          onClick={() => archiveModule(module)}
-                          className={`text-xs font-medium transition-all duration-150 ${module.status === 'archived' ? 'text-blue-400 hover:text-blue-300' : 'text-orange-400 hover:text-orange-300'}`}
-                        >
-                          {module.status === 'archived' ? 'Unarchive' : 'Archive'}
-                        </button>
-                        <button
-                          onClick={() => deleteModule(module.id)}
-                          className="text-red-400 hover:text-red-300 text-xs font-medium transition-all duration-150"
-                        >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
-                      </div>
+                    <td className="px-5 py-3 text-right">
+                      <Link
+                        href={`/admin/modules/${module.id}`}
+                        className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 text-xs font-medium transition-all duration-150"
+                      >
+                        View Details
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </Link>
                     </td>
                   </tr>
                 ))}

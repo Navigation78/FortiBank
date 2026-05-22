@@ -1,0 +1,85 @@
+// GET /api/admin/modules/[moduleId]/progress
+// Returns all users assigned to this module with their progress percentages
+
+import { NextResponse } from 'next/server'
+import supabaseAdmin from '@/lib/supabaseAdmin'
+import { getRouteUser } from '@/lib/supabaseRoute'
+
+async function verifyAdmin(request) {
+  const { user } = await getRouteUser(request)
+  if (!user) return null
+  const { data: roleData } = await supabaseAdmin
+    .from('user_roles').select('roles(name)').eq('user_id', user.id).single()
+  if (roleData?.roles?.name !== 'system_admin') return null
+  return user
+}
+
+export async function GET(request, { params }) {
+  const admin = await verifyAdmin(request)
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const { moduleId } = await params
+
+  // Get role IDs that have access to this module
+  const { data: roleAccess, error: roleAccessError } = await supabaseAdmin
+    .from('module_role_access')
+    .select('role_id')
+    .eq('module_id', moduleId)
+
+  if (roleAccessError) return NextResponse.json({ error: roleAccessError.message }, { status: 500 })
+
+  const roleIds = (roleAccess || []).map(r => r.role_id)
+  if (roleIds.length === 0) return NextResponse.json({ users: [] })
+
+  // Get all users with those roles
+  const { data: userRoles, error: userRolesError } = await supabaseAdmin
+    .from('user_roles')
+    .select('user_id, roles(name, display_name)')
+    .in('role_id', roleIds)
+    .neq('roles.name', 'system_admin')
+
+  if (userRolesError) return NextResponse.json({ error: userRolesError.message }, { status: 500 })
+
+  const filtered = (userRoles || []).filter(ur => ur.roles?.name !== 'system_admin')
+  if (filtered.length === 0) return NextResponse.json({ users: [] })
+
+  const userIds = [...new Set(filtered.map(ur => ur.user_id))]
+
+  // Get user details and progress in parallel
+  const [usersRes, progressRes] = await Promise.all([
+    supabaseAdmin.from('users').select('id, full_name, email').in('id', userIds),
+    supabaseAdmin
+      .from('user_module_progress')
+      .select('user_id, status, progress_pct, started_at, completed_at')
+      .eq('module_id', moduleId)
+      .in('user_id', userIds),
+  ])
+
+  if (usersRes.error) return NextResponse.json({ error: usersRes.error.message }, { status: 500 })
+  if (progressRes.error) return NextResponse.json({ error: progressRes.error.message }, { status: 500 })
+
+  const userMap = {}
+  ;(usersRes.data || []).forEach(u => { userMap[u.id] = u })
+
+  const progressMap = {}
+  ;(progressRes.data || []).forEach(p => { progressMap[p.user_id] = p })
+
+  // First role display name per user
+  const roleMap = {}
+  filtered.forEach(ur => {
+    if (!roleMap[ur.user_id]) roleMap[ur.user_id] = ur.roles?.display_name || ur.roles?.name || ''
+  })
+
+  const result = userIds.map(userId => ({
+    user_id: userId,
+    full_name: userMap[userId]?.full_name || 'Unknown',
+    email: userMap[userId]?.email || '',
+    role: roleMap[userId] || '',
+    progress: progressMap[userId] || { status: 'not_started', progress_pct: 0 },
+  }))
+
+  // Sort by progress descending so furthest along appear first
+  result.sort((a, b) => (b.progress.progress_pct || 0) - (a.progress.progress_pct || 0))
+
+  return NextResponse.json({ users: result })
+}

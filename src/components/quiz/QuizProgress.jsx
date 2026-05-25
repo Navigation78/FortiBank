@@ -8,12 +8,12 @@ export default function QuizProgress({
   onJump,
 }) {
   return (
-    <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-4">
+    <div className="bg-th-srf border border-th-brd rounded-xl p-4">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-slate-400 text-sm">
+        <span className="text-th-txt2 text-sm">
           Question {current + 1} of {total}
         </span>
-        <span className="text-slate-400 text-sm">
+        <span className="text-th-txt2 text-sm">
           {answered}/{total} answered
         </span>
       </div>
@@ -26,10 +26,10 @@ export default function QuizProgress({
             onClick={() => onJump(i)}
             className={`w-8 h-8 rounded-lg text-xs font-semibold transition-all ${
               i === current
-                ? 'bg-blue-600 text-white ring-2 ring-blue-400 ring-offset-2 ring-offset-slate-900'
+                ? 'bg-blue-600 text-white ring-2 ring-blue-400 ring-offset-2 ring-offset-th-bg'
                 : answered > i || (answered === total)
-                  ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                  : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                  ? 'bg-green-500/20 text-green-600 dark:text-green-400 border border-green-500/30'
+                  : 'bg-th-hov text-th-txt2 hover:bg-th-act'
             }`}
           >
             {i + 1}

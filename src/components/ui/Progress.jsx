@@ -11,14 +11,14 @@ export default function Progress({ value = 0, max = 100, color = 'blue', showLab
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
-      <div className="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
+      <div className="flex-1 h-1.5 bg-th-track rounded-full overflow-hidden">
         <div
           className={`h-full rounded-full transition-all duration-300 ${COLORS[color] || COLORS.blue}`}
           style={{ width: `${pct}%` }}
         />
       </div>
       {showLabel && (
-        <span className="text-slate-400 text-xs w-10 text-right flex-shrink-0">{Math.round(pct)}%</span>
+        <span className="text-th-muted text-xs w-10 text-right flex-shrink-0">{Math.round(pct)}%</span>
       )}
     </div>
   )

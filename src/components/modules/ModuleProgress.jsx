@@ -7,14 +7,14 @@ export default function ModuleProgress({
   completedPct,
 }) {
   return (
-    <div className="bg-slate-800 border border-white/[0.08] rounded-xl px-5 py-4">
+    <div className="bg-th-srf border border-th-brd rounded-xl px-5 py-4">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-slate-400 text-sm">
+        <span className="text-th-txt2 text-sm">
           Section {current} of {total}
         </span>
-        <span className="text-white font-semibold text-sm">{completedPct}%</span>
+        <span className="text-th-txt font-semibold text-sm">{completedPct}%</span>
       </div>
-      <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+      <div className="h-2 bg-th-track rounded-full overflow-hidden">
         <div
           className="h-full bg-blue-500 rounded-full transition-all duration-500"
           style={{ width: `${completedPct}%` }}
@@ -28,7 +28,7 @@ export default function ModuleProgress({
             className={`h-1 flex-1 rounded-full transition-all ${
               i < current - 1 ? 'bg-blue-500' :
               i === current - 1 ? 'bg-blue-400' :
-              'bg-slate-700'
+              'bg-th-track'
             }`}
           />
         ))}

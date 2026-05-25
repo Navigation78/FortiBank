@@ -210,9 +210,9 @@ export default function ModuleViewer({ module, nextModule }) {
   // ── No content fallback ───────────────────────────────────
   if (totalSecs === 0 && !quiz) {
     return (
-      <div className="text-center py-16 bg-slate-800 border border-white/[0.08] rounded-xl">
-        <p className="text-slate-400">No content available yet.</p>
-        <p className="text-slate-600 text-sm mt-1">Check back after the admin adds content.</p>
+      <div className="text-center py-16 bg-th-srf border border-th-brd rounded-xl">
+        <p className="text-th-txt2">No content available yet.</p>
+        <p className="text-th-muted text-sm mt-1">Check back after the admin adds content.</p>
       </div>
     )
   }
@@ -238,30 +238,30 @@ export default function ModuleViewer({ module, nextModule }) {
                       ? 'bg-blue-400 w-8'
                       : viewed.has(i)
                         ? 'bg-blue-600 w-4'
-                        : 'bg-slate-700 w-4 hover:bg-slate-600'
+                        : 'bg-th-track w-4 hover:bg-th-muted'
                   }`}
                 />
               ))}
-              <span className="text-slate-500 text-xs ml-auto">
+              <span className="text-th-muted text-xs ml-auto">
                 {currentIdx + 1}/{totalSecs}
               </span>
             </div>
           )}
 
           {/* Content panel */}
-          <div className="bg-slate-800 border border-white/[0.08] rounded-xl overflow-hidden mb-4">
+          <div className="bg-th-srf border border-th-brd rounded-xl overflow-hidden mb-4">
             {/* Section header */}
-            <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
+            <div className="px-6 py-4 border-b border-th-brd flex items-center justify-between">
               <div>
-                <p className="text-slate-500 text-xs capitalize mb-0.5">
+                <p className="text-th-muted text-xs capitalize mb-0.5">
                   {currentSec?.content_type?.replace('_', ' ')}
                 </p>
-                <h3 className="text-white font-semibold">{currentSec?.title}</h3>
+                <h3 className="text-th-txt font-semibold">{currentSec?.title}</h3>
               </div>
               {/* Overall progress */}
               <div className="text-right">
-                <p className="text-slate-500 text-xs mb-1">{progressPct}% read</p>
-                <div className="w-20 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                <p className="text-th-muted text-xs mb-1">{progressPct}% read</p>
+                <div className="w-20 h-1.5 bg-th-track rounded-full overflow-hidden">
                   <div
                     className="h-full bg-blue-500 rounded-full transition-all"
                     style={{ width: `${progressPct}%` }}
@@ -278,7 +278,7 @@ export default function ModuleViewer({ module, nextModule }) {
 
               {currentSec?.content_type === 'pdf' && (
                 <div className="space-y-4">
-                  <div className="aspect-[4/3] bg-slate-800 rounded-xl overflow-hidden">
+                  <div className="aspect-[4/3] bg-th-hov rounded-xl overflow-hidden">
                     <iframe
                       src={`${currentSec.content_url}#toolbar=0&navpanes=0`}
                       className="w-full h-full"
@@ -305,20 +305,20 @@ export default function ModuleViewer({ module, nextModule }) {
                   <img
                     src={currentSec.content_url}
                     alt={currentSec.title}
-                    className="max-w-full rounded-xl border border-slate-700"
+                    className="max-w-full rounded-xl border border-th-brd"
                   />
                 </div>
               )}
 
               {currentSec?.content_type === 'text' && (
                 <div
-                  className="prose prose-invert prose-sm max-w-none text-slate-300 leading-relaxed"
+                  className="prose prose-sm max-w-none text-th-txt2 leading-relaxed dark:prose-invert"
                   dangerouslySetInnerHTML={{ __html: currentSec.content_body }}
                 />
               )}
 
               {currentSec?.content_type === 'slides' && (
-                <div className="aspect-video bg-slate-800 rounded-xl overflow-hidden">
+                <div className="aspect-video bg-th-hov rounded-xl overflow-hidden">
                   <iframe
                     src={currentSec.content_url}
                     className="w-full h-full"
@@ -330,11 +330,11 @@ export default function ModuleViewer({ module, nextModule }) {
             </div>
 
             {/* Navigation footer */}
-            <div className="px-6 py-4 border-t border-slate-800 flex items-center justify-between gap-3">
+            <div className="px-6 py-4 border-t border-th-brd flex items-center justify-between gap-3">
               <button
                 onClick={goPrev}
                 disabled={currentIdx === 0}
-                className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-slate-300 rounded-lg text-sm font-medium transition-all duration-150"
+                className="flex items-center gap-2 px-4 py-2 bg-th-hov hover:bg-th-act disabled:opacity-30 disabled:cursor-not-allowed text-th-txt2 rounded-lg text-sm font-medium transition-all duration-150"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -370,7 +370,7 @@ export default function ModuleViewer({ module, nextModule }) {
                   <button
                     onClick={handleCompleteAndStartQuiz}
                     disabled={completing || !allViewed}
-                    className="flex items-center gap-2 px-5 py-2 bg-green-600 hover:bg-green-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-all duration-150"
+                    className="flex items-center gap-2 px-5 py-2 bg-green-600 hover:bg-green-500 disabled:bg-th-hov disabled:cursor-not-allowed text-white disabled:text-th-muted rounded-lg text-sm font-medium transition-all duration-150"
                   >
                     {completing ? (
                       <>
@@ -414,9 +414,9 @@ export default function ModuleViewer({ module, nextModule }) {
           {/* Quiz header */}
           <div className="flex items-center justify-between mb-5">
             <div>
-              <p className="text-blue-400 text-xs font-medium mb-0.5">Module Quiz</p>
-              <h3 className="text-white font-semibold">{quizMeta?.title}</h3>
-              <p className="text-slate-500 text-xs mt-0.5">
+              <p className="text-blue-600 dark:text-blue-400 text-xs font-medium mb-0.5">Module Quiz</p>
+              <h3 className="text-th-txt font-semibold">{quizMeta?.title}</h3>
+              <p className="text-th-muted text-xs mt-0.5">
                 Pass mark: {quizMeta?.pass_score}% · Attempt {attemptCount + 1} of {quizMeta?.max_attempts}
               </p>
             </div>
@@ -434,11 +434,11 @@ export default function ModuleViewer({ module, nextModule }) {
                     ? 'bg-blue-400 w-8'
                     : answers[questions[i]?.id]
                       ? 'bg-green-500 w-4'
-                      : 'bg-slate-700 w-4'
+                      : 'bg-th-track w-4'
                 }`}
               />
             ))}
-            <span className="text-slate-500 text-xs ml-auto">
+            <span className="text-th-muted text-xs ml-auto">
               {Object.keys(answers).length}/{questions.length} answered
             </span>
           </div>
@@ -459,7 +459,7 @@ export default function ModuleViewer({ module, nextModule }) {
             <button
               onClick={() => setCurrentQ(prev => Math.max(0, prev - 1))}
               disabled={currentQ === 0}
-              className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-slate-300 rounded-lg text-sm font-medium transition-all duration-150"
+              className="flex items-center gap-2 px-4 py-2 bg-th-hov hover:bg-th-act disabled:opacity-30 disabled:cursor-not-allowed text-th-txt2 rounded-lg text-sm font-medium transition-all duration-150"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -471,7 +471,7 @@ export default function ModuleViewer({ module, nextModule }) {
               <button
                 onClick={submitQuiz}
                 disabled={submitting || Object.keys(answers).length < questions.length}
-                className="flex items-center gap-2 px-6 py-2 bg-green-600 hover:bg-green-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-all duration-150"
+                className="flex items-center gap-2 px-6 py-2 bg-green-600 hover:bg-green-500 disabled:bg-th-hov disabled:cursor-not-allowed text-white disabled:text-th-muted rounded-lg text-sm font-medium transition-all duration-150"
               >
                 {submitting ? (
                   'Submitting...'
@@ -525,15 +525,15 @@ export default function ModuleViewer({ module, nextModule }) {
             <p className={`font-semibold text-lg mb-2 ${result.passed ? 'text-green-300' : 'text-red-300'}`}>
               {result.passed ? 'You passed!' : 'Not quite - keep going.'}
             </p>
-            <p className="text-slate-400 text-sm">
+            <p className="text-th-muted text-sm">
               Pass mark: {result.pass_score}% · Attempt {result.attempt_number} of {result.max_attempts}
             </p>
           </div>
 
           {/* Question breakdown */}
           {result.questions?.length > 0 && (
-            <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-5">
-              <h4 className="text-white font-semibold mb-3">Question Breakdown</h4>
+            <div className="bg-th-srf border border-th-brd rounded-xl p-5">
+              <h4 className="text-th-txt font-semibold mb-3">Question Breakdown</h4>
               <div className="space-y-2">
                 {result.questions.map((q, i) => (
                   <div key={q.id} className="flex items-center gap-3">
@@ -541,12 +541,12 @@ export default function ModuleViewer({ module, nextModule }) {
                       q.isCorrect ? 'bg-green-500/20' : 'bg-red-500/20'
                     }`}>
                       {q.isCorrect
-                        ? <svg className="w-3.5 h-3.5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                        : <svg className="w-3.5 h-3.5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                        ? <svg className="w-3.5 h-3.5 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                        : <svg className="w-3.5 h-3.5 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
                       }
                     </div>
-                    <span className="text-slate-400 text-sm">Question {i + 1}</span>
-                    <span className={`text-xs font-medium ml-auto ${q.isCorrect ? 'text-green-400' : 'text-red-400'}`}>
+                    <span className="text-th-txt2 text-sm">Question {i + 1}</span>
+                    <span className={`text-xs font-medium ml-auto ${q.isCorrect ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                       {q.isCorrect ? 'Correct' : 'Incorrect'}
                     </span>
                   </div>
@@ -575,7 +575,7 @@ export default function ModuleViewer({ module, nextModule }) {
             )}
             <Link
               href="/modules"
-              className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-all duration-150 text-center"
+              className="flex-1 bg-th-hov hover:bg-th-act text-th-txt2 border border-th-brd font-medium rounded-lg py-2.5 text-sm transition-all duration-150 text-center"
             >
               All Modules
             </Link>

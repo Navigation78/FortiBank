@@ -15,7 +15,7 @@ export default function QuizTimer({ timeLeft }) {
     <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-mono font-semibold ${
       isUrgent ? 'bg-red-500/15 border-red-500/30 text-red-400 animate-pulse' :
       isLow    ? 'bg-orange-500/15 border-orange-500/30 text-orange-400' :
-                 'bg-slate-800 border-slate-700 text-slate-300'
+                 'bg-th-hov border-th-brd text-th-txt2'
     }`}>
       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}

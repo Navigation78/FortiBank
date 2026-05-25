@@ -52,19 +52,19 @@ export default function RiskScoreGauge({ score = 0, loading = false }) {
 
   if (loading) {
     return (
-      <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 flex items-center justify-center h-48">
+      <div className="bg-th-srf border border-th-brd rounded-xl p-6 flex items-center justify-center h-48">
         <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
+    <div className="bg-th-srf border border-th-brd rounded-xl p-6 shadow-sm shadow-black/5 dark:shadow-black/30">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-white font-semibold">Risk Score</h3>
+        <h3 className="text-th-txt font-semibold">Risk Score</h3>
         <Link
           href="/risk-score"
-          className="text-blue-400 hover:text-blue-300 text-xs transition-all duration-150"
+          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-xs transition-all duration-150"
         >
           View details →
         </Link>
@@ -78,7 +78,7 @@ export default function RiskScoreGauge({ score = 0, loading = false }) {
             <circle
               cx="70" cy="80" r={radius}
               fill="none"
-              stroke="#1e293b"
+              stroke="var(--th-track)"
               strokeWidth="10"
               strokeDasharray={`${arc} ${circumference}`}
               strokeLinecap="round"
@@ -103,7 +103,7 @@ export default function RiskScoreGauge({ score = 0, loading = false }) {
           {/* Score number overlay */}
           <div className="absolute inset-0 flex flex-col items-center justify-center pb-2">
             <span className={`text-3xl font-bold ${risk.color}`}>{score}</span>
-            <span className="text-slate-500 text-xs">/100</span>
+            <span className="text-th-muted text-xs">/100</span>
           </div>
         </div>
 
@@ -112,16 +112,16 @@ export default function RiskScoreGauge({ score = 0, loading = false }) {
           <p className={`font-semibold text-lg ${risk.color}`}>{risk.label}</p>
           <div className="mt-3 space-y-2">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-400">Warning threshold</span>
-              <span className="text-yellow-400 font-medium">{warningThreshold}</span>
+              <span className="text-th-txt2">Warning threshold</span>
+              <span className="text-yellow-600 dark:text-yellow-400 font-medium">{warningThreshold}</span>
             </div>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-400">Critical threshold</span>
-              <span className="text-red-400 font-medium">{criticalThreshold}</span>
+              <span className="text-th-txt2">Critical threshold</span>
+              <span className="text-red-500 dark:text-red-400 font-medium">{criticalThreshold}</span>
             </div>
           </div>
           {score >= warningThreshold && (
-            <p className="text-xs text-slate-400 mt-3">
+            <p className="text-xs text-th-muted mt-3">
               Complete more modules and pass quizzes to lower your score.
             </p>
           )}

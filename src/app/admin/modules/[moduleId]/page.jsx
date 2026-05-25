@@ -9,14 +9,14 @@ import { createClient } from '@/lib/supabase'
 
 const STATUS_COLORS = {
   published: 'bg-green-500/15 text-green-400',
-  draft:     'bg-white/[0.06] text-slate-300',
+  draft:     'bg-th-hov text-th-txt2',
   archived:  'bg-red-500/15 text-red-400',
 }
 
 const PROGRESS_COLORS = {
   completed:   'bg-green-500/15 text-green-400',
   in_progress: 'bg-blue-500/15 text-blue-400',
-  not_started: 'bg-white/[0.06] text-slate-400',
+  not_started: 'bg-th-hov text-th-muted',
 }
 
 function fmt(iso) {
@@ -96,7 +96,7 @@ export default function EditModulePage() {
   if (loading) {
     return (
       <PageWrapper>
-        <div className="animate-pulse h-64 bg-slate-800 border border-white/[0.08] rounded-xl" />
+        <div className="animate-pulse h-64 bg-th-hov border border-th-brd rounded-xl" />
       </PageWrapper>
     )
   }
@@ -110,10 +110,10 @@ export default function EditModulePage() {
 
       {/* Header: breadcrumb + action buttons */}
       <div className="flex items-center justify-between mb-6 gap-4">
-        <div className="flex items-center gap-2 text-sm text-slate-500 min-w-0">
-          <Link href="/admin/modules" className="hover:text-slate-300 shrink-0">Modules</Link>
+        <div className="flex items-center gap-2 text-sm text-th-muted min-w-0">
+          <Link href="/admin/modules" className="hover:text-th-txt2 shrink-0">Modules</Link>
           <span>/</span>
-          <span className="text-slate-300 truncate">{module?.title}</span>
+          <span className="text-th-txt2 truncate">{module?.title}</span>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
@@ -152,27 +152,27 @@ export default function EditModulePage() {
       </div>
 
       {/* Module metadata panel */}
-      <div className="bg-slate-800 border border-white/[0.08] rounded-xl px-5 py-4 mb-6 flex flex-wrap gap-6">
+      <div className="bg-th-srf border border-th-brd rounded-xl px-5 py-4 mb-6 flex flex-wrap gap-6">
         <div>
-          <p className="text-slate-500 text-xs mb-1">Status</p>
+          <p className="text-th-muted text-xs mb-1">Status</p>
           <span className={`text-xs font-medium px-2 py-1 rounded-lg capitalize ${STATUS_COLORS[module?.status] || ''}`}>
             {module?.status || '—'}
           </span>
         </div>
         <div>
-          <p className="text-slate-500 text-xs mb-1">Created</p>
-          <p className="text-slate-200 text-sm font-medium">{fmt(module?.created_at)}</p>
+          <p className="text-th-muted text-xs mb-1">Created</p>
+          <p className="text-th-txt2 text-sm font-medium">{fmt(module?.created_at)}</p>
         </div>
         <div>
-          <p className="text-slate-500 text-xs mb-1">
+          <p className="text-th-muted text-xs mb-1">
             {module?.status === 'published' ? 'Published' : 'Last Updated'}
           </p>
-          <p className="text-slate-200 text-sm font-medium">{fmt(module?.updated_at)}</p>
+          <p className="text-th-txt2 text-sm font-medium">{fmt(module?.updated_at)}</p>
         </div>
         {module?.duration_mins && (
           <div>
-            <p className="text-slate-500 text-xs mb-1">Duration</p>
-            <p className="text-slate-200 text-sm font-medium">{module.duration_mins} min</p>
+            <p className="text-th-muted text-xs mb-1">Duration</p>
+            <p className="text-th-txt2 text-sm font-medium">{module.duration_mins} min</p>
           </div>
         )}
       </div>
@@ -187,22 +187,22 @@ export default function EditModulePage() {
       <div className="mt-10">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-white font-semibold">User Progress</h3>
-            <p className="text-slate-500 text-xs mt-0.5">{progressData.length} users assigned to this module</p>
+            <h3 className="text-th-txt font-semibold">User Progress</h3>
+            <p className="text-th-muted text-xs mt-0.5">{progressData.length} users assigned to this module</p>
           </div>
           {!progressLoading && progressData.length > 0 && (
             <div className="flex items-center gap-4 text-xs">
               <span className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
-                <span className="text-slate-300">{completedCount} completed</span>
+                <span className="text-th-txt2">{completedCount} completed</span>
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-blue-500 inline-block" />
-                <span className="text-slate-300">{inProgressCount} in progress</span>
+                <span className="text-th-txt2">{inProgressCount} in progress</span>
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-slate-600 inline-block" />
-                <span className="text-slate-300">{notStartedCount} not started</span>
+                <span className="w-2 h-2 rounded-full bg-th-muted inline-block" />
+                <span className="text-th-txt2">{notStartedCount} not started</span>
               </span>
             </div>
           )}
@@ -211,34 +211,34 @@ export default function EditModulePage() {
         {progressLoading ? (
           <div className="space-y-2">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-14 bg-slate-800 border border-white/[0.06] rounded-xl animate-pulse" />
+              <div key={i} className="h-14 bg-th-hov border border-th-brd rounded-xl animate-pulse" />
             ))}
           </div>
         ) : progressData.length === 0 ? (
-          <div className="bg-slate-800 border border-white/[0.06] rounded-xl px-5 py-10 text-center">
-            <p className="text-slate-400 text-sm">No users are assigned to this module yet.</p>
-            <p className="text-slate-600 text-xs mt-1">Assign roles to this module to see progress.</p>
+          <div className="bg-th-hov border border-th-brd rounded-xl px-5 py-10 text-center">
+            <p className="text-th-muted text-sm">No users are assigned to this module yet.</p>
+            <p className="text-th-muted text-xs mt-1">Assign roles to this module to see progress.</p>
           </div>
         ) : (
-          <div className="bg-slate-800 border border-white/[0.08] rounded-xl overflow-hidden">
+          <div className="bg-th-srf border border-th-brd rounded-xl overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/[0.06]">
-                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3">User</th>
-                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3 hidden sm:table-cell">Role</th>
-                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3">Status</th>
-                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3 w-40">Progress</th>
+                <tr className="border-b border-th-brd">
+                  <th className="text-left text-th-muted text-xs font-medium px-5 py-3">User</th>
+                  <th className="text-left text-th-muted text-xs font-medium px-5 py-3 hidden sm:table-cell">Role</th>
+                  <th className="text-left text-th-muted text-xs font-medium px-5 py-3">Status</th>
+                  <th className="text-left text-th-muted text-xs font-medium px-5 py-3 w-40">Progress</th>
                 </tr>
               </thead>
               <tbody>
                 {progressData.map((user) => (
-                  <tr key={user.user_id} className="border-b border-white/[0.06] last:border-0 hover:bg-white/[0.02] transition-all duration-150">
+                  <tr key={user.user_id} className="border-b border-th-brd last:border-0 hover:bg-th-hov/30 transition-all duration-150">
                     <td className="px-5 py-3">
-                      <p className="text-white text-sm font-medium">{user.full_name}</p>
-                      <p className="text-slate-500 text-xs">{user.email}</p>
+                      <p className="text-th-txt text-sm font-medium">{user.full_name}</p>
+                      <p className="text-th-muted text-xs">{user.email}</p>
                     </td>
                     <td className="px-5 py-3 hidden sm:table-cell">
-                      <span className="text-slate-400 text-xs">{user.role}</span>
+                      <span className="text-th-txt2 text-xs">{user.role}</span>
                     </td>
                     <td className="px-5 py-3">
                       <span className={`text-xs font-medium px-2 py-1 rounded-lg capitalize ${PROGRESS_COLORS[user.progress.status] || ''}`}>
@@ -247,16 +247,16 @@ export default function EditModulePage() {
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2">
-                        <div className="flex-1 h-1.5 bg-white/[0.08] rounded-full overflow-hidden">
+                        <div className="flex-1 h-1.5 bg-th-track rounded-full overflow-hidden">
                           <div
                             className={`h-full rounded-full transition-all duration-300 ${
                               user.progress.status === 'completed' ? 'bg-green-500' :
-                              (user.progress.progress_pct || 0) > 0 ? 'bg-blue-500' : 'bg-slate-600'
+                              (user.progress.progress_pct || 0) > 0 ? 'bg-blue-500' : 'bg-th-muted'
                             }`}
                             style={{ width: `${user.progress.progress_pct || 0}%` }}
                           />
                         </div>
-                        <span className="text-slate-400 text-xs w-8 text-right shrink-0">
+                        <span className="text-th-muted text-xs w-8 text-right shrink-0">
                           {user.progress.progress_pct || 0}%
                         </span>
                       </div>

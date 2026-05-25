@@ -15,7 +15,7 @@ export function Tabs({ children, defaultTab, className = '' }) {
 
 export function TabList({ children, className = '' }) {
   return (
-    <div className={`flex gap-1 bg-slate-800 border border-white/[0.08] rounded-xl p-1 ${className}`}>
+    <div className={`flex gap-1 bg-th-bg border border-th-brd rounded-xl p-1 ${className}`}>
       {children}
     </div>
   )
@@ -23,14 +23,15 @@ export function TabList({ children, className = '' }) {
 
 export function Tab({ id, children }) {
   const { active, setActive } = useContext(TabsContext)
+  const isActive = active === id
   return (
     <button
       type="button"
       onClick={() => setActive(id)}
-      className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-        active === id
-          ? 'bg-slate-800 text-white shadow-sm'
-          : 'text-slate-400 hover:text-white'
+      className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
+        isActive
+          ? 'bg-th-srf text-th-txt shadow-sm shadow-black/5 dark:shadow-black/30'
+          : 'text-th-txt2 hover:text-th-txt'
       }`}
     >
       {children}

@@ -149,10 +149,10 @@ export default function DashboardTemplate({
 
         {/* Welcome */}
         <div className="mb-6">
-          <h4 className="text-slate-100 text-2xl font-bold">
+          <h4 className="text-th-txt text-2xl font-bold">
             Good {getTimeOfDay()}, {firstName}
           </h4>
-          <p className="text-slate-400 text-sm mt-1">
+          <p className="text-th-txt2 text-sm mt-1">
             Here's your security training overview for today.
           </p>
         </div>
@@ -186,8 +186,8 @@ export default function DashboardTemplate({
           {/* Threat focus areas */}
           {focusAreas && (
             <div>
-              <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 shadow-sm shadow-black/30 transition-all duration-150 hover:border-white/[0.14] hover:shadow-md hover:shadow-black/40">
-                <h3 className="text-slate-100 font-semibold mb-4">Your Risk Focus Areas</h3>
+              <div className="bg-th-srf border border-th-brd rounded-xl p-6 shadow-sm shadow-black/5 dark:shadow-black/30 transition-all duration-150 hover:shadow-md hover:shadow-black/5 dark:hover:shadow-black/40">
+                <h3 className="text-th-txt font-semibold mb-4">Your Risk Focus Areas</h3>
                 <div className="space-y-3">
                   {focusAreas.map((area, i) => {
                     const Icon = area.icon
@@ -196,11 +196,11 @@ export default function DashboardTemplate({
                         {typeof area.icon === 'string' ? (
                           <span className="text-sm flex-shrink-0">{area.icon}</span>
                         ) : (
-                          <Icon className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
+                          <Icon className="w-5 h-5 text-th-txt2 flex-shrink-0 mt-0.5" />
                         )}
                         <div>
-                          <p className="text-slate-200 text-sm font-medium">{area.title}</p>
-                          <p className="text-slate-400 text-xs mt-0.5">{area.description}</p>
+                          <p className="text-th-txt text-sm font-medium">{area.title}</p>
+                          <p className="text-th-txt2 text-xs mt-0.5">{area.description}</p>
                         </div>
                       </div>
                     )

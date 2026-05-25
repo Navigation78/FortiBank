@@ -13,7 +13,7 @@ export default function DashboardLayout({ children }) {
   const toggleMobileSidebar = () => setIsMobileOpen(!isMobileOpen)
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-[#080f1e]">
+    <div className="flex flex-col h-screen overflow-hidden bg-th-bg">
       <Topbar
         toggleSidebar={toggleSidebar}
         isCollapsed={isCollapsed}

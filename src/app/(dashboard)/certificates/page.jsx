@@ -47,8 +47,8 @@ export default function CertificatesPage() {
         {/* Header */}
         <div className="flex items-start justify-between mb-6">
           <div>
-            <h4 className="text-white text-xl font-bold">My Certificates</h4>
-            <p className="text-slate-400 text-sm mt-1">
+            <h4 className="text-th-txt text-xl font-bold">My Certificates</h4>
+            <p className="text-th-muted text-sm mt-1">
               Certificates are awarded when you complete all modules and pass all quizzes.
             </p>
           </div>
@@ -86,12 +86,12 @@ export default function CertificatesPage() {
             { label: 'Certificates Earned', value: certificates.length, Icon: Medal },
             { label: 'Status', value: stats.completed === stats.total && stats.total > 0 ? 'Eligible!' : 'In Progress', Icon: BarChart3 },
           ].map((s, i) => (
-            <div key={i} className="bg-slate-800 border border-white/[0.08] rounded-xl p-4 text-center">
+            <div key={i} className="bg-th-srf border border-th-brd rounded-xl p-4 text-center">
               <div className="flex justify-center mb-1">
-                <s.Icon className="w-6 h-6 text-slate-400" />
+                <s.Icon className="w-6 h-6 text-th-muted" />
               </div>
-              <p className="text-white font-bold text-lg">{s.value}</p>
-              <p className="text-slate-500 text-xs">{s.label}</p>
+              <p className="text-th-txt font-bold text-lg">{s.value}</p>
+              <p className="text-th-muted text-xs">{s.label}</p>
             </div>
           ))}
         </div>
@@ -100,26 +100,26 @@ export default function CertificatesPage() {
         {loading ? (
           <div className="space-y-4">
             {[...Array(2)].map((_, i) => (
-              <div key={i} className="h-32 bg-slate-800 border border-white/[0.08] rounded-xl animate-pulse" />
+              <div key={i} className="h-32 bg-th-hov border border-th-brd rounded-xl animate-pulse" />
             ))}
           </div>
         ) : certificates.length > 0 ? (
           <div className="space-y-4">
             {certificates.map(cert => (
-              <div key={cert.id} className="bg-slate-900 border border-green-500/20 rounded-xl p-6">
+              <div key={cert.id} className="bg-th-srf border border-green-500/20 rounded-xl p-6">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
                       <Award className="w-6 h-6 text-green-400" />
                     </div>
                     <div>
-                      <p className="text-white font-semibold">
+                      <p className="text-th-txt font-semibold">
                         {cert.roles?.display_name} - Cybersecurity Certificate
                       </p>
-                      <p className="text-slate-400 text-sm mt-0.5">
+                      <p className="text-th-muted text-sm mt-0.5">
                         Certificate No: <span className="text-green-400 font-mono">{cert.certificate_no}</span>
                       </p>
-                      <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
+                      <div className="flex items-center gap-4 mt-2 text-xs text-th-muted">
                         <span>Issued: {new Date(cert.issued_at).toLocaleDateString('en-KE', { dateStyle: 'long' })}</span>
                         <span>·</span>
                         <span>Valid until: {new Date(cert.valid_until).toLocaleDateString('en-KE', { dateStyle: 'long' })}</span>
@@ -142,12 +142,12 @@ export default function CertificatesPage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 bg-slate-800 border border-white/[0.08] rounded-xl">
-            <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Medal className="w-8 h-8 text-slate-400" />
+          <div className="text-center py-16 bg-th-hov border border-th-brd rounded-xl">
+            <div className="w-16 h-16 bg-th-srf rounded-full flex items-center justify-center mx-auto mb-4">
+              <Medal className="w-8 h-8 text-th-muted" />
             </div>
-            <p className="text-white font-semibold">No certificates yet</p>
-            <p className="text-slate-400 text-sm mt-2 max-w-sm mx-auto">
+            <p className="text-th-txt font-semibold">No certificates yet</p>
+            <p className="text-th-muted text-sm mt-2 max-w-sm mx-auto">
               Complete all your assigned training modules and pass all quizzes to earn your certificate.
             </p>
           </div>

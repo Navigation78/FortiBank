@@ -66,17 +66,17 @@ export default function AssignRoleForm({ userId, currentRole, onSuccess }) {
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
         <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-          <p className="text-red-400 text-sm">{error}</p>
+          <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
         </div>
       )}
       <div>
-        <label className="block text-slate-300 text-sm font-medium mb-1.5">Assign Role</label>
+        <label className="block text-th-txt2 text-sm font-medium mb-1.5">Assign Role</label>
         <select
           value={roleId}
           onChange={e => setRoleId(e.target.value)}
           required
           disabled={rolesLoading}
-          className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
+          className="w-full bg-th-ibg border border-th-ibrd text-th-txt rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
         >
           <option value="">
             {rolesLoading ? 'Loading roles...' : 'Select role...'}
@@ -90,7 +90,7 @@ export default function AssignRoleForm({ userId, currentRole, onSuccess }) {
           ))}
         </select>
         {!rolesLoading && roles.length === 0 && (
-          <p className="text-red-400 text-xs mt-1">No roles are available yet.</p>
+          <p className="text-red-600 dark:text-red-400 text-xs mt-1">No roles are available yet.</p>
         )}
       </div>
       <button

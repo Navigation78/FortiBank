@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation'
 import { ChevronRight, Home } from 'lucide-react'
 
 const LABELS = {
-  // Employee role pages
   'teller': 'Teller',
   'branch-manager': 'Branch Manager',
   'relationship-manager': 'Relationship Manager',
@@ -17,7 +16,6 @@ const LABELS = {
   'relationship-officer': 'Relationship Officer',
   'assistant-branch-manager': 'Asst. Branch Manager',
   'service-recovery-officer': 'Service Recovery',
-  // Employee pages
   'dashboard': 'Dashboard',
   'modules': 'Modules',
   'phishing': 'Phishing Tests',
@@ -27,7 +25,6 @@ const LABELS = {
   'notifications': 'Notifications',
   'certificates': 'Certificates',
   'change-password': 'Change Password',
-  // Admin pages
   'users': 'Users',
   'create': 'Create New',
   'analytics': 'Analytics',
@@ -53,9 +50,7 @@ export default function Breadcrumb() {
   let segments = pathname.split('/').filter(Boolean)
   if (isAdmin) segments = segments.slice(1)
 
-  // No breadcrumb at the root home pages
   if (segments.length === 0) return null
-  // No breadcrumb on employee role dashboard (it IS the home)
   if (!isAdmin && segments[0] === 'dashboard') return null
 
   const crumbs = segments.map((seg, i) => {
@@ -66,21 +61,21 @@ export default function Breadcrumb() {
   })
 
   return (
-    <nav className="flex items-center gap-1 text-xs text-slate-500 mb-5">
+    <nav className="flex items-center gap-1 text-xs text-th-muted mb-5">
       <Link
         href={homeHref}
-        className="flex items-center gap-1 hover:text-slate-300 transition-colors duration-150"
+        className="flex items-center gap-1 hover:text-th-txt2 transition-colors duration-150"
       >
         <Home className="w-3 h-3" />
         <span>{homeLabel}</span>
       </Link>
       {crumbs.map(crumb => (
         <span key={crumb.href} className="flex items-center gap-1">
-          <ChevronRight className="w-3 h-3 text-slate-600" />
+          <ChevronRight className="w-3 h-3 text-th-muted opacity-50" />
           {crumb.isLast ? (
-            <span className="text-slate-200 font-medium">{crumb.label}</span>
+            <span className="text-th-txt font-medium">{crumb.label}</span>
           ) : (
-            <Link href={crumb.href} className="hover:text-slate-300 transition-colors duration-150">
+            <Link href={crumb.href} className="hover:text-th-txt2 transition-colors duration-150">
               {crumb.label}
             </Link>
           )}

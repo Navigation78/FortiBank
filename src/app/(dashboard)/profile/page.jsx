@@ -7,11 +7,11 @@ import { useRole } from '@/hooks/useRole'
 import { ROLE_LABELS } from '@/constants/roles'
 
 const CATEGORY_COLORS = {
-  'Leadership':         'bg-purple-500/15 text-purple-400 border-purple-500/20',
-  'Departmental Heads': 'bg-blue-500/15 text-blue-400 border-blue-500/20',
-  'Professional Staff': 'bg-green-500/15 text-green-400 border-green-500/20',
-  'Frontline Staff':    'bg-yellow-500/15 text-yellow-400 border-yellow-500/20',
-  'System':             'bg-red-500/15 text-red-400 border-red-500/20',
+  'Leadership':         'bg-purple-500/15 text-purple-700 dark:text-purple-400 border-purple-500/20',
+  'Departmental Heads': 'bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/20',
+  'Professional Staff': 'bg-green-500/15 text-green-700 dark:text-green-400 border-green-500/20',
+  'Frontline Staff':    'bg-yellow-500/15 text-yellow-700 dark:text-yellow-400 border-yellow-500/20',
+  'System':             'bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/20',
 }
 
 export default function ProfilePage() {
@@ -60,7 +60,6 @@ export default function ProfilePage() {
       setAvatarError('Upload failed. Please try again.')
     } finally {
       setAvatarLoading(false)
-      // Reset so the same file can be re-selected
       if (fileInputRef.current) fileInputRef.current.value = ''
     }
   }
@@ -97,7 +96,7 @@ export default function ProfilePage() {
       <div className="max-w-2xl mx-auto space-y-6">
 
         {/* Profile card */}
-        <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
+        <div className="bg-th-srf border border-th-brd rounded-xl p-6">
           <div className="flex items-start gap-5">
 
             {/* Avatar - clickable upload zone */}
@@ -116,8 +115,8 @@ export default function ProfilePage() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
-                    <span className="text-blue-400 text-2xl font-bold">{initial}</span>
+                  <div className="w-full h-full bg-blue-500/15 border border-blue-500/25 flex items-center justify-center">
+                    <span className="text-blue-600 dark:text-blue-400 text-2xl font-bold">{initial}</span>
                   </div>
                 )}
 
@@ -137,7 +136,7 @@ export default function ProfilePage() {
                 </div>
               </button>
 
-              <span className="text-slate-500 text-[10px] leading-tight text-center">
+              <span className="text-th-muted text-[10px] leading-tight text-center">
                 Click to upload
               </span>
 
@@ -152,53 +151,53 @@ export default function ProfilePage() {
 
             {/* Info */}
             <div className="flex-1 min-w-0">
-              <h4 className="text-white text-xl font-bold">{profile?.full_name || '-'}</h4>
-              <p className="text-slate-400 text-sm mt-0.5">{profile?.email}</p>
+              <h4 className="text-th-txt text-xl font-bold">{profile?.full_name || '-'}</h4>
+              <p className="text-th-txt2 text-sm mt-0.5">{profile?.email}</p>
               <div className="flex flex-wrap items-center gap-2 mt-3">
                 <span className={`text-xs font-medium px-2.5 py-1 rounded-lg border ${categoryColor}`}>
                   {roleLabel}
                 </span>
                 {profile?.employee_id && (
-                  <span className="text-xs text-slate-500 bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700">
+                  <span className="text-xs text-th-muted bg-th-hov px-2.5 py-1 rounded-lg border border-th-brd">
                     ID: {profile.employee_id}
                   </span>
                 )}
                 {profile?.department && (
-                  <span className="text-xs text-slate-500 bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700">
+                  <span className="text-xs text-th-muted bg-th-hov px-2.5 py-1 rounded-lg border border-th-brd">
                     {profile.department}
                   </span>
                 )}
               </div>
 
               {avatarError && (
-                <p className="text-red-400 text-xs mt-2">{avatarError}</p>
+                <p className="text-red-600 dark:text-red-400 text-xs mt-2">{avatarError}</p>
               )}
             </div>
           </div>
 
           {/* Details grid */}
-          <div className="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-slate-700">
+          <div className="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-th-brd">
             <div>
-              <p className="text-slate-500 text-xs">Role category</p>
-              <p className="text-slate-300 text-sm mt-1">{profile?.role_category || '-'}</p>
+              <p className="text-th-muted text-xs">Role category</p>
+              <p className="text-th-txt2 text-sm mt-1">{profile?.role_category || '-'}</p>
             </div>
             <div>
-              <p className="text-slate-500 text-xs">Account status</p>
-              <p className={`text-sm mt-1 font-medium ${profile?.is_active ? 'text-green-400' : 'text-red-400'}`}>
+              <p className="text-th-muted text-xs">Account status</p>
+              <p className={`text-sm mt-1 font-medium ${profile?.is_active ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                 {profile?.is_active ? 'Active' : 'Inactive'}
               </p>
             </div>
             <div>
-              <p className="text-slate-500 text-xs">Member since</p>
-              <p className="text-slate-300 text-sm mt-1">
+              <p className="text-th-muted text-xs">Member since</p>
+              <p className="text-th-txt2 text-sm mt-1">
                 {profile?.created_at
                   ? new Date(profile.created_at).toLocaleDateString('en-KE', { dateStyle: 'medium' })
                   : '-'}
               </p>
             </div>
             <div>
-              <p className="text-slate-500 text-xs">Risk thresholds</p>
-              <p className="text-slate-300 text-sm mt-1">
+              <p className="text-th-muted text-xs">Risk thresholds</p>
+              <p className="text-th-txt2 text-sm mt-1">
                 Warning: {profile?.risk_warning_threshold} · Critical: {profile?.risk_critical_threshold}
               </p>
             </div>
@@ -206,24 +205,24 @@ export default function ProfilePage() {
         </div>
 
         {/* Change password */}
-        <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
-          <h3 className="text-white font-semibold mb-4">Change Password</h3>
+        <div className="bg-th-srf border border-th-brd rounded-xl p-6">
+          <h3 className="text-th-txt font-semibold mb-4">Change Password</h3>
 
           {pwSuccess && (
-            <div className="mb-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
-              <p className="text-green-400 text-sm">Password updated successfully.</p>
+            <div className="mb-4 p-3 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 rounded-lg">
+              <p className="text-green-700 dark:text-green-400 text-sm">Password updated successfully.</p>
             </div>
           )}
 
           {pwError && (
-            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-              <p className="text-red-400 text-sm">{pwError}</p>
+            <div className="mb-4 p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-lg">
+              <p className="text-red-600 dark:text-red-400 text-sm">{pwError}</p>
             </div>
           )}
 
           <form onSubmit={handlePasswordChange} className="space-y-4">
             <div>
-              <label className="block text-slate-300 text-sm font-medium mb-1.5">
+              <label className="block text-th-txt text-sm font-medium mb-1.5">
                 New password
               </label>
               <input
@@ -233,11 +232,11 @@ export default function ProfilePage() {
                 placeholder="At least 8 characters"
                 required
                 minLength={8}
-                className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 transition-all duration-150"
+                className="w-full bg-th-ibg border border-th-ibrd text-th-txt placeholder:text-th-muted rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500/70 focus:ring-1 focus:ring-blue-500/20 transition-all duration-150"
               />
             </div>
             <div>
-              <label className="block text-slate-300 text-sm font-medium mb-1.5">
+              <label className="block text-th-txt text-sm font-medium mb-1.5">
                 Confirm new password
               </label>
               <input
@@ -246,7 +245,7 @@ export default function ProfilePage() {
                 onChange={e => setConfirmPassword(e.target.value)}
                 placeholder="Repeat new password"
                 required
-                className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 transition-all duration-150"
+                className="w-full bg-th-ibg border border-th-ibrd text-th-txt placeholder:text-th-muted rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500/70 focus:ring-1 focus:ring-blue-500/20 transition-all duration-150"
               />
             </div>
             <button

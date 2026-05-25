@@ -34,13 +34,13 @@ const TYPE_ICONS = {
 }
 
 const TYPE_COLORS = {
-  module:       { icon: 'text-blue-400',   bg: 'bg-blue-500/10'   },
-  quiz:         { icon: 'text-purple-400', bg: 'bg-purple-500/10' },
-  phishing:     { icon: 'text-orange-400', bg: 'bg-orange-500/10' },
-  risk_alert:   { icon: 'text-red-400',    bg: 'bg-red-500/10'    },
-  certificate:  { icon: 'text-green-400',  bg: 'bg-green-500/10'  },
-  announcement: { icon: 'text-cyan-400',   bg: 'bg-cyan-500/10'   },
-  system:       { icon: 'text-slate-400',  bg: 'bg-slate-500/10'  },
+  module:       { icon: 'text-blue-600 dark:text-blue-400',   bg: 'bg-blue-500/10'   },
+  quiz:         { icon: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-500/10' },
+  phishing:     { icon: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-500/10' },
+  risk_alert:   { icon: 'text-red-600 dark:text-red-400',    bg: 'bg-red-500/10'    },
+  certificate:  { icon: 'text-green-600 dark:text-green-400',  bg: 'bg-green-500/10'  },
+  announcement: { icon: 'text-cyan-600 dark:text-cyan-400',   bg: 'bg-cyan-500/10'   },
+  system:       { icon: 'text-th-txt2',  bg: 'bg-th-hov'  },
 }
 
 function Icon({ path, className = 'w-5 h-5' }) {
@@ -88,8 +88,8 @@ export default function NotificationsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold text-slate-100">Notifications</h1>
-          <p className="text-sm text-slate-400 mt-0.5">
+          <h1 className="text-xl font-semibold text-th-txt">Notifications</h1>
+          <p className="text-sm text-th-txt2 mt-0.5">
             {total} total · {unreadCount} unread
           </p>
         </div>
@@ -97,14 +97,14 @@ export default function NotificationsPage() {
           {unreadCount > 0 && (
             <button
               onClick={markAllRead}
-              className="text-sm text-blue-400 hover:text-blue-300 px-3 py-1.5 rounded-lg hover:bg-white/[0.05] transition-all duration-150"
+              className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 px-3 py-1.5 rounded-lg hover:bg-th-hov transition-all duration-150"
             >
               Mark all read
             </button>
           )}
           <button
             onClick={refresh}
-            className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-all duration-150"
+            className="flex items-center justify-center w-8 h-8 rounded-lg text-th-txt2 hover:text-th-txt hover:bg-th-hov transition-all duration-150"
             title="Refresh"
           >
             <Icon path="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" className="w-4 h-4" />
@@ -115,7 +115,7 @@ export default function NotificationsPage() {
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-2 mb-4">
         {/* Read/Unread filter */}
-        <div className="flex bg-white/[0.04] border border-white/[0.08] rounded-lg p-0.5 gap-0.5">
+        <div className="flex bg-th-hov border border-th-brd rounded-lg p-0.5 gap-0.5">
           {FILTERS.map(f => (
             <button
               key={f.value}
@@ -123,7 +123,7 @@ export default function NotificationsPage() {
               className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-150
                 ${filter === f.value
                   ? 'bg-blue-600 text-white'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-th-txt2 hover:text-th-txt'
                 }`}
             >
               {f.label}
@@ -135,7 +135,7 @@ export default function NotificationsPage() {
         <select
           value={type}
           onChange={e => handleTypeChange(e.target.value)}
-          className="bg-white/[0.04] border border-white/[0.08] text-slate-300 text-xs rounded-lg px-3 py-2 outline-none focus:border-blue-500/50 transition-colors"
+          className="bg-th-ibg border border-th-ibrd text-th-txt2 text-xs rounded-lg px-3 py-2 outline-none focus:border-blue-500/50 transition-colors"
         >
           {TYPES.map(t => (
             <option key={t.value} value={t.value}>{t.label}</option>
@@ -144,19 +144,19 @@ export default function NotificationsPage() {
       </div>
 
       {/* List */}
-      <div className="bg-slate-800/50 border border-white/[0.06] rounded-xl overflow-hidden">
+      <div className="bg-th-srf border border-th-brd rounded-xl overflow-hidden">
         {loading && notifications.length === 0 ? (
-          <div className="py-16 text-center text-slate-500 text-sm">Loading…</div>
+          <div className="py-16 text-center text-th-muted text-sm">Loading…</div>
         ) : error ? (
-          <div className="py-16 text-center text-red-400 text-sm">{error}</div>
+          <div className="py-16 text-center text-red-600 dark:text-red-400 text-sm">{error}</div>
         ) : notifications.length === 0 ? (
           <div className="py-16 text-center">
             <Icon
               path="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-              className="w-10 h-10 text-slate-600 mx-auto mb-3"
+              className="w-10 h-10 text-th-muted mx-auto mb-3"
             />
-            <p className="text-slate-400 font-medium">No notifications</p>
-            <p className="text-slate-600 text-sm mt-1">
+            <p className="text-th-txt2 font-medium">No notifications</p>
+            <p className="text-th-muted text-sm mt-1">
               {filter !== 'all' || type ? 'Try adjusting your filters' : 'You\'re all caught up!'}
             </p>
           </div>
@@ -167,7 +167,7 @@ export default function NotificationsPage() {
             return (
               <div
                 key={n.id}
-                className={`flex items-start gap-4 px-5 py-4 border-b border-white/[0.04] last:border-0 hover:bg-white/[0.02] transition-colors group
+                className={`flex items-start gap-4 px-5 py-4 border-b border-th-brds last:border-0 hover:bg-th-hov transition-colors group
                   ${!n.is_read ? 'bg-blue-500/[0.03]' : ''}`}
               >
                 {/* Type icon */}
@@ -181,14 +181,14 @@ export default function NotificationsPage() {
                   onClick={() => handleItemClick(n)}
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <p className={`text-sm leading-snug ${!n.is_read ? 'text-slate-100 font-semibold' : 'text-slate-300 font-medium'}`}>
+                    <p className={`text-sm leading-snug ${!n.is_read ? 'text-th-txt font-semibold' : 'text-th-txt2 font-medium'}`}>
                       {n.title}
                     </p>
-                    <span className="flex-shrink-0 text-[11px] text-slate-600 mt-0.5">{timeAgo(n.created_at)}</span>
+                    <span className="flex-shrink-0 text-[11px] text-th-muted mt-0.5">{timeAgo(n.created_at)}</span>
                   </div>
-                  <p className="text-sm text-slate-500 mt-1 leading-relaxed">{n.message}</p>
+                  <p className="text-sm text-th-muted mt-1 leading-relaxed">{n.message}</p>
                   {n.link && (
-                    <p className="text-xs text-blue-400 mt-1.5 flex items-center gap-1">
+                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-1.5 flex items-center gap-1">
                       <Icon path="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" className="w-3 h-3" />
                       View details
                     </p>
@@ -200,7 +200,7 @@ export default function NotificationsPage() {
                   <button
                     onClick={() => markAsRead(n.id, !n.is_read)}
                     title={n.is_read ? 'Mark unread' : 'Mark read'}
-                    className="p-1.5 rounded-lg text-slate-500 hover:text-blue-400 hover:bg-blue-500/10 transition-all duration-150"
+                    className="p-1.5 rounded-lg text-th-muted hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-500/10 transition-all duration-150"
                   >
                     <Icon
                       path={n.is_read
@@ -213,7 +213,7 @@ export default function NotificationsPage() {
                   <button
                     onClick={() => deleteNotification(n.id)}
                     title="Delete"
-                    className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all duration-150"
+                    className="p-1.5 rounded-lg text-th-muted hover:text-red-600 dark:hover:text-red-400 hover:bg-red-500/10 transition-all duration-150"
                   >
                     <Icon path="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" className="w-4 h-4" />
                   </button>
@@ -237,15 +237,15 @@ export default function NotificationsPage() {
           <button
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="px-4 py-2 text-sm rounded-lg bg-white/[0.04] border border-white/[0.08] text-slate-300 hover:text-white hover:bg-white/[0.08] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150"
+            className="px-4 py-2 text-sm rounded-lg bg-th-hov border border-th-brd text-th-txt2 hover:text-th-txt hover:bg-th-act disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150"
           >
             Previous
           </button>
-          <span className="text-slate-500 text-sm">Page {page}</span>
+          <span className="text-th-muted text-sm">Page {page}</span>
           <button
             onClick={() => setPage(p => p + 1)}
             disabled={!hasMore}
-            className="px-4 py-2 text-sm rounded-lg bg-white/[0.04] border border-white/[0.08] text-slate-300 hover:text-white hover:bg-white/[0.08] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150"
+            className="px-4 py-2 text-sm rounded-lg bg-th-hov border border-th-brd text-th-txt2 hover:text-th-txt hover:bg-th-act disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150"
           >
             Next
           </button>

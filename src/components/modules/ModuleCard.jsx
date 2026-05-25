@@ -5,9 +5,9 @@ import { Check, ChevronRight, Clock } from 'lucide-react'
 import Link from 'next/link'
 
 const STATUS_CONFIG = {
-  completed:   { label: 'Completed',   classes: 'bg-green-500/15 text-green-400 border-green-500/20' },
-  in_progress: { label: 'In Progress', classes: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/20' },
-  not_started: { label: 'Not Started', classes: 'bg-slate-700/50 text-slate-400 border-slate-600/20' },
+  completed:   { label: 'Completed',   classes: 'bg-green-500/15 text-green-700 dark:text-green-400 border-green-500/20' },
+  in_progress: { label: 'In Progress', classes: 'bg-yellow-500/15 text-yellow-700 dark:text-yellow-400 border-yellow-500/20' },
+  not_started: { label: 'Not Started', classes: 'bg-th-hov text-th-muted border-th-brd' },
 }
 
 export default function ModuleCard({ module }) {
@@ -18,7 +18,7 @@ export default function ModuleCard({ module }) {
   return (
     <Link
       href={`/modules/${module.id}`}
-      className="group bg-slate-800 border border-white/[0.08] hover:border-slate-600 rounded-xl p-5 flex flex-col gap-4 transition-all hover:shadow-lg hover:shadow-black/20"
+      className="group bg-th-srf border border-th-brd hover:border-blue-500/40 rounded-xl p-5 flex flex-col gap-4 transition-all hover:shadow-lg hover:shadow-black/10 dark:hover:shadow-black/30"
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
@@ -26,17 +26,16 @@ export default function ModuleCard({ module }) {
           <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-md border mb-2 ${config.classes}`}>
             {config.label}
           </span>
-          <h3 className="text-white font-semibold text-sm leading-snug group-hover:text-blue-400 transition-all duration-150">
+          <h3 className="text-th-txt font-semibold text-sm leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all duration-150">
             {module.title}
           </h3>
         </div>
-        {/* Arrow icon */}
-        <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-blue-400 flex-shrink-0 mt-1 transition-all duration-150" />
+        <ChevronRight className="w-4 h-4 text-th-muted group-hover:text-blue-500 dark:group-hover:text-blue-400 flex-shrink-0 mt-1 transition-all duration-150" />
       </div>
 
       {/* Description */}
       {module.description && (
-        <p className="text-slate-500 text-xs leading-relaxed line-clamp-2">
+        <p className="text-th-muted text-xs leading-relaxed line-clamp-2">
           {module.description}
         </p>
       )}
@@ -44,15 +43,15 @@ export default function ModuleCard({ module }) {
       {/* Progress bar */}
       <div>
         <div className="flex items-center justify-between mb-1.5">
-          <span className="text-slate-500 text-xs">Progress</span>
-          <span className="text-slate-400 text-xs font-medium">{pct}%</span>
+          <span className="text-th-muted text-xs">Progress</span>
+          <span className="text-th-txt2 text-xs font-medium">{pct}%</span>
         </div>
-        <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+        <div className="h-1.5 bg-th-track rounded-full overflow-hidden">
           <div
             className={`h-full rounded-full transition-all duration-500 ${
               status === 'completed' ? 'bg-green-500' :
               status === 'in_progress' ? 'bg-blue-500' :
-              'bg-slate-700'
+              'bg-th-muted'
             }`}
             style={{ width: `${pct}%` }}
           />
@@ -60,7 +59,7 @@ export default function ModuleCard({ module }) {
       </div>
 
       {/* Footer */}
-      <div className="flex items-center gap-3 text-xs text-slate-500">
+      <div className="flex items-center gap-3 text-xs text-th-muted">
         {module.duration_mins && (
           <span className="flex items-center gap-1">
             <Clock className="w-3.5 h-3.5" />
@@ -68,7 +67,7 @@ export default function ModuleCard({ module }) {
           </span>
         )}
         {status === 'completed' && module.progress?.completed_at && (
-          <span className="text-green-500 flex items-center gap-1">
+          <span className="text-green-600 dark:text-green-500 flex items-center gap-1">
             <Check className="w-3.5 h-3.5" />
             Done {new Date(module.progress.completed_at).toLocaleDateString('en-KE')}
           </span>

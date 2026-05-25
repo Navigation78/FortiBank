@@ -6,7 +6,7 @@ import PageWrapper from '@/components/layout/PageWrapper'
 
 const STATUS_COLORS = {
   published: 'bg-green-500/15 text-green-400',
-  draft:     'bg-white/[0.06] text-slate-300',
+  draft:     'bg-th-hov text-th-txt2',
   archived:  'bg-red-500/15 text-red-400',
 }
 
@@ -33,8 +33,8 @@ export default function AdminModulesPage() {
       <PageWrapper>
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h4 className="text-white text-xl font-bold">All Modules</h4>
-            <p className="text-slate-400 text-sm mt-0.5">{modules.length} total modules</p>
+            <h4 className="text-th-txt text-xl font-bold">All Modules</h4>
+            <p className="text-th-muted text-sm mt-0.5">{modules.length} total modules</p>
           </div>
           <div className="flex items-center gap-2">
             <Link
@@ -52,29 +52,29 @@ export default function AdminModulesPage() {
         {loading ? (
           <div className="space-y-3">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-16 bg-slate-800 border border-white/[0.06] rounded-xl animate-pulse" />
+              <div key={i} className="h-16 bg-th-hov border border-th-brd rounded-xl animate-pulse" />
             ))}
           </div>
         ) : (
-          <div className="bg-slate-800 border border-white/[0.08] rounded-xl overflow-hidden">
+          <div className="bg-th-srf border border-th-brd rounded-xl overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/[0.06]">
-                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3">Code</th>
-                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3">Module</th>
-                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3 hidden sm:table-cell">Status</th>
-                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3 hidden md:table-cell">Duration</th>
-                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3"></th>
+                <tr className="border-b border-th-brd">
+                  <th className="text-left text-th-muted text-xs font-medium px-5 py-3">Code</th>
+                  <th className="text-left text-th-muted text-xs font-medium px-5 py-3">Module</th>
+                  <th className="text-left text-th-muted text-xs font-medium px-5 py-3 hidden sm:table-cell">Status</th>
+                  <th className="text-left text-th-muted text-xs font-medium px-5 py-3 hidden md:table-cell">Duration</th>
+                  <th className="text-left text-th-muted text-xs font-medium px-5 py-3"></th>
                 </tr>
               </thead>
               <tbody>
                 {modules.map((module) => (
-                  <tr key={module.id} className="border-b border-white/[0.06] last:border-0 hover:bg-white/[0.04] transition-all duration-150">
-                    <td className="px-5 py-3 text-slate-400 text-sm">{formatModuleCode(module.order_index)}</td>
+                  <tr key={module.id} className="border-b border-th-brd last:border-0 hover:bg-th-hov/30 transition-all duration-150">
+                    <td className="px-5 py-3 text-th-muted text-sm">{formatModuleCode(module.order_index)}</td>
                     <td className="px-5 py-3">
-                      <p className="text-white text-sm font-medium">{module.title}</p>
+                      <p className="text-th-txt text-sm font-medium">{module.title}</p>
                       {module.description && (
-                        <p className="text-slate-500 text-xs truncate max-w-xs">{module.description}</p>
+                        <p className="text-th-muted text-xs truncate max-w-xs">{module.description}</p>
                       )}
                     </td>
                     <td className="px-5 py-3 hidden sm:table-cell">
@@ -83,12 +83,12 @@ export default function AdminModulesPage() {
                       </span>
                     </td>
                     <td className="px-5 py-3 hidden md:table-cell">
-                      <span className="text-slate-400 text-sm">{module.duration_mins ? `${module.duration_mins} min` : '-'}</span>
+                      <span className="text-th-txt2 text-sm">{module.duration_mins ? `${module.duration_mins} min` : '-'}</span>
                     </td>
                     <td className="px-5 py-3 text-right">
                       <Link
                         href={`/admin/modules/${module.id}`}
-                        className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 text-xs font-medium transition-all duration-150"
+                        className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-xs font-medium transition-all duration-150"
                       >
                         View Details
                         <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">

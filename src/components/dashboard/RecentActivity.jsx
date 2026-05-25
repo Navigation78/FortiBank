@@ -17,16 +17,16 @@ function timeAgo(dateString) {
 export default function RecentActivity({ activities = [], lastModule = null, loading = false }) {
   if (loading) {
     return (
-      <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
+      <div className="bg-th-srf border border-th-brd rounded-xl p-6 shadow-sm shadow-black/5 dark:shadow-black/30">
         <div className="animate-pulse space-y-4">
-          <div className="h-4 bg-slate-700 rounded w-1/3" />
-          <div className="h-16 bg-slate-700/60 rounded-lg" />
+          <div className="h-4 bg-th-track rounded w-1/3" />
+          <div className="h-16 bg-th-hov rounded-lg" />
           {[...Array(3)].map((_, i) => (
             <div key={i} className="flex gap-3">
-              <div className="w-8 h-8 bg-slate-700 rounded-lg" />
+              <div className="w-8 h-8 bg-th-track rounded-lg" />
               <div className="flex-1 space-y-2">
-                <div className="h-3 bg-slate-700 rounded w-3/4" />
-                <div className="h-3 bg-slate-700 rounded w-1/2" />
+                <div className="h-3 bg-th-track rounded w-3/4" />
+                <div className="h-3 bg-th-track rounded w-1/2" />
               </div>
             </div>
           ))}
@@ -36,27 +36,27 @@ export default function RecentActivity({ activities = [], lastModule = null, loa
   }
 
   return (
-    <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 transition-all duration-150 hover:border-white/[0.14] hover:shadow-md hover:shadow-black/40">
+    <div className="bg-th-srf border border-th-brd rounded-xl p-6 shadow-sm shadow-black/5 dark:shadow-black/30 transition-all duration-150 hover:shadow-md hover:shadow-black/5 dark:hover:shadow-black/40">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-slate-100 font-semibold">Recent Activity</h3>
-        <Link href="/results" className="text-blue-400 hover:text-blue-300 text-xs transition-all duration-150">
+        <h3 className="text-th-txt font-semibold">Recent Activity</h3>
+        <Link href="/results" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-xs transition-all duration-150">
           View all →
         </Link>
       </div>
 
       {/* Continue Learning section */}
       {lastModule && (
-        <div className="mb-5 p-4 bg-blue-500/10 border border-blue-500/25 rounded-xl">
-          <p className="text-slate-400 text-xs mb-1">Continue where you left off</p>
-          <p className="text-slate-100 text-sm font-semibold mb-2 truncate">{lastModule.title}</p>
+        <div className="mb-5 p-4 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/25 rounded-xl">
+          <p className="text-blue-600 dark:text-blue-400 text-xs mb-1">Continue where you left off</p>
+          <p className="text-th-txt text-sm font-semibold mb-2 truncate">{lastModule.title}</p>
           <div className="flex items-center gap-3">
-            <div className="flex-1 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+            <div className="flex-1 h-1.5 bg-blue-200 dark:bg-blue-900/60 rounded-full overflow-hidden">
               <div
                 className="h-full bg-blue-500 rounded-full transition-all duration-500"
                 style={{ width: `${lastModule.progress?.progress_pct || 0}%` }}
               />
             </div>
-            <span className="text-slate-400 text-xs shrink-0">
+            <span className="text-th-muted text-xs shrink-0">
               {lastModule.progress?.progress_pct || 0}%
             </span>
           </div>
@@ -78,7 +78,7 @@ export default function RecentActivity({ activities = [], lastModule = null, loa
         <div className="space-y-3">
           {activities.map((activity, i) => (
             <div key={i} className="flex items-start gap-3">
-              <svg className="w-4 h-4 text-white flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4 text-th-txt2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={
                   activity.type === 'quiz_passed'    ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' :
                   activity.type === 'quiz_failed'    ? 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z' :
@@ -89,16 +89,16 @@ export default function RecentActivity({ activities = [], lastModule = null, loa
               </svg>
 
               <div className="flex-1 min-w-0">
-                <p className="text-slate-200 text-sm">{activity.title}</p>
+                <p className="text-th-txt text-sm">{activity.title}</p>
                 <div className="flex items-center gap-2 mt-0.5">
                   {activity.score !== undefined && (
                     <span className={`text-xs font-medium ${
-                      activity.score >= 70 ? 'text-green-400' : 'text-red-400'
+                      activity.score >= 70 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'
                     }`}>
                       {activity.score}%
                     </span>
                   )}
-                  <span className="text-slate-500 text-xs">{timeAgo(activity.date)}</span>
+                  <span className="text-th-muted text-xs">{timeAgo(activity.date)}</span>
                 </div>
               </div>
             </div>
@@ -106,8 +106,8 @@ export default function RecentActivity({ activities = [], lastModule = null, loa
         </div>
       ) : (
         <div className="text-center py-6">
-          <p className="text-slate-400 text-sm">No activity yet.</p>
-          <p className="text-slate-500 text-xs mt-1">Complete a module or quiz to see your activity here.</p>
+          <p className="text-th-txt2 text-sm">No activity yet.</p>
+          <p className="text-th-muted text-xs mt-1">Complete a module or quiz to see your activity here.</p>
         </div>
       )}
     </div>

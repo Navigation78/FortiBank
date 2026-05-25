@@ -13,10 +13,10 @@ export default function PhishingStats({ targets = [] }) {
   const clickRate = sent > 0 ? Math.round((clicked / sent) * 100) : 0
 
   const stats = [
-    { label: 'Tests Received', value: sent,     color: 'text-blue-400',   bg: 'bg-blue-500/10',   border: 'border-blue-500/20'   },
-    { label: 'Links Clicked',  value: clicked,  color: 'text-red-400',    bg: 'bg-red-500/10',    border: 'border-red-500/20'    },
-    { label: 'Correctly Reported', value: reported, color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/20' },
-    { label: 'Click Rate',     value: `${clickRate}%`, color: clickRate > 30 ? 'text-red-400' : 'text-green-400', bg: 'bg-slate-800', border: 'border-slate-700' },
+    { label: 'Tests Received',    value: sent,     color: 'text-blue-600 dark:text-blue-400',   bg: 'bg-blue-500/10',   border: 'border-blue-500/20'   },
+    { label: 'Links Clicked',     value: clicked,  color: 'text-red-600 dark:text-red-400',     bg: 'bg-red-500/10',    border: 'border-red-500/20'    },
+    { label: 'Correctly Reported', value: reported, color: 'text-green-600 dark:text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/20'  },
+    { label: 'Click Rate',        value: `${clickRate}%`, color: clickRate > 30 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400', bg: 'bg-th-hov', border: 'border-th-brd' },
   ]
 
   return (
@@ -24,7 +24,7 @@ export default function PhishingStats({ targets = [] }) {
       {stats.map((stat, i) => (
         <div key={i} className={`${stat.bg} border ${stat.border} rounded-xl p-4 text-center`}>
           <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
-          <p className="text-slate-400 text-xs mt-1">{stat.label}</p>
+          <p className="text-th-txt2 text-xs mt-1">{stat.label}</p>
         </div>
       ))}
     </div>

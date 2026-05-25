@@ -1,6 +1,4 @@
 'use client'
-// src/app/(auth)/forgot-password/page.jsx
-
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -33,30 +31,30 @@ export default function ForgotPasswordPage() {
 
   if (sent) {
     return (
-      <div className="bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl text-center">
-        <div className="w-14 h-14 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg className="w-7 h-7 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="bg-th-srf border border-th-brd rounded-2xl p-8 shadow-xl shadow-black/5 dark:shadow-black/40 text-center">
+        <div className="w-14 h-14 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/25 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg className="w-7 h-7 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
           </svg>
         </div>
-        <h4 className="text-white text-xl font-bold mb-2">Check your email</h4>
-        <p className="text-slate-400 text-sm mb-6">
-          We sent a password reset link to <span className="text-white font-medium">{email}</span>.
+        <h4 className="text-th-txt text-xl font-bold mb-2">Check your email</h4>
+        <p className="text-th-txt2 text-sm mb-6">
+          We sent a password reset link to <span className="text-th-txt font-medium">{email}</span>.
           The link expires in 1 hour.
         </p>
-        <p className="text-slate-500 text-xs mb-6">
-          Didn't receive it? Check your spam folder or try again.
+        <p className="text-th-muted text-xs mb-6">
+          Didn&apos;t receive it? Check your spam folder or try again.
         </p>
         <div className="flex flex-col gap-2">
           <button
-            onClick={() => { setSent(false) }}
-            className="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-all duration-150"
+            onClick={() => setSent(false)}
+            className="w-full bg-th-hov hover:bg-th-act text-th-txt2 hover:text-th-txt border border-th-brd font-medium rounded-lg py-2.5 text-sm transition-all duration-150"
           >
             Try a different email
           </button>
           <Link
             href="/login"
-            className="w-full bg-transparent text-slate-500 hover:text-slate-400 font-medium rounded-lg py-2.5 text-sm transition-all duration-150 text-center"
+            className="w-full text-th-muted hover:text-th-txt2 font-medium rounded-lg py-2.5 text-sm transition-all duration-150 text-center"
           >
             Back to sign in
           </Link>
@@ -66,23 +64,23 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl">
+    <div className="bg-th-srf border border-th-brd rounded-2xl p-8 shadow-xl shadow-black/5 dark:shadow-black/40">
       <div className="mb-6">
-        <h4 className="text-white text-2xl font-bold">Reset your password</h4>
-        <p className="text-slate-400 text-sm mt-1">
+        <h4 className="text-th-txt text-2xl font-bold">Reset your password</h4>
+        <p className="text-th-txt2 text-sm mt-1">
           Enter your email and we'll send you a reset link.
         </p>
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-          <p className="text-red-400 text-sm">{error}</p>
+        <div className="mb-4 p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-lg">
+          <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-slate-300 text-sm font-medium mb-1.5">
+          <label className="block text-th-txt text-sm font-medium mb-1.5">
             Email address
           </label>
           <input
@@ -92,7 +90,7 @@ export default function ForgotPasswordPage() {
             placeholder="you@fortibank.com"
             required
             autoComplete="email"
-            className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 transition-all duration-150"
+            className="w-full bg-th-ibg border border-th-ibrd text-th-txt placeholder:text-th-muted rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500/70 focus:ring-1 focus:ring-blue-500/20 transition-all duration-150"
           />
         </div>
 
@@ -116,7 +114,7 @@ export default function ForgotPasswordPage() {
       </form>
 
       <div className="mt-4 text-center">
-        <Link href="/login" className="text-slate-500 hover:text-slate-400 text-sm transition-all duration-150">
+        <Link href="/login" className="text-th-muted hover:text-th-txt2 text-sm transition-all duration-150">
           ← Back to sign in
         </Link>
       </div>

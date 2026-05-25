@@ -62,15 +62,15 @@ export default function ChangePasswordPage() {
 
   if (success) {
     return (
-      <main className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
-        <div className="w-full max-w-md bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl text-center">
+      <main className="min-h-screen bg-th-bg flex items-center justify-center px-4">
+        <div className="w-full max-w-md bg-th-srf border border-th-brd rounded-2xl p-8 shadow-xl shadow-black/5 dark:shadow-black/40 text-center">
           <div className="w-14 h-14 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-7 h-7 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-7 h-7 text-green-500 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h1 className="text-white text-xl font-bold mb-2">Password updated</h1>
-          <p className="text-slate-400 text-sm">
+          <h1 className="text-th-txt text-xl font-bold mb-2">Password updated</h1>
+          <p className="text-th-txt2 text-sm">
             Your new password is saved. Redirecting you to sign in...
           </p>
         </div>
@@ -79,18 +79,18 @@ export default function ChangePasswordPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl">
+    <main className="min-h-screen bg-th-bg flex items-center justify-center px-4">
+      <div className="w-full max-w-md bg-th-srf border border-th-brd rounded-2xl p-8 shadow-xl shadow-black/5 dark:shadow-black/40">
         <div className="mb-6">
-          <h1 className="text-white text-2xl font-bold">Set your new password</h1>
-          <p className="text-slate-400 text-sm mt-1">
+          <h1 className="text-th-txt text-2xl font-bold">Set your new password</h1>
+          <p className="text-th-txt2 text-sm mt-1">
             Your temporary password only works once. Choose a new one to continue.
           </p>
           <div className="mt-3 space-y-1">
             {passwordChecks.map(check => (
               <p
                 key={check.label}
-                className={`text-xs ${check.met ? 'text-green-400' : 'text-slate-500'}`}
+                className={`text-xs ${check.met ? 'text-green-600 dark:text-green-400' : 'text-th-muted'}`}
               >
                 {check.met ? 'OK' : 'TIP'} {check.label}
               </p>
@@ -99,14 +99,14 @@ export default function ChangePasswordPage() {
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-            <p className="text-red-400 text-sm">{error}</p>
+          <div className="mb-4 p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-lg">
+            <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-slate-300 text-sm font-medium mb-1.5">
+            <label className="block text-th-txt text-sm font-medium mb-1.5">
               New password
             </label>
             <div className="relative">
@@ -117,12 +117,12 @@ export default function ChangePasswordPage() {
                 placeholder="At least 8 characters"
                 required
                 minLength={8}
-                className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 pr-10 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 transition-all duration-150"
+                className="w-full bg-th-ibg border border-th-ibrd text-th-txt placeholder:text-th-muted rounded-lg px-4 py-2.5 pr-10 text-sm focus:outline-none focus:border-blue-500/70 focus:ring-1 focus:ring-blue-500/20 transition-all duration-150"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-th-muted hover:text-th-txt2"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? (
@@ -138,14 +138,14 @@ export default function ChangePasswordPage() {
               </button>
             </div>
             {password && password.length < 8 && (
-              <p className="text-red-400 text-xs mt-1">
+              <p className="text-red-600 dark:text-red-400 text-xs mt-1">
                 Password must be at least 8 characters.
               </p>
             )}
           </div>
 
           <div>
-            <label className="block text-slate-300 text-sm font-medium mb-1.5">
+            <label className="block text-th-txt text-sm font-medium mb-1.5">
               Confirm password
             </label>
             <input
@@ -154,20 +154,33 @@ export default function ChangePasswordPage() {
               onChange={e => setConfirmPassword(e.target.value)}
               placeholder="Repeat your new password"
               required
-              className={`w-full bg-slate-800 border text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-1 transition-all duration-150 ${
+              className={`w-full bg-th-ibg border text-th-txt placeholder:text-th-muted rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-1 transition-all duration-150 ${
                 confirmPassword && password !== confirmPassword
-                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                  : 'border-slate-700 focus:border-blue-500 focus:ring-blue-500'
+                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500/40'
+                  : 'border-th-ibrd focus:border-blue-500/70 focus:ring-blue-500/20'
               }`}
             />
+            {confirmPassword && password !== confirmPassword && (
+              <p className="text-red-600 dark:text-red-400 text-xs mt-1">Passwords do not match</p>
+            )}
           </div>
 
           <button
             type="submit"
-            disabled={loading || (confirmPassword && password !== confirmPassword)}
+            disabled={loading || Boolean(confirmPassword && password !== confirmPassword)}
             className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 disabled:cursor-not-allowed text-white font-medium rounded-lg py-2.5 text-sm transition-all duration-150 flex items-center justify-center gap-2"
           >
-            {loading ? 'Updating...' : 'Save new password'}
+            {loading ? (
+              <>
+                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                </svg>
+                Updating...
+              </>
+            ) : (
+              'Save new password'
+            )}
           </button>
         </form>
       </div>

@@ -6,7 +6,7 @@ import Link from 'next/link'
 import PageWrapper from '@/components/layout/PageWrapper'
 
 const STATUS_COLORS = {
-  draft:     'bg-white/[0.06] text-slate-300',
+  draft:     'bg-th-hov text-th-txt2',
   active:    'bg-blue-500/15 text-blue-400',
   completed: 'bg-green-500/15 text-green-400',
   cancelled: 'bg-red-500/15 text-red-400',
@@ -41,8 +41,8 @@ export default function AdminPhishingPage() {
       <PageWrapper>
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h4 className="text-white text-xl font-bold">Phishing Campaigns</h4>
-            <p className="text-slate-400 text-sm mt-0.5">{campaigns.length} total campaigns</p>
+            <h4 className="text-th-txt text-xl font-bold">Phishing Campaigns</h4>
+            <p className="text-th-muted text-sm mt-0.5">{campaigns.length} total campaigns</p>
           </div>
           <Link
             href="/admin/phishing/create"
@@ -56,26 +56,26 @@ export default function AdminPhishingPage() {
         {loading ? (
           <div className="space-y-3">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-16 bg-slate-800 border border-white/[0.06] rounded-xl animate-pulse" />
+              <div key={i} className="h-16 bg-th-hov border border-th-brd rounded-xl animate-pulse" />
             ))}
           </div>
         ) : campaigns.length > 0 ? (
-          <div className="bg-slate-800 border border-white/[0.08] rounded-xl overflow-hidden">
+          <div className="bg-th-srf border border-th-brd rounded-xl overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/[0.06]">
-                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3">Campaign</th>
-                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3 hidden sm:table-cell">Status</th>
-                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3 hidden md:table-cell">Targets</th>
-                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3 hidden lg:table-cell">Click Rate</th>
-                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3">Actions</th>
+                <tr className="border-b border-th-brd">
+                  <th className="text-left text-th-muted text-xs font-medium px-5 py-3">Campaign</th>
+                  <th className="text-left text-th-muted text-xs font-medium px-5 py-3 hidden sm:table-cell">Status</th>
+                  <th className="text-left text-th-muted text-xs font-medium px-5 py-3 hidden md:table-cell">Targets</th>
+                  <th className="text-left text-th-muted text-xs font-medium px-5 py-3 hidden lg:table-cell">Click Rate</th>
+                  <th className="text-left text-th-muted text-xs font-medium px-5 py-3">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {campaigns.map(c => (
-                  <tr key={c.campaign_id} className="border-b border-white/[0.06] last:border-0 hover:bg-white/[0.04] transition-all duration-150">
+                  <tr key={c.campaign_id} className="border-b border-th-brd last:border-0 hover:bg-th-hov/30 transition-all duration-150">
                     <td className="px-5 py-3">
-                      <p className="text-white text-sm font-medium">{c.name}</p>
+                      <p className="text-th-txt text-sm font-medium">{c.name}</p>
                     </td>
                     <td className="px-5 py-3 hidden sm:table-cell">
                       <span className={`text-xs font-medium px-2 py-1 rounded-lg capitalize ${STATUS_COLORS[c.status]}`}>
@@ -83,7 +83,7 @@ export default function AdminPhishingPage() {
                       </span>
                     </td>
                     <td className="px-5 py-3 hidden md:table-cell">
-                      <span className="text-slate-400 text-sm">{c.total_targets || 0}</span>
+                      <span className="text-th-txt2 text-sm">{c.total_targets || 0}</span>
                     </td>
                     <td className="px-5 py-3 hidden lg:table-cell">
                       {(() => {
@@ -102,7 +102,7 @@ export default function AdminPhishingPage() {
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
-                        <Link href={`/admin/phishing/${c.campaign_id}`} className="text-blue-400 hover:text-blue-300 text-xs font-medium flex items-center gap-1">
+                        <Link href={`/admin/phishing/${c.campaign_id}`} className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-xs font-medium flex items-center gap-1">
                           View
                           <ArrowRight className="w-3 h-3" />
                         </Link>
@@ -110,7 +110,7 @@ export default function AdminPhishingPage() {
                           <button
                             onClick={() => handleResend(c.campaign_id)}
                             disabled={resending[c.campaign_id]}
-                            className="text-green-400 hover:text-green-300 disabled:opacity-50 text-xs font-medium transition-all duration-150"
+                            className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 disabled:opacity-50 text-xs font-medium transition-all duration-150"
                           >
                             {resending[c.campaign_id] ? 'Sending...' : 'Resend'}
                           </button>
@@ -123,9 +123,9 @@ export default function AdminPhishingPage() {
             </table>
           </div>
         ) : (
-          <div className="text-center py-16 bg-slate-800 border border-white/[0.08] rounded-xl">
-            <p className="text-slate-400 font-medium">No campaigns yet</p>
-            <Link href="/admin/phishing/create" className="text-blue-400 text-sm hover:text-blue-300 mt-2 inline-flex items-center gap-1">
+          <div className="text-center py-16 bg-th-hov border border-th-brd rounded-xl">
+            <p className="text-th-muted font-medium">No campaigns yet</p>
+            <Link href="/admin/phishing/create" className="text-blue-600 dark:text-blue-400 text-sm hover:text-blue-700 dark:hover:text-blue-300 mt-2 inline-flex items-center gap-1">
               Create your first campaign
               <ArrowRight className="w-3 h-3" />
             </Link>

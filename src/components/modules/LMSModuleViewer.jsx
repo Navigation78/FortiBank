@@ -81,12 +81,10 @@ function Sidebar({ topics, pages, pageIdx, highWaterMark, moduleTitle, durationM
   }
 
   function topicStatus(topicNum) {
-    // Find all page indices belonging to this topic
     const idxs = pages.reduce((a, p, i) => p.topicNumber === topicNum ? [...a, i] : a, [])
     if (!idxs.length) return 'locked'
     const allDone = idxs.every(i => i <= highWaterMark - 1)
     const anyDone = idxs.some(i => i <= highWaterMark - 1)
-    // Check if there's a checkpoint for this topic and if it's passed
     const cpIdx = pages.findIndex(p => p.type === 'checkpoint' && p.topicNumber === topicNum)
     const cpPassed = cpIdx !== -1 && cpIdx < highWaterMark
     if (cpPassed || (allDone && cpIdx === -1)) return 'complete'
@@ -96,24 +94,24 @@ function Sidebar({ topics, pages, pageIdx, highWaterMark, moduleTitle, durationM
 
   return (
     <nav
-      className="w-64 flex-shrink-0 flex flex-col bg-[#0d1117] border-r border-slate-800 sticky top-0 self-start overflow-y-auto"
+      className="w-64 flex-shrink-0 flex flex-col bg-th-bar border-r border-th-brd sticky top-0 self-start overflow-y-auto"
       style={{ height: 'calc(100vh - 56px)' }}
     >
       {/* Header */}
-      <div className="p-4 border-b border-slate-800 flex-shrink-0">
-        <Link href="/modules" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-300 text-xs mb-3 transition-colors">
+      <div className="p-4 border-b border-th-brd flex-shrink-0">
+        <Link href="/modules" className="inline-flex items-center gap-1.5 text-th-muted hover:text-th-txt2 text-xs mb-3 transition-colors">
           <ArrowLeft className="w-3 h-3" /> All Modules
         </Link>
-        <h2 className="text-white text-sm font-semibold leading-snug mb-3">{moduleTitle}</h2>
+        <h2 className="text-th-txt text-sm font-semibold leading-snug mb-3">{moduleTitle}</h2>
         {durationMins && (
-          <p className="text-slate-500 text-xs mb-3">{durationMins} min estimated</p>
+          <p className="text-th-muted text-xs mb-3">{durationMins} min estimated</p>
         )}
         <div>
           <div className="flex justify-between text-xs mb-1">
-            <span className="text-slate-500">Progress</span>
-            <span className="text-slate-400 tabular-nums">{overallPct}%</span>
+            <span className="text-th-muted">Progress</span>
+            <span className="text-th-txt2 tabular-nums">{overallPct}%</span>
           </div>
-          <div className="h-1 bg-slate-800 rounded-full overflow-hidden">
+          <div className="h-1 bg-th-track rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full transition-all duration-500 ${overallPct >= 100 ? 'bg-green-500' : 'bg-blue-500'}`}
               style={{ width: `${overallPct}%` }}
@@ -134,23 +132,23 @@ function Sidebar({ topics, pages, pageIdx, highWaterMark, moduleTitle, durationM
             <div key={topic.number}>
               <button
                 onClick={() => toggle(topic.number)}
-                className={`w-full flex items-center gap-2 px-2.5 py-2 rounded text-left transition-colors ${isCurTopic ? 'bg-slate-800' : 'hover:bg-slate-800/50'}`}
+                className={`w-full flex items-center gap-2 px-2.5 py-2 rounded text-left transition-colors ${isCurTopic ? 'bg-th-hov' : 'hover:bg-th-hov/50'}`}
               >
                 <StatusDot status={status} size="md" />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <span className="font-mono text-[10px] text-slate-600 flex-shrink-0">{topic.number}</span>
-                    <span className={`text-xs font-medium truncate ${isCurTopic ? 'text-white' : status === 'complete' ? 'text-slate-400' : 'text-slate-300'}`}>
+                    <span className="font-mono text-[10px] text-th-muted flex-shrink-0">{topic.number}</span>
+                    <span className={`text-xs font-medium truncate ${isCurTopic ? 'text-th-txt' : status === 'complete' ? 'text-th-txt2' : 'text-th-txt2'}`}>
                       {topic.title}
                     </span>
                   </div>
                 </div>
-                {status === 'locked' && <Lock className="w-3 h-3 text-slate-700 flex-shrink-0" />}
-                {status !== 'locked' && <ChevronDown className={`w-3 h-3 text-slate-700 flex-shrink-0 transition-transform ${isExpanded ? '' : '-rotate-90'}`} />}
+                {status === 'locked' && <Lock className="w-3 h-3 text-th-muted flex-shrink-0" />}
+                {status !== 'locked' && <ChevronDown className={`w-3 h-3 text-th-muted flex-shrink-0 transition-transform ${isExpanded ? '' : '-rotate-90'}`} />}
               </button>
 
               {isExpanded && status !== 'locked' && (
-                <div className="ml-3 pl-3 border-l border-slate-800 py-0.5 space-y-px">
+                <div className="ml-3 pl-3 border-l border-th-brd py-0.5 space-y-px">
                   {topic.pages.map((sec, si) => {
                     const gi = topicPageIdxs[si]
                     const accessible = gi <= highWaterMark
@@ -165,18 +163,18 @@ function Sidebar({ topics, pages, pageIdx, highWaterMark, moduleTitle, durationM
                         disabled={!accessible}
                         className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-left transition-colors ${
                           isCurrent ? 'bg-blue-600/15 text-blue-400'
-                          : accessible ? 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/50'
-                          : 'text-slate-700 cursor-not-allowed'
+                          : accessible ? 'text-th-muted hover:text-th-txt2 hover:bg-th-hov/50'
+                          : 'text-th-muted opacity-40 cursor-not-allowed'
                         }`}
                       >
                         <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 mt-px ${
                           isCurrent ? 'bg-blue-400'
                           : isDone ? 'bg-green-500'
-                          : accessible ? 'bg-slate-600'
-                          : 'bg-slate-800'
+                          : accessible ? 'bg-th-brds'
+                          : 'bg-th-track'
                         }`} />
                         {sec.section_number && (
-                          <span className="font-mono text-[10px] text-slate-700 flex-shrink-0">{sec.section_number}</span>
+                          <span className="font-mono text-[10px] text-th-muted flex-shrink-0">{sec.section_number}</span>
                         )}
                         <span className="text-xs truncate">
                           {isKC ? 'Quiz' : sec.title}
@@ -201,11 +199,11 @@ function Sidebar({ topics, pages, pageIdx, highWaterMark, moduleTitle, durationM
                         disabled={!accessible}
                         className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-left transition-colors ${
                           isCurrent ? 'bg-blue-600/15 text-blue-400'
-                          : accessible ? 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/50'
-                          : 'text-slate-700 cursor-not-allowed'
+                          : accessible ? 'text-th-muted hover:text-th-txt2 hover:bg-th-hov/50'
+                          : 'text-th-muted opacity-40 cursor-not-allowed'
                         }`}
                       >
-                        <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 mt-px ${isCurrent ? 'bg-blue-400' : isDone ? 'bg-green-500' : 'bg-slate-600'}`} />
+                        <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 mt-px ${isCurrent ? 'bg-blue-400' : isDone ? 'bg-green-500' : 'bg-th-brds'}`} />
                         <span className="text-xs truncate">Topic Checkpoint</span>
                         {isDone && <Check className="w-3 h-3 text-green-500 flex-shrink-0 ml-auto" strokeWidth={3} />}
                         {!accessible && <Lock className="w-2.5 h-2.5 flex-shrink-0 ml-auto" />}
@@ -226,20 +224,20 @@ function Sidebar({ topics, pages, pageIdx, highWaterMark, moduleTitle, durationM
           const isCurrent  = pageIdx === feIdx
           const isDone     = feIdx < highWaterMark
           return (
-            <div className="mt-2 pt-2 border-t border-slate-800">
+            <div className="mt-2 pt-2 border-t border-th-brd">
               <button
                 onClick={() => accessible && onNavigate(feIdx)}
                 disabled={!accessible}
                 className={`w-full flex items-center gap-2 px-2.5 py-2 rounded text-left transition-colors ${
                   isCurrent ? 'bg-blue-600/15 text-blue-400'
-                  : accessible ? 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-                  : 'text-slate-700 cursor-not-allowed'
+                  : accessible ? 'text-th-txt2 hover:text-th-txt hover:bg-th-hov/50'
+                  : 'text-th-muted opacity-40 cursor-not-allowed'
                 }`}
               >
-                <Target className={`w-3.5 h-3.5 flex-shrink-0 ${accessible ? 'text-blue-400' : 'text-slate-700'}`} />
+                <Target className={`w-3.5 h-3.5 flex-shrink-0 ${accessible ? 'text-blue-400' : 'text-th-muted'}`} />
                 <span className="text-xs font-medium">Final Exam</span>
                 {isDone && <Check className="w-3 h-3 text-green-500 flex-shrink-0 ml-auto" strokeWidth={3} />}
-                {!accessible && <Lock className="w-3 h-3 text-slate-700 flex-shrink-0 ml-auto" />}
+                {!accessible && <Lock className="w-3 h-3 text-th-muted flex-shrink-0 ml-auto" />}
               </button>
             </div>
           )
@@ -261,8 +259,8 @@ function StatusDot({ status, size = 'sm' }) {
       <div className="w-1 h-1 rounded-full bg-blue-500" />
     </div>
   )
-  if (status === 'locked') return <div className={`${sz} rounded-full border border-slate-800 flex-shrink-0`} />
-  return <div className={`${sz} rounded-full border border-slate-700 flex-shrink-0`} />
+  if (status === 'locked') return <div className={`${sz} rounded-full border border-th-track flex-shrink-0`} />
+  return <div className={`${sz} rounded-full border border-th-brds flex-shrink-0`} />
 }
 
 // ─── Content renderer ─────────────────────────────────────────────────────────
@@ -275,10 +273,10 @@ function ContentRenderer({ section }) {
 
   if (content_type === 'pdf') return (
     <div className="space-y-3">
-      <div className="aspect-[4/3] bg-slate-900 rounded-lg overflow-hidden border border-slate-800">
+      <div className="aspect-[4/3] bg-th-hov rounded-lg overflow-hidden border border-th-brd">
         <iframe src={`${content_url}#toolbar=0&navpanes=0`} className="w-full h-full" title={section.title} />
       </div>
-      <a href={content_url} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 text-sm transition-colors">
+      <a href={content_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm transition-colors">
         Open PDF in new tab
       </a>
     </div>
@@ -286,22 +284,22 @@ function ContentRenderer({ section }) {
 
   if (content_type === 'image') return (
     <figure className="space-y-2">
-      <div className="rounded-lg overflow-hidden border border-slate-800 bg-slate-900 flex items-center justify-center">
+      <div className="rounded-lg overflow-hidden border border-th-brd bg-th-hov flex items-center justify-center">
         <img src={content_url} alt={section.title} className="max-w-full object-contain" style={{ maxHeight: 480 }} />
       </div>
-      {image_caption && <figcaption className="text-slate-500 text-xs text-center italic">{image_caption}</figcaption>}
+      {image_caption && <figcaption className="text-th-muted text-xs text-center italic">{image_caption}</figcaption>}
     </figure>
   )
 
   if (content_type === 'slides') return (
-    <div className="aspect-video bg-slate-900 rounded-lg overflow-hidden border border-slate-800">
+    <div className="aspect-video bg-th-hov rounded-lg overflow-hidden border border-th-brd">
       <iframe src={content_url} className="w-full h-full" title={section.title} allowFullScreen />
     </div>
   )
 
   if (content_type === 'text') return (
     <div
-      className="prose prose-invert prose-sm max-w-none text-slate-300 leading-relaxed prose-headings:text-white prose-headings:font-semibold prose-a:text-blue-400 prose-strong:text-white prose-code:bg-slate-800 prose-code:text-blue-300 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-ul:text-slate-300 prose-ol:text-slate-300 prose-li:marker:text-slate-600 prose-blockquote:border-l-slate-600 prose-blockquote:text-slate-400"
+      className="prose prose-sm max-w-none text-th-txt2 leading-relaxed dark:prose-invert prose-headings:text-th-txt prose-headings:font-semibold prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-strong:text-th-txt prose-code:bg-th-hov prose-code:text-blue-600 dark:prose-code:text-blue-300 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-ul:text-th-txt2 prose-ol:text-th-txt2 prose-blockquote:border-l-th-brds prose-blockquote:text-th-muted"
       dangerouslySetInnerHTML={{ __html: content_body }}
     />
   )
@@ -312,12 +310,11 @@ function ContentRenderer({ section }) {
 // ─── Subtopic quiz (3 embedded MCQs) ─────────────────────────────────────────
 
 function SubtopicQuizPanel({ questions, onComplete }) {
-  const [answers, setAnswers]   = useState({})   // { [qId]: optionId }
+  const [answers, setAnswers]   = useState({})
   const [revealed, setRevealed] = useState(false)
   const [done, setDone]         = useState(false)
 
   if (!questions?.length) {
-    // No questions — auto-complete
     useEffect(() => { onComplete() }, [])
     return null
   }
@@ -336,11 +333,11 @@ function SubtopicQuizPanel({ questions, onComplete }) {
   }
 
   return (
-    <div className="mt-10 border-t border-slate-800 pt-8">
+    <div className="mt-10 border-t border-th-brd pt-8">
       <div className="flex items-center gap-2 mb-6">
-        <BookOpen className="w-4 h-4 text-slate-400" />
-        <span className="text-slate-400 text-xs font-semibold uppercase tracking-widest">Subtopic Quiz</span>
-        <span className="text-slate-600 text-xs">— Answer all questions to continue</span>
+        <BookOpen className="w-4 h-4 text-th-muted" />
+        <span className="text-th-muted text-xs font-semibold uppercase tracking-widest">Subtopic Quiz</span>
+        <span className="text-th-muted text-xs opacity-60">— Answer all questions to continue</span>
       </div>
 
       <div className="space-y-8">
@@ -350,19 +347,19 @@ function SubtopicQuizPanel({ questions, onComplete }) {
 
           return (
             <div key={q.id} className="space-y-3">
-              <p className="text-white text-sm font-medium leading-relaxed">
-                <span className="text-slate-500 font-mono mr-2">{qi + 1}.</span>{q.text || q.question}
+              <p className="text-th-txt text-sm font-medium leading-relaxed">
+                <span className="text-th-muted font-mono mr-2">{qi + 1}.</span>{q.text || q.question}
               </p>
               <div className="space-y-2 pl-5">
                 {(q.options || []).map(opt => {
                   const isSel = sel === opt.id
-                  let cls = 'border-slate-800 text-slate-400 hover:border-slate-600 hover:text-slate-200'
+                  let cls = 'border-th-brd text-th-txt2 hover:border-th-brds hover:text-th-txt'
                   if (revealed) {
-                    if (opt.correct)       cls = 'border-green-600/50 bg-green-500/[0.07] text-green-300'
-                    else if (isSel)        cls = 'border-red-600/50 bg-red-500/[0.07] text-red-300'
-                    else                   cls = 'border-slate-800 text-slate-700'
+                    if (opt.correct)       cls = 'border-green-600/50 bg-green-500/[0.07] text-green-400'
+                    else if (isSel)        cls = 'border-red-600/50 bg-red-500/[0.07] text-red-400'
+                    else                   cls = 'border-th-brd text-th-muted opacity-50'
                   } else if (isSel) {
-                    cls = 'border-blue-500/60 bg-blue-500/[0.08] text-white'
+                    cls = 'border-blue-500/60 bg-blue-500/[0.08] text-th-txt'
                   }
                   return (
                     <button
@@ -377,7 +374,7 @@ function SubtopicQuizPanel({ questions, onComplete }) {
                 })}
               </div>
               {revealed && (
-                <p className={`pl-5 text-xs leading-relaxed ${answers[q.id] === correct?.id ? 'text-green-400' : 'text-slate-400'}`}>
+                <p className={`pl-5 text-xs leading-relaxed ${answers[q.id] === correct?.id ? 'text-green-400' : 'text-th-muted'}`}>
                   {answers[q.id] === correct?.id
                     ? 'Correct. '
                     : `Incorrect. The correct answer is: ${correct?.text}. `}
@@ -393,7 +390,7 @@ function SubtopicQuizPanel({ questions, onComplete }) {
         <button
           onClick={submit}
           disabled={!allAnswered}
-          className="mt-6 px-5 py-2 bg-slate-700 hover:bg-slate-600 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded transition-colors"
+          className="mt-6 px-5 py-2 bg-th-hov hover:bg-th-act disabled:opacity-40 disabled:cursor-not-allowed text-th-txt2 text-sm font-medium rounded border border-th-brd transition-colors"
         >
           {allAnswered ? 'Submit Quiz' : `Answer all questions (${Object.keys(answers).length}/${questions.length})`}
         </button>
@@ -412,7 +409,7 @@ function SubtopicQuizPanel({ questions, onComplete }) {
 // ─── Checkpoint quiz panel (loads from API) ───────────────────────────────────
 
 function CheckpointQuizPanel({ quiz, onPass, onExhausted }) {
-  const [state, setState] = useState('loading') // loading | ready | submitted
+  const [state, setState] = useState('loading')
   const [questions, setQuestions]     = useState([])
   const [quizMeta, setQuizMeta]       = useState(null)
   const [currentQ, setCurrentQ]       = useState(0)
@@ -462,12 +459,12 @@ function CheckpointQuizPanel({ quiz, onPass, onExhausted }) {
   const allAnswered = questions.every(q => answers[q.id]?.length > 0)
 
   if (state === 'loading') return (
-    <div className="flex items-center gap-3 py-12 text-slate-500 text-sm">
+    <div className="flex items-center gap-3 py-12 text-th-muted text-sm">
       <Loader2 className="w-4 h-4 animate-spin" /> Loading checkpoint…
     </div>
   )
   if (state === 'error') return (
-    <div className="py-12 text-red-400 text-sm flex items-center gap-2">
+    <div className="py-12 text-red-600 dark:text-red-400 text-sm flex items-center gap-2">
       <AlertCircle className="w-4 h-4" /> Failed to load checkpoint quiz.
     </div>
   )
@@ -477,7 +474,7 @@ function CheckpointQuizPanel({ quiz, onPass, onExhausted }) {
         <AlertCircle className="w-4 h-4" />
         Maximum attempts reached for this checkpoint.
       </div>
-      <button onClick={onExhausted} className="px-5 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm rounded transition-colors">
+      <button onClick={onExhausted} className="px-5 py-2 bg-th-hov hover:bg-th-act text-th-txt2 border border-th-brd text-sm rounded transition-colors">
         Continue to next topic
       </button>
     </div>
@@ -499,7 +496,7 @@ function CheckpointQuizPanel({ quiz, onPass, onExhausted }) {
       {!result.passed && !result.can_retake && (
         <button
           onClick={onExhausted}
-          className="mt-4 px-5 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm rounded transition-colors"
+          className="mt-4 px-5 py-2 bg-th-hov hover:bg-th-act text-th-txt2 border border-th-brd text-sm rounded transition-colors"
         >
           Continue anyway
         </button>
@@ -516,19 +513,19 @@ function CheckpointQuizPanel({ quiz, onPass, onExhausted }) {
             key={i}
             onClick={() => setCurrentQ(i)}
             className={`rounded-full transition-all ${
-              i === currentQ ? 'w-5 h-1.5 bg-blue-400' : answers[questions[i]?.id] ? 'w-3 h-1.5 bg-green-500' : 'w-3 h-1.5 bg-slate-700'
+              i === currentQ ? 'w-5 h-1.5 bg-blue-400' : answers[questions[i]?.id] ? 'w-3 h-1.5 bg-green-500' : 'w-3 h-1.5 bg-th-track'
             }`}
           />
         ))}
-        <span className="text-slate-500 text-xs ml-auto tabular-nums">{Object.keys(answers).length}/{questions.length} answered</span>
+        <span className="text-th-muted text-xs ml-auto tabular-nums">{Object.keys(answers).length}/{questions.length} answered</span>
       </div>
 
       {questions[currentQ] && (() => {
         const q = questions[currentQ]
         return (
           <div className="space-y-3">
-            <p className="text-white text-sm font-medium leading-relaxed">
-              <span className="text-slate-500 font-mono mr-2">{currentQ + 1}.</span>{q.question_text}
+            <p className="text-th-txt text-sm font-medium leading-relaxed">
+              <span className="text-th-muted font-mono mr-2">{currentQ + 1}.</span>{q.question_text}
             </p>
             <div className="space-y-2">
               {(q.quiz_options || []).map(opt => {
@@ -538,8 +535,8 @@ function CheckpointQuizPanel({ quiz, onPass, onExhausted }) {
                     key={opt.id}
                     onClick={() => select(q.id, opt.id)}
                     className={`w-full text-left px-4 py-2.5 rounded border text-sm transition-colors ${
-                      isSel ? 'border-blue-500/60 bg-blue-500/[0.08] text-white'
-                             : 'border-slate-800 text-slate-400 hover:border-slate-600 hover:text-slate-200'
+                      isSel ? 'border-blue-500/60 bg-blue-500/[0.08] text-th-txt'
+                             : 'border-th-brd text-th-txt2 hover:border-th-brds hover:text-th-txt'
                     }`}
                   >
                     {opt.option_text}
@@ -555,14 +552,14 @@ function CheckpointQuizPanel({ quiz, onPass, onExhausted }) {
         <button
           onClick={() => setCurrentQ(p => Math.max(0, p - 1))}
           disabled={currentQ === 0}
-          className="px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 rounded text-sm transition-colors"
+          className="px-4 py-2 bg-th-hov hover:bg-th-act disabled:opacity-30 text-th-txt2 border border-th-brd rounded text-sm transition-colors"
         >
           Previous
         </button>
         {currentQ < questions.length - 1 ? (
           <button
             onClick={() => setCurrentQ(p => p + 1)}
-            className="flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-sm transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2 bg-th-hov hover:bg-th-act text-th-txt2 border border-th-brd rounded text-sm transition-colors"
           >
             Next <ChevronRight className="w-3.5 h-3.5" />
           </button>
@@ -655,7 +652,6 @@ function FinalExamPanel({ quiz, moduleId, onComplete, nextModule }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ module_id: moduleId, quiz_id: quiz.id }),
     })
-    // Reload the page so the module viewer resets from page 0
     window.location.reload()
   }
 
@@ -666,12 +662,12 @@ function FinalExamPanel({ quiz, moduleId, onComplete, nextModule }) {
   const allAnswered = questions.every(q => answers[q.id]?.length > 0)
 
   if (state === 'loading') return (
-    <div className="flex items-center gap-3 py-12 text-slate-500 text-sm">
+    <div className="flex items-center gap-3 py-12 text-th-muted text-sm">
       <Loader2 className="w-4 h-4 animate-spin" /> Loading final exam…
     </div>
   )
   if (state === 'error') return (
-    <div className="py-12 text-red-400 text-sm flex items-center gap-2">
+    <div className="py-12 text-red-600 dark:text-red-400 text-sm flex items-center gap-2">
       <AlertCircle className="w-4 h-4" /> Failed to load exam.
     </div>
   )
@@ -681,7 +677,7 @@ function FinalExamPanel({ quiz, moduleId, onComplete, nextModule }) {
         <AlertCircle className="w-4 h-4" />
         All {meta?.max_attempts || 3} exam attempts used — you did not reach 80%.
       </div>
-      <p className="text-slate-400 text-sm">
+      <p className="text-th-muted text-sm">
         You need to redo the module content to unlock 3 fresh attempts.
       </p>
       <button
@@ -713,9 +709,9 @@ function FinalExamPanel({ quiz, moduleId, onComplete, nextModule }) {
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-slate-500 text-xs font-semibold uppercase tracking-widest mb-1">Final Exam</p>
-            <h2 className="text-white text-xl font-bold">{meta?.title}</h2>
-            <p className="text-slate-500 text-sm mt-1">
+            <p className="text-th-muted text-xs font-semibold uppercase tracking-widest mb-1">Final Exam</p>
+            <h2 className="text-th-txt text-xl font-bold">{meta?.title}</h2>
+            <p className="text-th-muted text-sm mt-1">
               Pass mark: {meta?.pass_score}% · Attempt {attemptCount + 1} of {meta?.max_attempts}
             </p>
           </div>
@@ -729,19 +725,19 @@ function FinalExamPanel({ quiz, moduleId, onComplete, nextModule }) {
               key={i}
               onClick={() => setCurrentQ(i)}
               className={`rounded-full transition-all ${
-                i === currentQ ? 'w-5 h-1.5 bg-blue-400' : answers[questions[i]?.id] ? 'w-3 h-1.5 bg-green-500' : 'w-3 h-1.5 bg-slate-700'
+                i === currentQ ? 'w-5 h-1.5 bg-blue-400' : answers[questions[i]?.id] ? 'w-3 h-1.5 bg-green-500' : 'w-3 h-1.5 bg-th-track'
               }`}
             />
           ))}
-          <span className="text-slate-500 text-xs ml-auto tabular-nums">{Object.keys(answers).length}/{questions.length}</span>
+          <span className="text-th-muted text-xs ml-auto tabular-nums">{Object.keys(answers).length}/{questions.length}</span>
         </div>
 
         {questions[currentQ] && (() => {
           const q = questions[currentQ]
           return (
             <div className="space-y-3">
-              <p className="text-white text-sm font-medium leading-relaxed">
-                <span className="text-slate-500 font-mono mr-2">{currentQ + 1}.</span>{q.question_text}
+              <p className="text-th-txt text-sm font-medium leading-relaxed">
+                <span className="text-th-muted font-mono mr-2">{currentQ + 1}.</span>{q.question_text}
               </p>
               <div className="space-y-2">
                 {(q.quiz_options || []).map(opt => {
@@ -751,8 +747,8 @@ function FinalExamPanel({ quiz, moduleId, onComplete, nextModule }) {
                       key={opt.id}
                       onClick={() => select(q.id, opt.id)}
                       className={`w-full text-left px-4 py-2.5 rounded border text-sm transition-colors ${
-                        isSel ? 'border-blue-500/60 bg-blue-500/[0.08] text-white'
-                               : 'border-slate-800 text-slate-400 hover:border-slate-600 hover:text-slate-200'
+                        isSel ? 'border-blue-500/60 bg-blue-500/[0.08] text-th-txt'
+                               : 'border-th-brd text-th-txt2 hover:border-th-brds hover:text-th-txt'
                       }`}
                     >
                       {opt.option_text}
@@ -768,14 +764,14 @@ function FinalExamPanel({ quiz, moduleId, onComplete, nextModule }) {
           <button
             onClick={() => setCurrentQ(p => Math.max(0, p - 1))}
             disabled={currentQ === 0}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 rounded text-sm transition-colors"
+            className="px-4 py-2 bg-th-hov hover:bg-th-act disabled:opacity-30 text-th-txt2 border border-th-brd rounded text-sm transition-colors"
           >
             Previous
           </button>
           {currentQ < questions.length - 1 ? (
             <button
               onClick={() => setCurrentQ(p => p + 1)}
-              className="flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-sm transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 bg-th-hov hover:bg-th-act text-th-txt2 border border-th-brd rounded text-sm transition-colors"
             >
               Next <ChevronRight className="w-3.5 h-3.5" />
             </button>
@@ -805,42 +801,35 @@ export default function LMSModuleViewer({ module, nextModule }) {
   const finalExam  = module.quiz || null
   const pages      = useMemo(() => buildNavPages(topics, checkpoints, finalExam), [topics, checkpoints, finalExam])
 
-  // highWaterMark: the highest page index accessible (next unlocked = highWaterMark)
   const [pageIdx, setPageIdx]           = useState(0)
-  // Initialise from stored progress so reopening a module never resets the watermark to 0
   const [highWaterMark, setHwm] = useState(() => {
     if (module.progress?.status === 'completed') return pages.length
     const savedPct = module.progress?.progress_pct || 0
     if (savedPct === 0) return 0
     return Math.max(0, Math.round((savedPct / 100) * pages.length))
   })
-  const [kcComplete, setKcComplete]     = useState(() => new Set()) // set of pageIdx where subtopic quiz is done
+  const [kcComplete, setKcComplete]     = useState(() => new Set())
   const [moduleComplete, setModuleComplete] = useState(module.progress?.status === 'completed')
   const [sidebarOpen, setSidebarOpen]   = useState(true)
   const mainRef = useRef(null)
   const touchStartX = useRef(null)
 
-  // Start module on first load (only for truly new modules — never overwrites existing progress)
   useEffect(() => {
     if (module.progress?.status === 'not_started') startModule(module.id)
   }, [])
 
-  // Sync progress — only write when the new value is above the saved baseline
   const savedPctRef = useRef(module.progress?.progress_pct || 0)
   useEffect(() => {
     if (!pages.length) return
     const pct = Math.round((Math.min(highWaterMark, pages.length) / pages.length) * 100)
     const effective = moduleComplete ? 100 : pct
-    // Skip the write if we haven't actually moved forward from the stored value
     if (!moduleComplete && effective <= savedPctRef.current && effective !== 0) return
     updateProgress(module.id, effective)
     if (effective > savedPctRef.current) savedPctRef.current = effective
   }, [highWaterMark, moduleComplete])
 
-  // Scroll to top on page change
   useEffect(() => { mainRef.current?.scrollTo({ top: 0, behavior: 'smooth' }) }, [pageIdx])
 
-  // Auto-unlock content pages when navigated to
   useEffect(() => {
     const page = pages[pageIdx]
     if (!page) return
@@ -850,23 +839,19 @@ export default function LMSModuleViewer({ module, nextModule }) {
     }
   }, [pageIdx, pages])
 
-  // ── Computed ───────────────────────────────────────────────────────────────
   const currentPage = pages[pageIdx]
   const overallPct  = pages.length > 0
     ? Math.round((Math.min(highWaterMark, pages.length) / pages.length) * 100)
     : moduleComplete ? 100 : 0
 
-  // Can advance: current page is done
   const currentPageDone = (() => {
     if (!currentPage) return false
     const t = currentPage.type
     if (t === 'topic_header' || t === 'subtopic') return pageIdx < highWaterMark
     if (t === 'subtopic_quiz') return kcComplete.has(pageIdx)
-    // checkpoint and final_exam: unlocked by their respective panels calling onPass/onComplete
     return pageIdx < highWaterMark
   })()
 
-  // ── Navigation ─────────────────────────────────────────────────────────────
   function goToPage(idx) {
     if (idx < 0 || idx > highWaterMark) return
     setPageIdx(idx)
@@ -904,21 +889,19 @@ export default function LMSModuleViewer({ module, nextModule }) {
     setHwm(prev => Math.max(prev, pages.length))
   }
 
-  // ── Empty state ────────────────────────────────────────────────────────────
   if (pages.length === 0) {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
-          <p className="text-slate-400 mb-2 text-sm">No content available.</p>
-          <Link href="/modules" className="text-blue-400 hover:text-blue-300 text-sm">Back to Modules</Link>
+          <p className="text-th-muted mb-2 text-sm">No content available.</p>
+          <Link href="/modules" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm">Back to Modules</Link>
         </div>
       </div>
     )
   }
 
-  // ── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div className="flex min-h-full bg-[#0d1117]">
+    <div className="flex min-h-full bg-th-bg">
 
       {/* Sidebar */}
       {sidebarOpen && (
@@ -938,21 +921,21 @@ export default function LMSModuleViewer({ module, nextModule }) {
       <div className="flex-1 flex flex-col min-w-0">
 
         {/* Topbar */}
-        <div className="flex items-center gap-3 px-5 py-3 border-b border-slate-800 bg-[#0d1117] sticky top-0 z-10 flex-shrink-0">
+        <div className="flex items-center gap-3 px-5 py-3 border-b border-th-brd bg-th-bar sticky top-0 z-10 flex-shrink-0">
           <button
             onClick={() => setSidebarOpen(v => !v)}
-            className="p-1.5 rounded text-slate-600 hover:text-white hover:bg-slate-800 transition-colors flex-shrink-0"
+            className="p-1.5 rounded text-th-muted hover:text-th-txt hover:bg-th-hov transition-colors flex-shrink-0"
             title={sidebarOpen ? 'Hide outline' : 'Show outline'}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
             </svg>
           </button>
-          <span className="flex-1 text-white text-sm font-medium truncate">{module.title}</span>
+          <span className="flex-1 text-th-txt text-sm font-medium truncate">{module.title}</span>
           <div className="flex items-center gap-2.5 flex-shrink-0">
-            <span className="text-slate-600 text-xs tabular-nums hidden sm:block">{pageIdx + 1}/{pages.length}</span>
-            <span className="text-slate-600 text-xs tabular-nums hidden sm:block">{overallPct}%</span>
-            <div className="w-20 h-1 bg-slate-800 rounded-full overflow-hidden">
+            <span className="text-th-muted text-xs tabular-nums hidden sm:block">{pageIdx + 1}/{pages.length}</span>
+            <span className="text-th-muted text-xs tabular-nums hidden sm:block">{overallPct}%</span>
+            <div className="w-20 h-1 bg-th-track rounded-full overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all duration-500 ${overallPct >= 100 ? 'bg-green-500' : 'bg-blue-500'}`}
                 style={{ width: `${overallPct}%` }}
@@ -970,12 +953,11 @@ export default function LMSModuleViewer({ module, nextModule }) {
         >
           <div className="max-w-3xl mx-auto px-6 py-10 pb-24">
 
-            {/* ── Topic header ───────────────────────────────────────────── */}
+            {/* ── Topic header / subtopic ─────────────────────────────────── */}
             {(currentPage.type === 'topic_header' || currentPage.type === 'subtopic') && (() => {
               const sec = currentPage.section
               return (
                 <>
-                  {/* Section label + title */}
                   <div className="mb-8">
                     <div className="flex items-center gap-2 mb-3">
                       {sec.section_number && (
@@ -984,27 +966,26 @@ export default function LMSModuleViewer({ module, nextModule }) {
                         </span>
                       )}
                       {currentPage.type === 'topic_header' && (
-                        <span className="text-[11px] text-slate-500 border border-slate-800 px-2 py-0.5 rounded">
+                        <span className="text-[11px] text-th-muted border border-th-brd px-2 py-0.5 rounded">
                           Topic Overview
                         </span>
                       )}
                     </div>
-                    <h1 className="text-2xl font-bold text-white leading-tight">{sec.title}</h1>
-                    <p className="text-slate-500 text-sm mt-1">{currentPage.topicNumber} · {currentPage.topicTitle}</p>
+                    <h1 className="text-2xl font-bold text-th-txt leading-tight">{sec.title}</h1>
+                    <p className="text-th-muted text-sm mt-1">{currentPage.topicNumber} · {currentPage.topicTitle}</p>
                   </div>
 
-                  {/* Learning objectives on topic header */}
                   {currentPage.type === 'topic_header' && currentPage.topicObjectives?.length > 0 && (
-                    <div className="mb-8 border border-slate-800 rounded-lg p-5">
+                    <div className="mb-8 border border-th-brd rounded-lg p-5">
                       <div className="flex items-center gap-2 mb-3">
-                        <Target className="w-3.5 h-3.5 text-slate-400" />
-                        <span className="text-slate-400 text-xs font-semibold uppercase tracking-widest">Learning Objectives</span>
+                        <Target className="w-3.5 h-3.5 text-th-muted" />
+                        <span className="text-th-muted text-xs font-semibold uppercase tracking-widest">Learning Objectives</span>
                       </div>
-                      <p className="text-slate-500 text-sm mb-3">After completing this topic you will be able to:</p>
+                      <p className="text-th-muted text-sm mb-3">After completing this topic you will be able to:</p>
                       <ul className="space-y-2">
                         {currentPage.topicObjectives.map((obj, i) => (
-                          <li key={i} className="flex items-start gap-2.5 text-sm text-slate-300">
-                            <span className="text-slate-600 mt-0.5 flex-shrink-0">→</span>
+                          <li key={i} className="flex items-start gap-2.5 text-sm text-th-txt2">
+                            <span className="text-th-muted mt-0.5 flex-shrink-0">→</span>
                             <span>{obj}</span>
                           </li>
                         ))}
@@ -1012,12 +993,10 @@ export default function LMSModuleViewer({ module, nextModule }) {
                     </div>
                   )}
 
-                  {/* Main content */}
                   <ContentRenderer section={sec} />
 
-                  {/* Navigation */}
-                  <div className="flex items-center justify-between gap-3 mt-10 pt-6 border-t border-slate-800">
-                    <button onClick={goPrev} disabled={pageIdx === 0} className="flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 rounded text-sm transition-colors">
+                  <div className="flex items-center justify-between gap-3 mt-10 pt-6 border-t border-th-brd">
+                    <button onClick={goPrev} disabled={pageIdx === 0} className="flex items-center gap-1.5 px-4 py-2 bg-th-hov hover:bg-th-act disabled:opacity-30 text-th-txt2 border border-th-brd rounded text-sm transition-colors">
                       <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                       Previous
                     </button>
@@ -1043,8 +1022,8 @@ export default function LMSModuleViewer({ module, nextModule }) {
                         </span>
                       )}
                     </div>
-                    <h1 className="text-2xl font-bold text-white">{currentPage.section.title || 'Knowledge Check'}</h1>
-                    <p className="text-slate-500 text-sm mt-1">{currentPage.topicNumber} · {currentPage.topicTitle}</p>
+                    <h1 className="text-2xl font-bold text-th-txt">{currentPage.section.title || 'Knowledge Check'}</h1>
+                    <p className="text-th-muted text-sm mt-1">{currentPage.topicNumber} · {currentPage.topicTitle}</p>
                   </div>
 
                   <SubtopicQuizPanel
@@ -1053,8 +1032,8 @@ export default function LMSModuleViewer({ module, nextModule }) {
                     onComplete={onKcComplete}
                   />
 
-                  <div className="flex items-center justify-between gap-3 mt-10 pt-6 border-t border-slate-800">
-                    <button onClick={goPrev} disabled={pageIdx === 0} className="flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 rounded text-sm transition-colors">
+                  <div className="flex items-center justify-between gap-3 mt-10 pt-6 border-t border-th-brd">
+                    <button onClick={goPrev} disabled={pageIdx === 0} className="flex items-center gap-1.5 px-4 py-2 bg-th-hov hover:bg-th-act disabled:opacity-30 text-th-txt2 border border-th-brd rounded text-sm transition-colors">
                       <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                       Previous
                     </button>
@@ -1074,11 +1053,11 @@ export default function LMSModuleViewer({ module, nextModule }) {
             {currentPage.type === 'checkpoint' && (
               <>
                 <div className="mb-8">
-                  <p className="text-slate-500 text-xs font-semibold uppercase tracking-widest mb-2">Topic Checkpoint</p>
-                  <h1 className="text-2xl font-bold text-white">
+                  <p className="text-th-muted text-xs font-semibold uppercase tracking-widest mb-2">Topic Checkpoint</p>
+                  <h1 className="text-2xl font-bold text-th-txt">
                     {currentPage.topicNumber} · {currentPage.topicTitle}
                   </h1>
-                  <p className="text-slate-500 text-sm mt-2">
+                  <p className="text-th-muted text-sm mt-2">
                     Complete this checkpoint to unlock the next topic. You must achieve the passing score to continue.
                   </p>
                 </div>
@@ -1088,8 +1067,8 @@ export default function LMSModuleViewer({ module, nextModule }) {
                   onPass={() => { onCheckpointPass(); }}
                   onExhausted={onCheckpointExhausted}
                 />
-                <div className="flex items-center justify-between gap-3 mt-10 pt-6 border-t border-slate-800">
-                  <button onClick={goPrev} disabled={pageIdx === 0} className="flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 rounded text-sm transition-colors">
+                <div className="flex items-center justify-between gap-3 mt-10 pt-6 border-t border-th-brd">
+                  <button onClick={goPrev} disabled={pageIdx === 0} className="flex items-center gap-1.5 px-4 py-2 bg-th-hov hover:bg-th-act disabled:opacity-30 text-th-txt2 border border-th-brd rounded text-sm transition-colors">
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                     Previous
                   </button>
@@ -1108,9 +1087,9 @@ export default function LMSModuleViewer({ module, nextModule }) {
             {currentPage.type === 'final_exam' && (
               <>
                 <div className="mb-8">
-                  <p className="text-slate-500 text-xs font-semibold uppercase tracking-widest mb-2">Final Exam</p>
-                  <h1 className="text-2xl font-bold text-white">{module.title}</h1>
-                  <p className="text-slate-500 text-sm mt-2">
+                  <p className="text-th-muted text-xs font-semibold uppercase tracking-widest mb-2">Final Exam</p>
+                  <h1 className="text-2xl font-bold text-th-txt">{module.title}</h1>
+                  <p className="text-th-muted text-sm mt-2">
                     This exam covers all topics in the module. You must pass to earn your completion certificate.
                   </p>
                 </div>

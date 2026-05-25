@@ -57,7 +57,7 @@ export default function CampaignDetailAdminPage() {
     return (
       <>
         <PageWrapper>
-          <div className="animate-pulse space-y-4"><div className="h-32 bg-slate-800 border border-white/[0.08] rounded-xl" /></div>
+          <div className="animate-pulse space-y-4"><div className="h-32 bg-th-hov border border-th-brd rounded-xl" /></div>
         </PageWrapper>
       </>
     )
@@ -66,34 +66,34 @@ export default function CampaignDetailAdminPage() {
   return (
     <>
       <PageWrapper>
-        <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-          <Link href="/admin/phishing" className="hover:text-slate-300">Phishing</Link>
+        <div className="flex items-center gap-2 text-sm text-th-muted mb-6">
+          <Link href="/admin/phishing" className="hover:text-th-txt2">Phishing</Link>
           <span>/</span>
-          <span className="text-slate-300 truncate">{campaign?.name}</span>
+          <span className="text-th-txt2 truncate">{campaign?.name}</span>
         </div>
 
         <div className="space-y-6 max-w-4xl">
           {/* Stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: 'Total Targets', value: stats.total,    color: 'text-white' },
+              { label: 'Total Targets', value: stats.total,    color: 'text-th-txt' },
               { label: 'Emails Sent',   value: stats.sent,     color: 'text-blue-400' },
               { label: 'Links Clicked', value: stats.clicked,  color: 'text-red-400' },
               { label: 'Click Rate',    value: `${stats.clickRate}%`, color: stats.clickRate > 30 ? 'text-red-400' : 'text-green-400' },
             ].map((s, i) => (
-              <div key={i} className="bg-slate-800 border border-white/[0.08] rounded-xl p-4 text-center">
+              <div key={i} className="bg-th-srf border border-th-brd rounded-xl p-4 text-center">
                 <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
-                <p className="text-slate-500 text-xs mt-1">{s.label}</p>
+                <p className="text-th-muted text-xs mt-1">{s.label}</p>
               </div>
             ))}
           </div>
 
           {/* Campaign info + send button */}
-          <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 flex items-start justify-between gap-4">
+          <div className="bg-th-srf border border-th-brd rounded-xl p-6 flex items-start justify-between gap-4">
             <div className="space-y-2 text-sm">
-              <div><span className="text-slate-500">Subject: </span><span className="text-slate-300">{campaign?.email_subject}</span></div>
-              <div><span className="text-slate-500">Sender: </span><span className="text-slate-300">{campaign?.email_sender_name} &lt;{campaign?.email_sender_addr}&gt;</span></div>
-              <div><span className="text-slate-500">Status: </span><span className="text-slate-300 capitalize">{campaign?.status}</span></div>
+              <div><span className="text-th-muted">Subject: </span><span className="text-th-txt2">{campaign?.email_subject}</span></div>
+              <div><span className="text-th-muted">Sender: </span><span className="text-th-txt2">{campaign?.email_sender_name} &lt;{campaign?.email_sender_addr}&gt;</span></div>
+              <div><span className="text-th-muted">Status: </span><span className="text-th-txt2 capitalize">{campaign?.status}</span></div>
             </div>
             {campaign?.status === 'draft' && (
               <button
@@ -108,24 +108,24 @@ export default function CampaignDetailAdminPage() {
 
           {/* Targets table */}
           {targets.length > 0 && (
-            <div className="bg-slate-800 border border-white/[0.08] rounded-xl overflow-hidden">
-              <div className="px-5 py-4 border-b border-white/[0.06]">
-                <h3 className="text-white font-semibold">Target Employees</h3>
+            <div className="bg-th-srf border border-th-brd rounded-xl overflow-hidden">
+              <div className="px-5 py-4 border-b border-th-brd">
+                <h3 className="text-th-txt font-semibold">Target Employees</h3>
               </div>
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-white/[0.06]">
-                    <th className="text-left text-slate-500 text-xs font-medium px-5 py-3">Employee</th>
-                    <th className="text-left text-slate-500 text-xs font-medium px-5 py-3">Result</th>
-                    <th className="text-left text-slate-500 text-xs font-medium px-5 py-3 hidden sm:table-cell">Sent</th>
+                  <tr className="border-b border-th-brd">
+                    <th className="text-left text-th-muted text-xs font-medium px-5 py-3">Employee</th>
+                    <th className="text-left text-th-muted text-xs font-medium px-5 py-3">Result</th>
+                    <th className="text-left text-th-muted text-xs font-medium px-5 py-3 hidden sm:table-cell">Sent</th>
                   </tr>
                 </thead>
                 <tbody>
                   {targets.map(t => (
-                    <tr key={t.id} className="border-b border-white/[0.06] last:border-0">
+                    <tr key={t.id} className="border-b border-th-brd last:border-0">
                       <td className="px-5 py-3">
-                        <p className="text-white text-sm">{t.users?.full_name}</p>
-                        <p className="text-slate-500 text-xs">{t.users?.email}</p>
+                        <p className="text-th-txt text-sm">{t.users?.full_name}</p>
+                        <p className="text-th-muted text-xs">{t.users?.email}</p>
                       </td>
                       <td className="px-5 py-3">
                         <span className={`text-xs font-medium px-2 py-1 rounded-lg ${
@@ -133,13 +133,13 @@ export default function CampaignDetailAdminPage() {
                           t.result === 'reported' ? 'bg-green-500/15 text-green-400' :
                           t.result === 'opened'   ? 'bg-yellow-500/15 text-yellow-400' :
                           t.result === 'sent'     ? 'bg-blue-500/15 text-blue-400' :
-                          'bg-white/[0.06] text-slate-300'
+                          'bg-th-hov text-th-txt2'
                         }`}>
                           {t.result}
                         </span>
                       </td>
                       <td className="px-5 py-3 hidden sm:table-cell">
-                        <span className="text-slate-400 text-xs">
+                        <span className="text-th-muted text-xs">
                           {t.sent_at ? new Date(t.sent_at).toLocaleDateString('en-KE') : '-'}
                         </span>
                       </td>

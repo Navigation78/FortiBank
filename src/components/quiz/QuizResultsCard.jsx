@@ -80,11 +80,11 @@ export default function QuizResultsCard({
         {totalCount > 0 && (
           <div className="flex justify-center">
             <div className={`relative w-24 h-24 rounded-full p-0.5 bg-gradient-to-br ${ring}`}>
-              <div className="w-full h-full rounded-full bg-slate-900 flex flex-col items-center justify-center">
+              <div className="w-full h-full rounded-full bg-th-bg flex flex-col items-center justify-center">
                 <span className={`text-2xl font-bold tabular-nums leading-none ${clr}`}>
                   {correctCount}/{totalCount}
                 </span>
-                <span className="text-slate-500 text-[10px] mt-0.5">correct</span>
+                <span className="text-th-muted text-[10px] mt-0.5">correct</span>
               </div>
             </div>
           </div>
@@ -94,26 +94,26 @@ export default function QuizResultsCard({
         <div>
           <p className={`text-5xl font-bold tabular-nums ${clr}`}>{score_pct}%</p>
           {totalCount === 0 && (
-            <p className="text-slate-500 text-xs mt-1">score</p>
+            <p className="text-th-muted text-xs mt-1">score</p>
           )}
         </div>
 
         {/* Message */}
         <div>
           <p className={`text-lg font-semibold ${clr}`}>{msg.headline}</p>
-          <p className="text-slate-400 text-sm mt-1">{msg.sub}</p>
+          <p className="text-th-txt2 text-sm mt-1">{msg.sub}</p>
         </div>
 
         {/* Meta */}
-        <p className="text-slate-600 text-xs">
+        <p className="text-th-muted text-xs">
           Pass mark: {pass_score}% · Attempt {attempt_number} of {max_attempts}
         </p>
       </div>
 
       {/* ── Question breakdown dots ── */}
       {questions.length > 0 && (
-        <div className="rounded-xl border border-white/[0.06] bg-slate-800/60 p-5">
-          <h4 className="text-white text-sm font-semibold mb-4">Question Breakdown</h4>
+        <div className="rounded-xl border border-th-brd bg-th-srf p-5">
+          <h4 className="text-th-txt text-sm font-semibold mb-4">Question Breakdown</h4>
           <div className="flex flex-wrap gap-2">
             {questions.map((q, i) => (
               <div
@@ -129,7 +129,7 @@ export default function QuizResultsCard({
               </div>
             ))}
           </div>
-          <p className="text-slate-500 text-xs mt-3">
+          <p className="text-th-muted text-xs mt-3">
             {correctCount} correct · {totalCount - correctCount} incorrect
           </p>
         </div>
@@ -175,7 +175,7 @@ export default function QuizResultsCard({
         {isExam && passed && (
           <Link
             href="/certificates"
-            className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-xl transition-colors text-center"
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-th-hov hover:bg-th-act border border-th-brd text-th-txt2 text-sm font-medium rounded-xl transition-colors text-center"
           >
             <Trophy className="w-4 h-4" />
             View Certificate
@@ -186,7 +186,7 @@ export default function QuizResultsCard({
         {moduleId && (
           <Link
             href={`/modules/${moduleId}`}
-            className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-400 text-sm font-medium rounded-xl transition-colors text-center"
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-th-hov hover:bg-th-act border border-th-brd text-th-txt2 text-sm font-medium rounded-xl transition-colors text-center"
           >
             Back to Module
           </Link>

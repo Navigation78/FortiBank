@@ -110,26 +110,26 @@ export default function EmployeeDashboardsPage() {
       <PageWrapper>
 
         <div className="mb-6">
-          <h4 className="text-white text-xl font-bold">Employee Dashboards</h4>
-          <p className="text-slate-400 text-sm mt-1">Open the role-specific dashboard views used across FortiBank teams.</p>
+          <h4 className="text-th-txt text-xl font-bold">Employee Dashboards</h4>
+          <p className="text-th-muted text-sm mt-1">Open the role-specific dashboard views used across FortiBank teams.</p>
         </div>
 
         {error && (
           <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-            <p className="text-red-400 text-sm">{error}</p>
+            <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
           </div>
         )}
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
-            { label: 'Dashboard Views', value: totalDashboards, color: 'text-white' },
+            { label: 'Dashboard Views', value: totalDashboards, color: 'text-th-txt' },
             { label: 'Active Employees', value: loading ? '...' : activeEmployees, color: 'text-green-400' },
             { label: 'Role Groups', value: CATEGORY_CONFIG.length, color: 'text-blue-400' },
             { label: 'Employee Roles', value: EMPLOYEE_ROLES.length, color: 'text-amber-400' },
           ].map(item => (
-            <div key={item.label} className="bg-slate-800 border border-white/[0.08] rounded-xl p-4">
+            <div key={item.label} className="bg-th-srf border border-th-brd rounded-xl p-4">
               <p className={`text-2xl font-bold ${item.color}`}>{item.value}</p>
-              <p className="text-slate-400 text-xs mt-1">{item.label}</p>
+              <p className="text-th-muted text-xs mt-1">{item.label}</p>
             </div>
           ))}
         </div>
@@ -141,8 +141,8 @@ export default function EmployeeDashboardsPage() {
             return (
               <section key={category.title}>
                 <div className="flex items-center gap-3 mb-3">
-                  <CategoryIcon className="w-5 h-5 text-white" />
-                  <h3 className="text-white font-semibold">{category.title}</h3>
+                  <CategoryIcon className="w-5 h-5 text-th-txt" />
+                  <h3 className="text-th-txt font-semibold">{category.title}</h3>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -153,22 +153,22 @@ export default function EmployeeDashboardsPage() {
                       <Link
                         key={role}
                         href={ROLE_DASHBOARD_MAP[role]}
-                        className="group bg-slate-800 border border-white/[0.08] hover:border-white/[0.18] rounded-xl p-5 transition-all duration-150 hover:shadow-md hover:shadow-black/40"
+                        className="group bg-th-srf border border-th-brd hover:border-th-brds rounded-xl p-5 transition-all duration-150 hover:shadow-md hover:shadow-black/20 dark:hover:shadow-black/40"
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
-                              <ShieldCheck className="w-4 h-4 text-white flex-shrink-0" />
-                              <h4 className="text-white font-semibold text-sm truncate">{ROLE_LABELS[role]}</h4>
+                              <ShieldCheck className="w-4 h-4 text-th-txt2 flex-shrink-0" />
+                              <h4 className="text-th-txt font-semibold text-sm truncate">{ROLE_LABELS[role]}</h4>
                             </div>
-                            <p className="text-slate-400 text-xs mt-2">
+                            <p className="text-th-muted text-xs mt-2">
                               {loading ? 'Loading employees...' : `${count.active} active of ${count.total} employees`}
                             </p>
                           </div>
-                          <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-white transition-all duration-150 flex-shrink-0" />
+                          <ArrowUpRight className="w-4 h-4 text-th-muted group-hover:text-th-txt transition-all duration-150 flex-shrink-0" />
                         </div>
 
-                        <div className="mt-4 flex items-center gap-2 text-xs text-slate-400">
+                        <div className="mt-4 flex items-center gap-2 text-xs text-th-muted">
                           <Building2 className="w-4 h-4" />
                           <span className="truncate">{ROLE_DASHBOARD_MAP[role]}</span>
                         </div>

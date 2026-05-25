@@ -18,7 +18,7 @@ const CATEGORY_VARIANTS = {
 }
 
 const SearchIcon = (
-  <svg className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <svg className="w-4 h-4 text-th-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
   </svg>
 )
@@ -42,7 +42,7 @@ export default function UserTable({ users = [], loading = false, onRefresh: _onR
     return (
       <div className="space-y-2">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="h-14 bg-slate-800 border border-white/[0.06] rounded-xl animate-pulse" />
+          <div key={i} className="h-14 bg-th-hov border border-th-brd rounded-xl animate-pulse" />
         ))}
       </div>
     )
@@ -69,7 +69,7 @@ export default function UserTable({ users = [], loading = false, onRefresh: _onR
               className={`px-3 py-2 rounded-lg text-xs font-medium transition-all capitalize ${
                 categoryFilter === cat
                   ? 'bg-blue-600 text-white shadow-sm shadow-blue-600/20'
-                  : 'bg-white/[0.05] text-slate-300 hover:text-white hover:bg-white/[0.09] border border-white/[0.07]'
+                  : 'bg-th-hov text-th-txt2 hover:text-th-txt hover:bg-th-act border border-th-brd'
               }`}
             >
               {cat}
@@ -91,14 +91,14 @@ export default function UserTable({ users = [], loading = false, onRefresh: _onR
             <Tr key={user.id}>
               <Td>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center flex-shrink-0">
-                    <span className="text-blue-400 text-xs font-semibold">
+                  <div className="w-8 h-8 rounded-full bg-blue-500/15 border border-blue-500/25 flex items-center justify-center flex-shrink-0">
+                    <span className="text-blue-600 dark:text-blue-400 text-xs font-semibold">
                       {user.full_name?.charAt(0) || '?'}
                     </span>
                   </div>
                   <div>
-                    <p className="text-slate-100 text-sm font-medium">{user.full_name}</p>
-                    <p className="text-slate-400 text-xs">{user.email}</p>
+                    <p className="text-th-txt text-sm font-medium">{user.full_name}</p>
+                    <p className="text-th-muted text-xs">{user.email}</p>
                   </div>
                 </div>
               </Td>
@@ -108,7 +108,7 @@ export default function UserTable({ users = [], loading = false, onRefresh: _onR
                 </Badge>
               </Td>
               <Td className="hidden md:table-cell">
-                <span className="text-slate-300 text-sm">{user.department || '-'}</span>
+                <span className="text-th-txt2 text-sm">{user.department || '-'}</span>
               </Td>
               <Td className="hidden lg:table-cell">
                 <Badge variant={user.is_active ? 'green' : 'slate'}>
@@ -118,7 +118,7 @@ export default function UserTable({ users = [], loading = false, onRefresh: _onR
               <Td>
                 <Link
                   href={`/admin/users/${user.id}`}
-                  className="text-blue-400 hover:text-blue-300 text-xs font-medium transition-all duration-150"
+                  className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-xs font-medium transition-all duration-150"
                 >
                   View →
                 </Link>
@@ -126,7 +126,7 @@ export default function UserTable({ users = [], loading = false, onRefresh: _onR
             </Tr>
           )) : (
             <Tr>
-              <Td className="py-12 text-center text-slate-500 text-sm" colSpan={5}>
+              <Td className="py-12 text-center text-th-muted text-sm" colSpan={5}>
                 {search ? `No employees found matching "${search}"` : 'No employees yet.'}
               </Td>
             </Tr>
@@ -134,7 +134,7 @@ export default function UserTable({ users = [], loading = false, onRefresh: _onR
         </Tbody>
       </Table>
 
-      <p className="text-slate-500 text-xs mt-3 text-right">
+      <p className="text-th-muted text-xs mt-3 text-right">
         Showing {filtered.length} of {users.length} employees
       </p>
     </div>

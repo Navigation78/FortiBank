@@ -91,68 +91,68 @@ export default function ResultsPage() {
       {loading ? (
         <div className="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-28 bg-slate-800 border border-white/[0.08] rounded-xl animate-pulse" />
+            <div key={i} className="h-28 bg-th-hov border border-th-brd rounded-xl animate-pulse" />
           ))}
         </div>
       ) : riskScore ? (
         <div className="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
 
           {/* Composite risk score */}
-          <div className={`rounded-xl border p-5 ${riskLevel?.bgColor || 'bg-slate-800'} ${riskLevel?.borderColor || 'border-white/[0.08]'}`}>
-            <p className="text-xs text-slate-500 mb-2 font-medium uppercase tracking-wide">Overall Risk Score</p>
+          <div className={`rounded-xl border p-5 ${riskLevel?.bgColor || 'bg-th-srf'} ${riskLevel?.borderColor || 'border-th-brd'}`}>
+            <p className="text-th-muted text-xs mb-2 font-medium uppercase tracking-wide">Overall Risk Score</p>
             <div className="flex items-baseline gap-1">
-              <span className={`text-4xl font-bold ${riskLevel?.textColor || 'text-white'}`}>{compositeScore}</span>
-              <span className="text-slate-500 text-sm">/100</span>
+              <span className={`text-4xl font-bold ${riskLevel?.textColor || 'text-th-txt'}`}>{compositeScore}</span>
+              <span className="text-th-muted text-sm">/100</span>
             </div>
-            <p className={`text-xs mt-1.5 font-medium ${riskLevel?.textColor || 'text-slate-400'}`}>{riskLevel?.label || 'No data'}</p>
-            <p className="text-slate-600 text-xs mt-0.5">= (Phishing × 60%) + (Quiz × 40%)</p>
+            <p className={`text-xs mt-1.5 font-medium ${riskLevel?.textColor || 'text-th-txt2'}`}>{riskLevel?.label || 'No data'}</p>
+            <p className="text-th-muted text-xs mt-0.5">= (Phishing × 60%) + (Quiz × 40%)</p>
           </div>
 
           {/* Quiz performance */}
-          <div className="rounded-xl border border-white/[0.08] bg-slate-800 p-5">
-            <p className="text-xs text-slate-500 mb-2 font-medium uppercase tracking-wide">Quiz Performance <span className="text-slate-600 normal-case">(40% of risk)</span></p>
+          <div className="rounded-xl border border-th-brd bg-th-srf p-5">
+            <p className="text-th-muted text-xs mb-2 font-medium uppercase tracking-wide">Quiz Performance <span className="text-th-muted normal-case">(40% of risk)</span></p>
             <div className="flex items-baseline gap-1">
-              <span className="text-4xl font-bold text-white">{riskScore.quizzes_passed}</span>
-              <span className="text-slate-500 text-sm">/ {riskScore.quizzes_taken} passed</span>
+              <span className="text-4xl font-bold text-th-txt">{riskScore.quizzes_passed}</span>
+              <span className="text-th-muted text-sm">/ {riskScore.quizzes_taken} passed</span>
             </div>
             {riskScore.quizzes_taken > 0 && (
               <>
-                <div className="mt-3 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                <div className="mt-3 h-1.5 bg-th-track rounded-full overflow-hidden">
                   <div
                     className="h-full bg-blue-500 rounded-full transition-all"
                     style={{ width: `${quizPassRate}%` }}
                   />
                 </div>
-                <p className="text-slate-600 text-xs mt-1">{quizPassRate}% pass rate · quiz risk component: <span className="text-slate-400">{quizScore}/100</span></p>
+                <p className="text-th-muted text-xs mt-1">{quizPassRate}% pass rate · quiz risk component: <span className="text-th-txt2">{quizScore}/100</span></p>
               </>
             )}
             {riskScore.quizzes_taken === 0 && (
-              <p className="text-slate-600 text-xs mt-1">No quizzes taken yet</p>
+              <p className="text-th-muted text-xs mt-1">No quizzes taken yet</p>
             )}
           </div>
 
           {/* Phishing tests */}
-          <div className="rounded-xl border border-white/[0.08] bg-slate-800 p-5">
-            <p className="text-xs text-slate-500 mb-2 font-medium uppercase tracking-wide">Phishing Tests <span className="text-slate-600 normal-case">(60% of risk)</span></p>
+          <div className="rounded-xl border border-th-brd bg-th-srf p-5">
+            <p className="text-th-muted text-xs mb-2 font-medium uppercase tracking-wide">Phishing Tests <span className="text-th-muted normal-case">(60% of risk)</span></p>
             <div className="flex items-baseline gap-1">
-              <span className={`text-4xl font-bold ${riskScore.phishing_clicks > 0 ? 'text-red-400' : 'text-white'}`}>
+              <span className={`text-4xl font-bold ${riskScore.phishing_clicks > 0 ? 'text-red-600 dark:text-red-400' : 'text-th-txt'}`}>
                 {riskScore.phishing_clicks}
               </span>
-              <span className="text-slate-500 text-sm">/ {riskScore.phishing_attempts} clicked</span>
+              <span className="text-th-muted text-sm">/ {riskScore.phishing_attempts} clicked</span>
             </div>
             {riskScore.phishing_attempts > 0 && (
               <>
-                <div className="mt-3 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                <div className="mt-3 h-1.5 bg-th-track rounded-full overflow-hidden">
                   <div
                     className="h-full bg-orange-500 rounded-full transition-all"
                     style={{ width: `${phishClickRate}%` }}
                   />
                 </div>
-                <p className="text-slate-600 text-xs mt-1">{phishClickRate}% click rate · phishing risk component: <span className="text-slate-400">{phishingScore}/100</span></p>
+                <p className="text-th-muted text-xs mt-1">{phishClickRate}% click rate · phishing risk component: <span className="text-th-txt2">{phishingScore}/100</span></p>
               </>
             )}
             {riskScore.phishing_attempts === 0 && (
-              <p className="text-slate-600 text-xs mt-1">No phishing tests sent yet</p>
+              <p className="text-th-muted text-xs mt-1">No phishing tests sent yet</p>
             )}
           </div>
 
@@ -160,25 +160,25 @@ export default function ResultsPage() {
       ) : null}
 
       {/* ── Tabs ───────────────────────────────────────────────── */}
-      <div className="flex gap-2 mb-6 border-b border-white/[0.06]">
+      <div className="flex gap-2 mb-6 border-b border-th-brd">
         {TABS.map((t, i) => (
           <button
             key={t}
             onClick={() => setTab(i)}
             className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-all duration-150 -mb-px ${
               tab === i
-                ? 'border-blue-500 text-blue-400'
-                : 'border-transparent text-slate-500 hover:text-slate-300'
+                ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                : 'border-transparent text-th-muted hover:text-th-txt2'
             }`}
           >
             {t}
             {i === 0 && quizAttempts.length > 0 && (
-              <span className="ml-2 text-xs bg-slate-700 text-slate-400 px-1.5 py-0.5 rounded-full">
+              <span className="ml-2 text-xs bg-th-hov text-th-muted px-1.5 py-0.5 rounded-full">
                 {quizAttempts.length}
               </span>
             )}
             {i === 1 && phishingTargets.length > 0 && (
-              <span className="ml-2 text-xs bg-slate-700 text-slate-400 px-1.5 py-0.5 rounded-full">
+              <span className="ml-2 text-xs bg-th-hov text-th-muted px-1.5 py-0.5 rounded-full">
                 {phishingTargets.length}
               </span>
             )}
@@ -192,19 +192,19 @@ export default function ResultsPage() {
           {loading ? (
             <div className="space-y-3">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="h-16 bg-slate-800 border border-white/[0.08] rounded-xl animate-pulse" />
+                <div key={i} className="h-16 bg-th-hov border border-th-brd rounded-xl animate-pulse" />
               ))}
             </div>
           ) : quizAttempts.length > 0 ? (
-            <div className="bg-slate-800 border border-white/[0.08] rounded-xl overflow-hidden">
+            <div className="bg-th-srf border border-th-brd rounded-xl overflow-hidden">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-white/[0.06]">
-                    <th className="text-left text-slate-500 text-xs font-medium px-5 py-3">Quiz</th>
-                    <th className="text-left text-slate-500 text-xs font-medium px-5 py-3 hidden sm:table-cell">Attempt</th>
-                    <th className="text-left text-slate-500 text-xs font-medium px-5 py-3">Score</th>
-                    <th className="text-left text-slate-500 text-xs font-medium px-5 py-3 hidden md:table-cell">Duration</th>
-                    <th className="text-left text-slate-500 text-xs font-medium px-5 py-3 hidden lg:table-cell">Date</th>
+                  <tr className="border-b border-th-brd">
+                    <th className="text-left text-th-muted text-xs font-medium px-5 py-3">Quiz</th>
+                    <th className="text-left text-th-muted text-xs font-medium px-5 py-3 hidden sm:table-cell">Attempt</th>
+                    <th className="text-left text-th-muted text-xs font-medium px-5 py-3">Score</th>
+                    <th className="text-left text-th-muted text-xs font-medium px-5 py-3 hidden md:table-cell">Duration</th>
+                    <th className="text-left text-th-muted text-xs font-medium px-5 py-3 hidden lg:table-cell">Date</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -217,50 +217,50 @@ export default function ResultsPage() {
                     const quizTitle   = attempt.quizzes?.title   || 'Unknown Quiz'
                     const moduleTitle = attempt.quizzes?.modules?.title || null
                     return (
-                      <tr key={attempt.id} className={`border-b border-white/[0.06] last:border-0 ${i % 2 === 0 ? '' : 'bg-slate-900/50'}`}>
+                      <tr key={attempt.id} className={`border-b border-th-brd last:border-0 ${i % 2 === 0 ? '' : 'bg-th-hov/50'}`}>
                         <td className="px-5 py-3">
                           <div className="flex items-center gap-2">
-                            <p className="text-white text-sm font-medium truncate max-w-44">{quizTitle}</p>
+                            <p className="text-th-txt text-sm font-medium truncate max-w-44">{quizTitle}</p>
                             <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded flex-shrink-0 ${
                               isExam
-                                ? 'bg-purple-500/15 text-purple-400'
-                                : 'bg-blue-500/15 text-blue-400'
+                                ? 'bg-purple-500/15 text-purple-700 dark:text-purple-400'
+                                : 'bg-blue-500/15 text-blue-700 dark:text-blue-400'
                             }`}>
                               {isExam ? 'EXAM' : 'QUIZ'}
                             </span>
                           </div>
                           {moduleTitle && (
-                            <p className="text-slate-500 text-xs truncate mt-0.5">{moduleTitle}</p>
+                            <p className="text-th-muted text-xs truncate mt-0.5">{moduleTitle}</p>
                           )}
                         </td>
                         <td className="px-5 py-3 hidden sm:table-cell">
-                          <span className="text-slate-400 text-sm">#{attempt.attempt_number}</span>
+                          <span className="text-th-txt2 text-sm">#{attempt.attempt_number}</span>
                         </td>
                         <td className="px-5 py-3">
                           <div className="flex items-center gap-2">
-                            <span className={`font-bold text-sm tabular-nums ${attempt.passed ? 'text-green-400' : 'text-red-400'}`}>
+                            <span className={`font-bold text-sm tabular-nums ${attempt.passed ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                               {attempt.score_pct}%
                             </span>
                             {hasFraction && (
-                              <span className="text-slate-600 text-xs tabular-nums">{correct}/{total}</span>
+                              <span className="text-th-muted text-xs tabular-nums">{correct}/{total}</span>
                             )}
                             <span className={`text-xs px-1.5 py-0.5 rounded ${
-                              attempt.passed ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400'
+                              attempt.passed ? 'bg-green-500/15 text-green-700 dark:text-green-400' : 'bg-red-500/15 text-red-700 dark:text-red-400'
                             }`}>
                               {attempt.passed ? 'Pass' : 'Fail'}
                             </span>
                             {attempt.quizzes?.pass_score && (
-                              <span className="text-slate-600 text-xs hidden sm:inline">
+                              <span className="text-th-muted text-xs hidden sm:inline">
                                 (pass: {attempt.quizzes.pass_score}%)
                               </span>
                             )}
                           </div>
                         </td>
                         <td className="px-5 py-3 hidden md:table-cell">
-                          <span className="text-slate-400 text-sm">{formatDuration(attempt.time_taken_secs)}</span>
+                          <span className="text-th-txt2 text-sm">{formatDuration(attempt.time_taken_secs)}</span>
                         </td>
                         <td className="px-5 py-3 hidden lg:table-cell">
-                          <span className="text-slate-400 text-sm">
+                          <span className="text-th-txt2 text-sm">
                             {new Date(attempt.submitted_at).toLocaleDateString('en-KE', { dateStyle: 'medium' })}
                           </span>
                         </td>
@@ -272,8 +272,8 @@ export default function ResultsPage() {
             </div>
           ) : (
             <div className="text-center py-16">
-              <p className="text-slate-400 font-medium">No quiz attempts yet</p>
-              <Link href="/modules" className="text-blue-400 text-sm hover:text-blue-300 mt-2 inline-block">
+              <p className="text-th-txt2 font-medium">No quiz attempts yet</p>
+              <Link href="/modules" className="text-blue-600 dark:text-blue-400 text-sm hover:text-blue-700 dark:hover:text-blue-300 mt-2 inline-block">
                 Start a module →
               </Link>
             </div>
@@ -287,56 +287,56 @@ export default function ResultsPage() {
           {loading ? (
             <div className="space-y-3">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-16 bg-slate-800 border border-white/[0.08] rounded-xl animate-pulse" />
+                <div key={i} className="h-16 bg-th-hov border border-th-brd rounded-xl animate-pulse" />
               ))}
             </div>
           ) : phishingTargets.length > 0 ? (
-            <div className="bg-slate-800 border border-white/[0.08] rounded-xl overflow-hidden">
+            <div className="bg-th-srf border border-th-brd rounded-xl overflow-hidden">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-white/[0.06]">
-                    <th className="text-left text-slate-500 text-xs font-medium px-5 py-3">Campaign</th>
-                    <th className="text-left text-slate-500 text-xs font-medium px-5 py-3">Result</th>
-                    <th className="text-left text-slate-500 text-xs font-medium px-5 py-3 hidden sm:table-cell">Date</th>
-                    <th className="text-left text-slate-500 text-xs font-medium px-5 py-3 hidden md:table-cell">Impact on Risk</th>
+                  <tr className="border-b border-th-brd">
+                    <th className="text-left text-th-muted text-xs font-medium px-5 py-3">Campaign</th>
+                    <th className="text-left text-th-muted text-xs font-medium px-5 py-3">Result</th>
+                    <th className="text-left text-th-muted text-xs font-medium px-5 py-3 hidden sm:table-cell">Date</th>
+                    <th className="text-left text-th-muted text-xs font-medium px-5 py-3 hidden md:table-cell">Impact on Risk</th>
                   </tr>
                 </thead>
                 <tbody>
                   {phishingTargets.map((target, i) => (
-                    <tr key={target.id} className={`border-b border-white/[0.06] last:border-0 ${i % 2 === 0 ? '' : 'bg-slate-900/50'}`}>
+                    <tr key={target.id} className={`border-b border-th-brd last:border-0 ${i % 2 === 0 ? '' : 'bg-th-hov/50'}`}>
                       <td className="px-5 py-3">
-                        <p className="text-white text-sm font-medium truncate max-w-48">
+                        <p className="text-th-txt text-sm font-medium truncate max-w-48">
                           {target.phishing_campaigns?.name || 'Phishing Simulation'}
                         </p>
-                        <p className="text-slate-500 text-xs truncate">
+                        <p className="text-th-muted text-xs truncate">
                           {target.phishing_campaigns?.email_subject || 'Subject hidden'}
                         </p>
                       </td>
                       <td className="px-5 py-3">
                         <span className={`text-xs font-medium px-2 py-1 rounded-lg ${
                           target.result === 'clicked'
-                            ? 'bg-red-500/15 text-red-400'
+                            ? 'bg-red-500/15 text-red-700 dark:text-red-400'
                             : target.result === 'reported'
-                              ? 'bg-green-500/15 text-green-400'
+                              ? 'bg-green-500/15 text-green-700 dark:text-green-400'
                               : target.result === 'opened'
-                                ? 'bg-yellow-500/15 text-yellow-400'
-                                : 'bg-white/[0.06] text-slate-300'
+                                ? 'bg-yellow-500/15 text-yellow-700 dark:text-yellow-400'
+                                : 'bg-th-hov text-th-txt2'
                         }`}>
-                          {target.result === 'clicked'  ? '⚠ Clicked' :
-                           target.result === 'reported' ? '✓ Reported' :
+                          {target.result === 'clicked'  ? 'Clicked' :
+                           target.result === 'reported' ? 'Reported' :
                            target.result === 'opened'   ? 'Opened' :
                            target.result === 'sent'     ? 'Received' : 'Pending'}
                         </span>
                       </td>
                       <td className="px-5 py-3 hidden sm:table-cell">
-                        <span className="text-slate-400 text-sm">
+                        <span className="text-th-txt2 text-sm">
                           {target.sent_at
                             ? new Date(target.sent_at).toLocaleDateString('en-KE', { dateStyle: 'medium' })
                             : '-'}
                         </span>
                       </td>
                       <td className="px-5 py-3 hidden md:table-cell">
-                        <span className={`text-xs ${target.result === 'clicked' ? 'text-red-400' : target.result === 'reported' ? 'text-green-400' : 'text-slate-500'}`}>
+                        <span className={`text-xs ${target.result === 'clicked' ? 'text-red-600 dark:text-red-400' : target.result === 'reported' ? 'text-green-600 dark:text-green-400' : 'text-th-muted'}`}>
                           {target.result === 'clicked'
                             ? '+risk (counted as click)'
                             : target.result === 'reported'
@@ -351,8 +351,8 @@ export default function ResultsPage() {
             </div>
           ) : (
             <div className="text-center py-16">
-              <p className="text-slate-400 font-medium">No phishing tests yet</p>
-              <p className="text-slate-600 text-sm mt-1">Your organization has not sent any phishing tests yet.</p>
+              <p className="text-th-txt2 font-medium">No phishing tests yet</p>
+              <p className="text-th-muted text-sm mt-1">Your organization has not sent any phishing tests yet.</p>
             </div>
           )}
         </div>

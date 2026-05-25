@@ -84,7 +84,7 @@ export default function CreateUserForm() {
     <button
       type="button"
       onClick={() => setShowPassword(!showPassword)}
-      className="text-slate-400 hover:text-slate-300"
+      className="text-th-muted hover:text-th-txt2"
       aria-label={showPassword ? 'Hide password' : 'Show password'}
     >
       {showPassword ? (
@@ -108,8 +108,8 @@ export default function CreateUserForm() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <p className="text-white font-semibold">Employee created successfully!</p>
-        <p className="text-slate-400 text-sm mt-1">Redirecting to users list...</p>
+        <p className="text-th-txt font-semibold">Employee created successfully!</p>
+        <p className="text-th-txt2 text-sm mt-1">Redirecting to users list...</p>
       </div>
     )
   }
@@ -169,14 +169,14 @@ export default function CreateUserForm() {
         />
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-slate-300 text-sm font-medium">Role *</label>
+          <label className="text-th-txt text-sm font-medium">Role *</label>
           <select
             name="role_id"
             value={form.role_id}
             onChange={handleChange}
             required
             disabled={rolesLoading}
-            className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
+            className="w-full bg-th-ibg border border-th-ibrd text-th-txt rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500/70 transition-all duration-150"
           >
             <option value="">{rolesLoading ? 'Loading roles...' : 'Select a role...'}</option>
             {Object.entries(rolesByCategory).map(([category, categoryRoles]) => (

@@ -102,21 +102,21 @@ export default function SafeExamBrowser({ children, onForceSubmit }) {
               <Shield className="w-5 h-5 text-blue-400" />
             </div>
             <div>
-              <h3 className="text-white font-semibold text-base">Safe Exam Mode</h3>
+              <h3 className="text-th-txt font-semibold text-base">Safe Exam Mode</h3>
               <p className="text-blue-400 text-xs mt-0.5">Monitored assessment environment</p>
             </div>
           </div>
 
           <ul className="space-y-3">
             {[
-              ['The exam will run in fullscreen — do not exit.', 'text-slate-300'],
-              ['Switching tabs or windows counts as a violation.', 'text-slate-300'],
-              ['Right-click and browser shortcuts are disabled.', 'text-slate-300'],
-              [`${MAX_VIOLATIONS} violations will auto-submit your exam.`, 'text-amber-300'],
-              ['Pass mark: 80% — you have 3 attempts before the module resets.', 'text-slate-300'],
+              ['The exam will run in fullscreen — do not exit.', 'text-th-txt2'],
+              ['Switching tabs or windows counts as a violation.', 'text-th-txt2'],
+              ['Right-click and browser shortcuts are disabled.', 'text-th-txt2'],
+              [`${MAX_VIOLATIONS} violations will auto-submit your exam.`, 'text-amber-600 dark:text-amber-300'],
+              ['Pass mark: 80% — you have 3 attempts before the module resets.', 'text-th-txt2'],
             ].map(([text, color], i) => (
               <li key={i} className="flex items-start gap-3">
-                <span className={`w-5 h-5 rounded-full bg-slate-800 text-xs flex items-center justify-center flex-shrink-0 mt-0.5 ${color}`}>
+                <span className={`w-5 h-5 rounded-full bg-th-hov text-xs flex items-center justify-center flex-shrink-0 mt-0.5 ${color}`}>
                   {i + 1}
                 </span>
                 <span className={`text-sm ${color}`}>{text}</span>
@@ -140,7 +140,7 @@ export default function SafeExamBrowser({ children, onForceSubmit }) {
   return (
     <div>
       {/* Status bar */}
-      <div className="mb-4 flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900 border border-slate-800">
+      <div className="mb-4 flex items-center gap-2 px-3 py-2 rounded-lg bg-th-srf border border-th-brd">
         <Shield className="w-3.5 h-3.5 text-green-400 flex-shrink-0" />
         <span className="text-green-400 text-xs font-medium">Safe Exam Mode Active</span>
         {violations > 0 && (

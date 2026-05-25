@@ -8,10 +8,10 @@ export default function CreateModulePage() {
   return (
     <>
       <PageWrapper>
-        <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-          <Link href="/admin/modules" className="hover:text-slate-300">Modules</Link>
+        <div className="flex items-center gap-2 text-sm text-th-muted mb-6">
+          <Link href="/admin/modules" className="hover:text-th-txt2">Modules</Link>
           <span>/</span>
-          <span className="text-slate-300">Create Module</span>
+          <span className="text-th-txt2">Create Module</span>
         </div>
         <CreateModuleForm />
       </PageWrapper>

@@ -44,7 +44,7 @@ export default function UserDetailPage() {
       <>
         <PageWrapper>
           <div className="animate-pulse space-y-4 max-w-3xl">
-            <div className="h-32 bg-slate-800 border border-white/[0.08] rounded-xl" />
+            <div className="h-32 bg-th-hov border border-th-brd rounded-xl" />
           </div>
         </PageWrapper>
       </>
@@ -55,7 +55,7 @@ export default function UserDetailPage() {
     return (
       <>
         <PageWrapper>
-          <p className="text-slate-400">User not found.</p>
+          <p className="text-th-muted">User not found.</p>
         </PageWrapper>
       </>
     )
@@ -67,26 +67,26 @@ export default function UserDetailPage() {
     <>
       <PageWrapper>
 
-        <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-          <Link href="/admin/users" className="hover:text-slate-300">Users</Link>
+        <div className="flex items-center gap-2 text-sm text-th-muted mb-6">
+          <Link href="/admin/users" className="hover:text-th-txt2">Users</Link>
           <span>/</span>
-          <span className="text-slate-300">{user.full_name}</span>
+          <span className="text-th-txt2">{user.full_name}</span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-5xl">
 
           {/* Profile card */}
           <div className="lg:col-span-2 space-y-5">
-            <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
+            <div className="bg-th-srf border border-th-brd rounded-xl p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center">
-                    <span className="text-blue-400 text-xl font-bold">{user.full_name?.charAt(0)}</span>
+                    <span className="text-blue-600 dark:text-blue-400 text-xl font-bold">{user.full_name?.charAt(0)}</span>
                   </div>
                   <div>
-                    <h4 className="text-white text-lg font-bold">{user.full_name}</h4>
-                    <p className="text-slate-400 text-sm">{user.email}</p>
-                    <p className="text-slate-500 text-xs">{user.role_display_name} · {user.department || 'No department'}</p>
+                    <h4 className="text-th-txt text-lg font-bold">{user.full_name}</h4>
+                    <p className="text-th-muted text-sm">{user.email}</p>
+                    <p className="text-th-muted text-xs">{user.role_display_name} · {user.department || 'No department'}</p>
                   </div>
                 </div>
                 <button
@@ -102,23 +102,23 @@ export default function UserDetailPage() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 text-sm border-t border-slate-800 pt-4">
+              <div className="grid grid-cols-2 gap-4 text-sm border-t border-th-brd pt-4">
                 <div>
-                  <p className="text-slate-500 text-xs">Employee ID</p>
-                  <p className="text-slate-300 mt-0.5">{user.employee_id || '-'}</p>
+                  <p className="text-th-muted text-xs">Employee ID</p>
+                  <p className="text-th-txt2 mt-0.5">{user.employee_id || '-'}</p>
                 </div>
                 <div>
-                  <p className="text-slate-500 text-xs">Member since</p>
-                  <p className="text-slate-300 mt-0.5">{new Date(user.created_at).toLocaleDateString('en-KE', { dateStyle: 'medium' })}</p>
+                  <p className="text-th-muted text-xs">Member since</p>
+                  <p className="text-th-txt2 mt-0.5">{new Date(user.created_at).toLocaleDateString('en-KE', { dateStyle: 'medium' })}</p>
                 </div>
                 <div>
-                  <p className="text-slate-500 text-xs">Risk score</p>
+                  <p className="text-th-muted text-xs">Risk score</p>
                   <p className={`font-semibold mt-0.5 ${latestScore?.is_critical ? 'text-red-400' : latestScore?.is_warning ? 'text-orange-400' : 'text-green-400'}`}>
                     {latestScore ? Math.round(latestScore.composite_score) : '-'}/100
                   </p>
                 </div>
                 <div>
-                  <p className="text-slate-500 text-xs">Status</p>
+                  <p className="text-th-muted text-xs">Status</p>
                   <p className={`font-medium mt-0.5 ${user.is_active ? 'text-green-400' : 'text-red-400'}`}>
                     {user.is_active ? 'Active' : 'Inactive'}
                   </p>
@@ -128,14 +128,14 @@ export default function UserDetailPage() {
 
             {/* Recent quiz attempts */}
             {attempts.length > 0 && (
-              <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-5">
-                <h3 className="text-white font-semibold mb-3">Recent Quiz Attempts</h3>
+              <div className="bg-th-srf border border-th-brd rounded-xl p-5">
+                <h3 className="text-th-txt font-semibold mb-3">Recent Quiz Attempts</h3>
                 <div className="space-y-2">
                   {attempts.map(a => (
-                    <div key={a.id} className="flex items-center justify-between py-2 border-b border-white/[0.06] last:border-0">
+                    <div key={a.id} className="flex items-center justify-between py-2 border-b border-th-brd last:border-0">
                       <div>
-                        <p className="text-slate-300 text-sm">{a.quizzes?.modules?.title}</p>
-                        <p className="text-slate-500 text-xs">{new Date(a.submitted_at).toLocaleDateString('en-KE')}</p>
+                        <p className="text-th-txt2 text-sm">{a.quizzes?.modules?.title}</p>
+                        <p className="text-th-muted text-xs">{new Date(a.submitted_at).toLocaleDateString('en-KE')}</p>
                       </div>
                       <span className={`text-sm font-bold ${a.passed ? 'text-green-400' : 'text-red-400'}`}>
                         {a.score_pct}%
@@ -150,8 +150,8 @@ export default function UserDetailPage() {
           {/* Sidebar */}
           <div className="space-y-5">
             {/* Assign role */}
-            <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-5">
-              <h3 className="text-white font-semibold mb-4">Change Role</h3>
+            <div className="bg-th-srf border border-th-brd rounded-xl p-5">
+              <h3 className="text-th-txt font-semibold mb-4">Change Role</h3>
               <AssignRoleForm
                 userId={userId}
                 currentRole={user.role}
@@ -161,12 +161,12 @@ export default function UserDetailPage() {
 
             {/* Risk score history */}
             {scores.length > 0 && (
-              <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-5">
-                <h3 className="text-white font-semibold mb-3">Risk Score History</h3>
+              <div className="bg-th-srf border border-th-brd rounded-xl p-5">
+                <h3 className="text-th-txt font-semibold mb-3">Risk Score History</h3>
                 <div className="space-y-2">
                   {scores.map(s => (
                     <div key={s.id} className="flex items-center justify-between">
-                      <span className="text-slate-500 text-xs">{new Date(s.calculated_at).toLocaleDateString('en-KE')}</span>
+                      <span className="text-th-muted text-xs">{new Date(s.calculated_at).toLocaleDateString('en-KE')}</span>
                       <span className={`text-sm font-semibold ${s.is_critical ? 'text-red-400' : s.is_warning ? 'text-orange-400' : 'text-green-400'}`}>
                         {Math.round(s.composite_score)}
                       </span>

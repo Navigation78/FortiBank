@@ -2,7 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
+/* ─── Design-system CSS variables ───────────────────────────────────────────
+   :root  = light mode defaults
+   .dark  = dark mode overrides (applied by next-themes on <html>)
+   ──────────────────────────────────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --th-bg:    #f9fafb;          /* gray-50  – page canvas          */
+  --th-srf:   #ffffff;          /* white    – cards, panels        */
+  --th-elv:   #ffffff;          /* white    – modals, dropdowns    */
+  --th-bar:   #ffffff;          /* white    – topbar / sidebar     */
+
+  /* Borders */
+  --th-brd:   rgba(0,0,0,0.09);
+  --th-brds:  rgba(0,0,0,0.05);
+
+  /* Text */
+  --th-txt:   #111827;          /* gray-900 – primary              */
+  --th-txt2:  #4b5563;          /* gray-600 – secondary            */
+  --th-muted: #9ca3af;          /* gray-400 – muted / placeholder  */
+
+  /* Interactive */
+  --th-hov:   rgba(0,0,0,0.04);
+  --th-act:   rgba(0,0,0,0.08);
+
+  /* Inputs */
+  --th-ibg:   #f3f4f6;          /* gray-100 */
+  --th-ibrd:  rgba(0,0,0,0.14);
+
+  /* Misc */
+  --th-track: #e5e7eb;          /* gray-200 – progress bar track   */
+}
+
+.dark {
+  --th-bg:    #080f1e;
+  --th-srf:   #0d1526;
+  --th-elv:   #1e293b;
+  --th-bar:   #0f172a;
+
+  --th-brd:   rgba(255,255,255,0.08);
+  --th-brds:  rgba(255,255,255,0.05);
+
+  --th-txt:   #f1f5f9;
+  --th-txt2:  #94a3b8;
+  --th-muted: #64748b;
+
+  --th-hov:   rgba(255,255,255,0.06);
+  --th-act:   rgba(255,255,255,0.10);
+
+  --th-ibg:   rgba(255,255,255,0.05);
+  --th-ibrd:  rgba(255,255,255,0.10);
+
+  --th-track: #1e293b;
+}
+
+/* ─── Base resets ─────────────────────────────────────────────────────────── */
+*, *::before, *::after {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
@@ -16,5 +71,17 @@ body {
   padding: 0;
   max-width: 100vw;
   overflow-x: hidden;
-  background: #0f172a;
+  background: var(--th-bg);
+  color: var(--th-txt);
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: var(--th-brd); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--th-txt2); }
+
+/* ─── Smooth theme colour transitions ─────────────────────────────────────── */
+html {
+  transition: background-color 150ms ease, color 150ms ease;
 }

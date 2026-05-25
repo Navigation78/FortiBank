@@ -35,8 +35,8 @@ export default function AdminUsersPage() {
       <PageWrapper>
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h4 className="text-white text-xl font-bold">All Employees</h4>
-            <p className="text-slate-400 text-sm mt-0.5">{users.length} total employees</p>
+            <h4 className="text-th-txt text-xl font-bold">All Employees</h4>
+            <p className="text-th-muted text-sm mt-0.5">{users.length} total employees</p>
           </div>
           <Link
             href="/admin/users/create"
@@ -50,7 +50,7 @@ export default function AdminUsersPage() {
         </div>
         {error && (
           <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-            <p className="text-red-400 text-sm">{error}</p>
+            <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
           </div>
         )}
         <UserTable users={users} loading={loading} onRefresh={fetchUsers} />

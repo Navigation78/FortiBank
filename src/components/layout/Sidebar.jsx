@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useTheme } from 'next-themes'
 import { useRole } from '@/hooks/useRole'
 import { getDashboardUrl } from '@/utils/roleRedirect'
 
@@ -38,7 +39,10 @@ const NAV_ITEMS = [
   { label: 'Certificates',   icon: 'cert',      href: '/certificates' },
 ]
 
-function SidebarInner({ collapsed, onToggle, navItems, isActive, darkMode, setDarkMode, onCloseMobile, search = '' }) {
+function SidebarInner({ collapsed, onToggle, navItems, isActive, onCloseMobile, search = '' }) {
+  const { theme, setTheme } = useTheme()
+  const isDark = theme === 'dark'
+
   const filtered = search.trim()
     ? navItems.filter(item => item.label.toLowerCase().includes(search.toLowerCase()))
     : navItems
@@ -51,7 +55,7 @@ function SidebarInner({ collapsed, onToggle, navItems, isActive, darkMode, setDa
         <button
           onClick={onToggle}
           title="Toggle sidebar"
-          className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-all duration-150 ${collapsed ? 'justify-center' : ''}`}
+          className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-th-txt2 hover:text-th-txt hover:bg-th-hov transition-all duration-150 ${collapsed ? 'justify-center' : ''}`}
         >
           <Icon path={ICONS.menu} className="w-5 h-5 flex-shrink-0" />
         </button>
@@ -61,7 +65,7 @@ function SidebarInner({ collapsed, onToggle, navItems, isActive, darkMode, setDa
       <nav className="flex-1 px-2.5 overflow-y-auto flex flex-col gap-0.5">
         {filtered.length === 0 ? (
           !collapsed && (
-            <p className="text-slate-500 text-xs text-center py-3">No results</p>
+            <p className="text-th-muted text-xs text-center py-3">No results</p>
           )
         ) : filtered.map(item => {
           const active = isActive(item.href)
@@ -75,7 +79,7 @@ function SidebarInner({ collapsed, onToggle, navItems, isActive, darkMode, setDa
                 ${collapsed ? 'justify-center' : ''}
                 ${active
                   ? 'bg-blue-600 text-white'
-                  : 'text-slate-400 hover:text-white hover:bg-white/[0.06]'
+                  : 'text-th-txt2 hover:text-th-txt hover:bg-th-hov'
                 }`}
             >
               <Icon path={ICONS[item.icon]} className="w-5 h-5 flex-shrink-0" />
@@ -86,37 +90,38 @@ function SidebarInner({ collapsed, onToggle, navItems, isActive, darkMode, setDa
       </nav>
 
       {/* Divider */}
-      <div className="mx-3 my-1.5 border-t border-white/[0.06]" />
+      <div className="mx-3 my-1.5 border-t border-th-brds" />
 
       {/* Theme toggle */}
       <div className="px-2.5 pb-5 flex-shrink-0">
         {collapsed ? (
           <div className="flex justify-center">
             <button
-              onClick={() => setDarkMode(d => !d)}
-              title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-              className="flex items-center justify-center text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-white/[0.06] transition-all duration-150"
+              onClick={() => setTheme(isDark ? 'light' : 'dark')}
+              title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              className="flex items-center justify-center text-th-txt2 hover:text-th-txt p-1.5 rounded-lg hover:bg-th-hov transition-all duration-150"
             >
-              <Icon path={darkMode ? ICONS.moon : ICONS.sun} className="w-4 h-4" />
+              <Icon path={isDark ? ICONS.moon : ICONS.sun} className="w-4 h-4" />
             </button>
           </div>
         ) : (
-          <div className="flex bg-white/[0.04] border border-white/[0.08] rounded-lg p-0.5 gap-0.5">
+          <div className="flex bg-th-hov border border-th-brd rounded-lg p-0.5 gap-0.5">
             {[
-              { label: 'Light', icon: 'sun',  value: false },
-              { label: 'Dark',  icon: 'moon', value: true  },
+              { label: 'Light', icon: 'sun',  value: 'light' },
+              { label: 'Dark',  icon: 'moon', value: 'dark'  },
             ].map(opt => (
               <button
                 key={opt.label}
-                onClick={() => setDarkMode(opt.value)}
+                onClick={() => setTheme(opt.value)}
                 title={`${opt.label} mode`}
-                className={`flex-1 flex items-center justify-center py-1.5 rounded-md transition-all duration-150
-                  ${darkMode === opt.value
-                    ? 'bg-white/[0.1] text-white'
-                    : 'text-slate-500 hover:text-slate-300'
+                className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition-all duration-150
+                  ${theme === opt.value
+                    ? 'bg-th-srf text-th-txt shadow-sm dark:shadow-black/30'
+                    : 'text-th-muted hover:text-th-txt2'
                   }`}
               >
-                <Icon path={ICONS[opt.icon]} className="w-4 h-4" />
+                <Icon path={ICONS[opt.icon]} className="w-3.5 h-3.5" />
+                {opt.label}
               </button>
             ))}
           </div>
@@ -130,7 +135,6 @@ function SidebarInner({ collapsed, onToggle, navItems, isActive, darkMode, setDa
 export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, setIsMobileOpen, search = '' }) {
   const pathname = usePathname()
   const { role } = useRole()
-  const [darkMode, setDarkMode] = useState(true)
 
   const dashboardUrl = getDashboardUrl(role)
 
@@ -145,7 +149,7 @@ export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, setIsMobi
   )
 
   const sharedProps = {
-    navItems, isActive, darkMode, setDarkMode,
+    navItems, isActive,
     onCloseMobile: () => setIsMobileOpen(false),
     search,
   }
@@ -154,21 +158,21 @@ export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, setIsMobi
     <>
       {isMobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-40"
+          className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
 
       {/* Mobile sidebar */}
       <aside
-        className={`lg:hidden fixed top-0 left-0 h-full z-50 w-48 bg-slate-900 border-r border-white/[0.06] transform transition-transform duration-200 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        className={`lg:hidden fixed top-0 left-0 h-full z-50 w-48 bg-th-bar border-r border-th-brd transform transition-transform duration-200 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         <SidebarInner {...sharedProps} collapsed={false} onToggle={() => setIsMobileOpen(false)} />
       </aside>
 
       {/* Desktop sidebar */}
       <aside
-        className={`hidden lg:flex flex-col relative flex-shrink-0 h-full bg-slate-900 border-r border-white/[0.06] transition-all duration-200 ${isCollapsed ? 'w-[60px]' : 'w-48'}`}
+        className={`hidden lg:flex flex-col relative flex-shrink-0 h-full bg-th-bar border-r border-th-brd transition-all duration-200 ${isCollapsed ? 'w-[60px]' : 'w-48'}`}
       >
         <SidebarInner {...sharedProps} collapsed={isCollapsed} onToggle={onToggle} />
       </aside>

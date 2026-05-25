@@ -166,7 +166,7 @@ export default function SafeExamBrowser({ children, onForceSubmit }) {
           <div>
             <p className="text-amber-300 text-sm font-medium">Violation: {lastViolation}</p>
             <p className="text-amber-500/80 text-xs mt-0.5">
-              {violations}/{MAX_VIOLATIONS} — exam auto-submits at {MAX_VIOLATIONS}.
+              {violations}/{MAX_VIOLATIONS}  exam auto-submits at {MAX_VIOLATIONS}.
             </p>
           </div>
         </div>

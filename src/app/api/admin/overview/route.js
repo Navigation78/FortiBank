@@ -1,14 +1,11 @@
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { ROLES } from '@/constants/roles'
-import { getRouteUser } from '@/lib/supabaseRoute'
+import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 
 export async function GET(request) {
-  const { user, supabase } = await getRouteUser(request)
-
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const { user, supabase, networkError } = await getRouteUser(request)
+  if (!user) return unauthorizedResponse(networkError)
 
   const { data: adminCheck, error: roleError } = await supabase
     .from('user_roles')

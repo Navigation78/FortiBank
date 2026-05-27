@@ -6,14 +6,12 @@
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { ROLES } from '@/constants/roles'
-import { getRouteUser } from '@/lib/supabaseRoute'
+import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 
 export async function GET(request) {
-  const { user, supabase } = await getRouteUser(request)
+  const { user, supabase, networkError } = await getRouteUser(request)
 
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  if (!user) return unauthorizedResponse(networkError)
 
   const { data: adminCheck, error: roleError } = await supabase
     .from('user_roles')
@@ -35,11 +33,9 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const { user: adminUser, supabase } = await getRouteUser(request)
+  const { user: adminUser, supabase, networkError } = await getRouteUser(request)
 
-  if (!adminUser) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  if (!adminUser) return unauthorizedResponse(networkError)
 
   const { data: adminCheck, error: roleError } = await supabase
     .from('user_roles')

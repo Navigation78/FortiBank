@@ -29,7 +29,7 @@ function Icon({ path, className = 'w-5 h-5' }) {
 
 const SEARCH_ICON = 'M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z'
 
-export default function Topbar({ toggleSidebar, isCollapsed, toggleMobileSidebar, search = '', setSearch }) {
+export default function Topbar({ toggleSidebar, toggleMobileSidebar, search = '', setSearch }) {
   const { profile, signOut } = useAuth()
   const { role } = useRole()
   const pathname = usePathname()
@@ -63,11 +63,11 @@ export default function Topbar({ toggleSidebar, isCollapsed, toggleMobileSidebar
     <header className="h-73px bg-th-bar border-b border-th-brd flex items-center sticky top-0 z-30 shadow-sm shadow-black/5 dark:shadow-black/40">
 
       {/* Desktop logo column — width mirrors the sidebar so logo is centred directly above it */}
-      <div className={`hidden lg:flex items-center justify-center flex-shrink-0 h-full border-r border-th-brd transition-all duration-200 ${isCollapsed ? 'w-[60px]' : 'w-48'}`}>
+      <div className="hidden lg:flex items-center justify-center flex-shrink-0 h-full border-r border-th-brd w-48">
         <img
           src="/FortiBank%20LogoO.png"
           alt="FortiBank"
-          className="max-w-[110px] max-h-11 w-auto object-contain"
+          className="max-w-[110px] max-h-11 w-auto object-contain dark:brightness-0 dark:invert"
         />
       </div>
 
@@ -83,7 +83,7 @@ export default function Topbar({ toggleSidebar, isCollapsed, toggleMobileSidebar
         <img
           src="/FortiBank%20LogoO.png"
           alt="FortiBank"
-          className="max-w-[100px] max-h-7 w-auto object-contain"
+          className="max-w-[100px] max-h-7 w-auto object-contain dark:brightness-0 dark:invert"
         />
       </div>
 

@@ -224,7 +224,7 @@ function AdminTopbar({ toggleMobileSidebar, search, setSearch }) {
           <img
             src="/FortiBank%20LogoO.png"
             alt="FortiBank"
-            className="max-w-[120px] max-h-8 w-auto object-contain flex-shrink-0"
+            className="max-w-[120px] max-h-8 w-auto object-contain flex-shrink-0 dark:brightness-0 dark:invert"
           />
           <div className="hidden sm:flex items-center gap-1.5 text-sm">
             <span className="text-th-txt2">{firstName}</span>

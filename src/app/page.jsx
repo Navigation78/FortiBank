@@ -71,7 +71,7 @@ export default function LandingPage() {
         <img
           src="/FortiBank%20LogoO.png"
           alt="FortiBank"
-          className="max-w-[140px] max-h-9 w-auto object-contain"
+          className="max-w-[140px] max-h-9 w-auto object-contain dark:brightness-0 dark:invert"
         />
 
         <div className="flex items-center gap-3">

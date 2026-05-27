@@ -5,7 +5,7 @@
 // ============================================================
 
 import { NextResponse } from 'next/server'
-import { getRouteUser } from '@/lib/supabaseRoute'
+import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
@@ -15,10 +15,8 @@ export async function GET(request) {
     return NextResponse.json({ error: 'quizId is required' }, { status: 400 })
   }
 
-  const { user, error: authError, supabase } = await getRouteUser(request)
-  if (authError || !user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const { user, supabase, networkError } = await getRouteUser(request)
+  if (!user) return unauthorizedResponse(networkError)
 
   // Fetch quiz with questions and options
   const { data: quiz, error: quizError } = await supabase

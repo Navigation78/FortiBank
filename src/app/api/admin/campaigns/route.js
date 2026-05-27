@@ -4,11 +4,11 @@
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
-import { getRouteUser } from '@/lib/supabaseRoute'
+import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 
 async function verifyAdmin(request) {
-  const { user } = await getRouteUser(request)
-  if (!user) return null
+  const { user, networkError } = await getRouteUser(request)
+  if (!user) return networkError ? unauthorizedResponse(true) : null
   const { data: roleData } = await supabaseAdmin
     .from('user_roles').select('roles(name)').eq('user_id', user.id).single()
   if (roleData?.roles?.name !== 'system_admin') return null
@@ -17,6 +17,7 @@ async function verifyAdmin(request) {
 
 export async function GET(request) {
   const admin = await verifyAdmin(request)
+  if (admin instanceof Response) return admin
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { data, error } = await supabaseAdmin
@@ -30,6 +31,7 @@ export async function GET(request) {
 
 export async function POST(request) {
   const admin = await verifyAdmin(request)
+  if (admin instanceof Response) return admin
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await request.json()

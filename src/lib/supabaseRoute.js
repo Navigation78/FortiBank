@@ -1,3 +1,4 @@
+import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
 export function getBearerToken(request) {
@@ -30,9 +31,35 @@ export async function createRouteClient(request) {
 
 export async function getRouteUser(request) {
   const { supabase, token, tabId } = await createRouteClient(request)
-  const { data: { user }, error } = token
-    ? await supabase.auth.getUser(token)
-    : await supabase.auth.getUser()
 
-  return { user, error, supabase, tabId }
+  let user = null
+  let error = null
+  let networkError = false
+
+  try {
+    const { data, error: authErr } = token
+      ? await supabase.auth.getUser(token)
+      : await supabase.auth.getUser()
+    user = data?.user ?? null
+    error = authErr ?? null
+    // GoTrue API errors carry a numeric `status`; raw network/fetch failures don't
+    if (error && typeof error.status !== 'number') {
+      networkError = true
+    }
+  } catch (err) {
+    error = err
+    networkError = true
+  }
+
+  return { user, error, supabase, tabId, networkError }
+}
+
+export function unauthorizedResponse(networkError = false) {
+  if (networkError) {
+    return NextResponse.json(
+      { error: 'Authentication service temporarily unavailable. Please try again.' },
+      { status: 503 }
+    )
+  }
+  return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 }

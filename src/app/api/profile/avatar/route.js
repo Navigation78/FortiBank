@@ -3,15 +3,15 @@
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
-import { getRouteUser } from '@/lib/supabaseRoute'
+import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 
 const MAX_SIZE    = 5 * 1024 * 1024
 const ALLOWED     = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
 const BUCKET      = 'avatars'
 
 export async function POST(request) {
-  const { user } = await getRouteUser(request)
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const { user, networkError } = await getRouteUser(request)
+  if (!user) return unauthorizedResponse(networkError)
 
   const formData = await request.formData()
   const file     = formData.get('file')

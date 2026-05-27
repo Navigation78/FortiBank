@@ -6,13 +6,11 @@
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
-import { getRouteUser } from '@/lib/supabaseRoute'
+import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 
 export async function POST(request) {
-  const { user, error: authError } = await getRouteUser(request)
-  if (authError || !user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const { user, networkError } = await getRouteUser(request)
+  if (!user) return unauthorizedResponse(networkError)
 
   const { module_id, quiz_id } = await request.json()
   if (!module_id || !quiz_id) {

@@ -20,7 +20,7 @@ export default function AuthLayout({ children }) {
           <img
             src="/FortiBank%20LogoO.png"
             alt="FortiBank Logo"
-            className="w-full max-w-[200px] h-auto object-contain"
+            className="w-full max-w-[200px] h-auto object-contain dark:brightness-0 dark:invert"
           />
         </div>
 

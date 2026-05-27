@@ -4,16 +4,14 @@
 
 
 import { NextResponse } from 'next/server'
-import { getRouteUser } from '@/lib/supabaseRoute'
+import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
   const view = searchParams.get('view') // 'employee' or 'admin'
 
-  const { user, error: authError, supabase } = await getRouteUser(request)
-  if (authError || !user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const { user, supabase, networkError } = await getRouteUser(request)
+  if (!user) return unauthorizedResponse(networkError)
 
   // Employee view - their own phishing results
   const { data: targets, error } = await supabase

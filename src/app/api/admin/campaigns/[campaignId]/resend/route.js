@@ -4,13 +4,13 @@
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { sendPhishingEmail } from '@/lib/email'
-import { getRouteUser } from '@/lib/supabaseRoute'
+import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 
 const isDev = process.env.NODE_ENV === 'development'
 
 async function verifyAdmin(request) {
-  const { user } = await getRouteUser(request)
-  if (!user) return null
+  const { user, networkError } = await getRouteUser(request)
+  if (!user) return networkError ? unauthorizedResponse(true) : null
   const { data: roleData } = await supabaseAdmin
     .from('user_roles').select('roles(name)').eq('user_id', user.id).single()
   if (roleData?.roles?.name !== 'system_admin') return null
@@ -19,6 +19,7 @@ async function verifyAdmin(request) {
 
 export async function POST(request, { params }) {
   const admin = await verifyAdmin(request)
+  if (admin instanceof Response) return admin
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { campaignId } = await params

@@ -4,15 +4,13 @@
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
-import { getRouteUser } from '@/lib/supabaseRoute'
+import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 
 const PAGE_SIZE = 20
 
 export async function GET(request) {
-  const { user, error: authError, supabase } = await getRouteUser(request)
-  if (authError || !user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const { user, supabase, networkError } = await getRouteUser(request)
+  if (!user) return unauthorizedResponse(networkError)
 
   const { searchParams } = new URL(request.url)
   const filter = searchParams.get('filter') || 'all'  // all | unread | read
@@ -45,10 +43,8 @@ export async function GET(request) {
 
 export async function POST(request) {
   // Internal: only system_admin may POST notifications via the API
-  const { user, error: authError } = await getRouteUser(request)
-  if (authError || !user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const { user, networkError } = await getRouteUser(request)
+  if (!user) return unauthorizedResponse(networkError)
 
   const { data: roleData } = await supabaseAdmin
     .from('user_roles').select('roles(name)').eq('user_id', user.id).single()

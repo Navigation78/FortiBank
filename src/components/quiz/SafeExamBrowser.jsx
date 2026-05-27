@@ -109,11 +109,11 @@ export default function SafeExamBrowser({ children, onForceSubmit }) {
 
           <ul className="space-y-3">
             {[
-              ['The exam will run in fullscreen — do not exit.', 'text-th-txt2'],
+              ['The exam will run in fullscreen. Do not exit.', 'text-th-txt2'],
               ['Switching tabs or windows counts as a violation.', 'text-th-txt2'],
               ['Right-click and browser shortcuts are disabled.', 'text-th-txt2'],
               [`${MAX_VIOLATIONS} violations will auto-submit your exam.`, 'text-amber-600 dark:text-amber-300'],
-              ['Pass mark: 80% — you have 3 attempts before the module resets.', 'text-th-txt2'],
+              ['Pass mark: 80%. You have 3 attempts before the module resets.', 'text-th-txt2'],
             ].map(([text, color], i) => (
               <li key={i} className="flex items-start gap-3">
                 <span className={`w-5 h-5 rounded-full bg-th-hov text-xs flex items-center justify-center flex-shrink-0 mt-0.5 ${color}`}>

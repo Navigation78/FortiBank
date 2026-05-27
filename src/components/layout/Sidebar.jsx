@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useTheme } from 'next-themes'
@@ -41,7 +41,9 @@ const NAV_ITEMS = [
 
 function SidebarInner({ collapsed, onToggle, navItems, isActive, onCloseMobile, search = '' }) {
   const { theme, setTheme } = useTheme()
-  const isDark = theme === 'dark'
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  const isDark = mounted && theme === 'dark'
 
   const filtered = search.trim()
     ? navItems.filter(item => item.label.toLowerCase().includes(search.toLowerCase()))
@@ -115,7 +117,7 @@ function SidebarInner({ collapsed, onToggle, navItems, isActive, onCloseMobile, 
                 onClick={() => setTheme(opt.value)}
                 title={`${opt.label} mode`}
                 className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition-all duration-150
-                  ${theme === opt.value
+                  ${mounted && theme === opt.value
                     ? 'bg-th-srf text-th-txt shadow-sm dark:shadow-black/30'
                     : 'text-th-muted hover:text-th-txt2'
                   }`}

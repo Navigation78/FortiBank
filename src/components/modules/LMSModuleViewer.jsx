@@ -7,7 +7,7 @@ import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import {
   ArrowLeft, ChevronDown, ChevronRight, Check, Lock,
-  Loader2, Target, BookOpen, AlertCircle,
+  Loader2, Target, BookOpen, AlertCircle, Maximize2, Minimize2,
 } from 'lucide-react'
 import VideoPlayer from '@/components/modules/VideoPlayer'
 import QuizTimer from '@/components/quiz/QuizTimer'
@@ -811,8 +811,15 @@ export default function LMSModuleViewer({ module, nextModule }) {
   const [kcComplete, setKcComplete]     = useState(() => new Set())
   const [moduleComplete, setModuleComplete] = useState(module.progress?.status === 'completed')
   const [sidebarOpen, setSidebarOpen]   = useState(true)
+  const [isFullscreen, setIsFullscreen] = useState(false)
   const mainRef = useRef(null)
   const touchStartX = useRef(null)
+
+  useEffect(() => {
+    function onKey(e) { if (e.key === 'Escape' && isFullscreen) setIsFullscreen(false) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [isFullscreen])
 
   useEffect(() => {
     if (module.progress?.status === 'not_started') startModule(module.id)
@@ -901,10 +908,10 @@ export default function LMSModuleViewer({ module, nextModule }) {
   }
 
   return (
-    <div className="flex min-h-full bg-th-bg">
+    <div className={`flex bg-th-bg ${isFullscreen ? 'fixed inset-0 z-50' : 'min-h-full'}`}>
 
       {/* Sidebar */}
-      {sidebarOpen && (
+      {sidebarOpen && !isFullscreen && (
         <Sidebar
           topics={topics}
           pages={pages}
@@ -922,15 +929,17 @@ export default function LMSModuleViewer({ module, nextModule }) {
 
         {/* Topbar */}
         <div className="flex items-center gap-3 px-5 py-3 border-b border-th-brd bg-th-bar sticky top-0 z-10 flex-shrink-0">
-          <button
-            onClick={() => setSidebarOpen(v => !v)}
-            className="p-1.5 rounded text-th-muted hover:text-th-txt hover:bg-th-hov transition-colors flex-shrink-0"
-            title={sidebarOpen ? 'Hide outline' : 'Show outline'}
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
-            </svg>
-          </button>
+          {!isFullscreen && (
+            <button
+              onClick={() => setSidebarOpen(v => !v)}
+              className="p-1.5 rounded text-th-muted hover:text-th-txt hover:bg-th-hov transition-colors flex-shrink-0"
+              title={sidebarOpen ? 'Hide outline' : 'Show outline'}
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
+              </svg>
+            </button>
+          )}
           <span className="flex-1 text-th-txt text-sm font-medium truncate">{module.title}</span>
           <div className="flex items-center gap-2.5 flex-shrink-0">
             <span className="text-th-muted text-xs tabular-nums hidden sm:block">{pageIdx + 1}/{pages.length}</span>
@@ -941,6 +950,13 @@ export default function LMSModuleViewer({ module, nextModule }) {
                 style={{ width: `${overallPct}%` }}
               />
             </div>
+            <button
+              onClick={() => setIsFullscreen(v => !v)}
+              className="p-1.5 rounded text-th-muted hover:text-th-txt hover:bg-th-hov transition-colors flex-shrink-0"
+              title={isFullscreen ? 'Exit fullscreen (Esc)' : 'Fullscreen'}
+            >
+              {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+            </button>
           </div>
         </div>
 

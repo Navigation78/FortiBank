@@ -220,16 +220,13 @@ function AdminTopbar({ toggleMobileSidebar, search, setSearch }) {
           <Icon path="M4 6h16M4 12h16M4 18h16" className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 bg-green-500 rounded flex items-center justify-center flex-shrink-0">
-            <Icon
-              path="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-              className="w-3 h-3 text-white"
-            />
-          </div>
+        <div className="flex items-center gap-3">
+          <img
+            src="/FortiBank%20LogoO.png"
+            alt="FortiBank"
+            className="max-w-[120px] max-h-8 w-auto object-contain flex-shrink-0"
+          />
           <div className="hidden sm:flex items-center gap-1.5 text-sm">
-            <span className="text-th-txt font-semibold">FortiBank</span>
-            <span className="text-th-muted">|</span>
             <span className="text-th-txt2">{firstName}</span>
             <span className="text-green-600 dark:text-green-400 text-[10px] tracking-widest uppercase ml-1 font-medium">Admin</span>
             {pageLabel && (
@@ -260,18 +257,22 @@ function AdminTopbar({ toggleMobileSidebar, search, setSearch }) {
         <NotificationBell inboxHref="/admin/notifications" />
 
         <div className="relative">
-          <button
+          <div
             onClick={() => setMenuOpen(!menuOpen)}
-            className="flex items-center gap-2 px-2 py-1.5 bg-th-hov hover:bg-th-act border border-th-brd rounded-lg transition-all duration-150"
+            className="flex items-center gap-1 cursor-pointer"
           >
-            <div className="w-6 h-6 rounded-full bg-green-500/20 border border-green-500/40 flex items-center justify-center flex-shrink-0">
-              <span className="text-green-600 dark:text-green-300 font-semibold text-xs">{userInitial}</span>
+            <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0">
+              <img
+                src={profile?.avatar_url || '/Placeholder%20avatar.jpg'}
+                alt="Avatar"
+                className="w-full h-full object-cover"
+              />
             </div>
             <Icon
               path="M19 9l-7 7-7-7"
-              className={`w-4 h-4 text-th-muted transition-transform duration-150 ${menuOpen ? 'rotate-180' : ''}`}
+              className={`w-3.5 h-3.5 text-th-muted transition-transform duration-150 ${menuOpen ? 'rotate-180' : ''}`}
             />
-          </button>
+          </div>
 
           {menuOpen && (
             <>

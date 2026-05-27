@@ -68,18 +68,11 @@ export default function LandingPage() {
 
       {/* NAV */}
       <nav className="flex items-center justify-between px-6 sm:px-12 py-4 border-b border-th-brd sticky top-0 bg-th-bar z-50 backdrop-blur-sm">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round"
-                d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-            </svg>
-          </div>
-          <div>
-            <div className="text-[15px] font-semibold text-th-txt leading-none">FortiBank</div>
-            <div className="text-[10px] text-blue-600 dark:text-blue-400 tracking-widest uppercase mt-1">Security Training</div>
-          </div>
-        </div>
+        <img
+          src="/FortiBank%20LogoO.png"
+          alt="FortiBank"
+          className="max-w-[140px] max-h-9 w-auto object-contain"
+        />
 
         <div className="flex items-center gap-3">
           {/* Theme toggle */}

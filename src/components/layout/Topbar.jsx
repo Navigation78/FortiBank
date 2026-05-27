@@ -114,14 +114,6 @@ export default function Topbar({ toggleSidebar, toggleMobileSidebar, search = ''
           </div>
         </div>
 
-        <Link
-          href="/risk-score"
-          className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-th-hov hover:bg-th-act border border-th-brd rounded-lg transition-all duration-150"
-        >
-          <div className="w-2 h-2 rounded-full bg-green-500" />
-          <span className="text-th-txt2 text-xs font-medium">Risk Score</span>
-        </Link>
-
         <NotificationBell inboxHref="/notifications" />
 
         <div className="relative">
@@ -129,13 +121,11 @@ export default function Topbar({ toggleSidebar, toggleMobileSidebar, search = ''
             onClick={() => setMenuOpen(!menuOpen)}
             className="flex items-center gap-1 cursor-pointer"
           >
-            <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0">
-              <img
-                src={profile?.avatar_url || '/avatar%20placeholder.jpg'}
-                alt="Avatar"
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <img
+              src={profile?.avatar_url || '/avatar%20placeholder.jpg'}
+              alt="Avatar"
+              className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-full object-cover flex-shrink-0"
+            />
             <Icon
               path="M19 9l-7 7-7-7"
               className={`w-3.5 h-3.5 text-th-muted transition-transform duration-150 ${menuOpen ? 'rotate-180' : ''}`}

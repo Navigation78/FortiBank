@@ -6,14 +6,12 @@
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { sendRiskAlertEmail } from '@/lib/email'
-import { getRouteUser } from '@/lib/supabaseRoute'
+import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 import { createNotification, NOTIFICATION_TYPES } from '@/lib/notificationService'
 
 export async function GET(request) {
-  const { user, error: authError, supabase } = await getRouteUser(request)
-  if (authError || !user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const { user, supabase, networkError } = await getRouteUser(request)
+  if (!user) return unauthorizedResponse(networkError)
 
   const { data, error } = await supabase
     .from('risk_scores')
@@ -31,10 +29,8 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const { user, error: authError } = await getRouteUser(request)
-  if (authError || !user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const { user, networkError } = await getRouteUser(request)
+  if (!user) return unauthorizedResponse(networkError)
 
   // Trigger recalculation via Postgres function
   const { data: newScore, error: calcError } = await supabaseAdmin

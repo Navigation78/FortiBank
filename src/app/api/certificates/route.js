@@ -8,12 +8,12 @@ import supabaseAdmin from '@/lib/supabaseAdmin'
 import { generateCertificatePDF } from '@/lib/pdfGenerator'
 import { uploadCertificate } from '@/lib/storage'
 import { sendCertificateEmail } from '@/lib/email'
-import { getRouteUser } from '@/lib/supabaseRoute'
+import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 import { createNotification, NOTIFICATION_TYPES } from '@/lib/notificationService'
 
 export async function GET(request) {
-  const { user, supabase } = await getRouteUser(request)
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const { user, supabase, networkError } = await getRouteUser(request)
+  if (!user) return unauthorizedResponse(networkError)
 
   const { data, error } = await supabase
     .from('certificates')
@@ -27,8 +27,8 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const { user } = await getRouteUser(request)
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const { user, networkError } = await getRouteUser(request)
+  if (!user) return unauthorizedResponse(networkError)
 
   // Get user profile and role
   const { data: profile } = await supabaseAdmin

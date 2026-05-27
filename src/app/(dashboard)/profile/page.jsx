@@ -108,17 +108,11 @@ export default function ProfilePage() {
                 className="relative w-16 h-16 rounded-xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 title="Click to change profile picture"
               >
-                {avatarUrl ? (
-                  <img
-                    src={avatarUrl}
-                    alt="Profile picture"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-blue-500/15 border border-blue-500/25 flex items-center justify-center">
-                    <span className="text-blue-600 dark:text-blue-400 text-2xl font-bold">{initial}</span>
-                  </div>
-                )}
+                <img
+                  src={avatarUrl || '/avatar%20placeholder.jpg'}
+                  alt="Profile picture"
+                  className="w-full h-full object-cover"
+                />
 
                 {/* Hover / loading overlay */}
                 <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-150 ${avatarLoading ? 'opacity-100 bg-black/60' : 'opacity-0 group-hover:opacity-100 bg-black/50'}`}>
@@ -136,9 +130,11 @@ export default function ProfilePage() {
                 </div>
               </button>
 
-              <span className="text-th-muted text-[10px] leading-tight text-center">
-                Click to upload
-              </span>
+              {!avatarUrl && (
+                <span className="text-th-muted text-[10px] leading-tight text-center">
+                  Click to upload
+                </span>
+              )}
 
               <input
                 ref={fileInputRef}

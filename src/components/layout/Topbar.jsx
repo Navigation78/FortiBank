@@ -60,40 +60,46 @@ export default function Topbar({ toggleSidebar, isCollapsed, toggleMobileSidebar
   }
 
   return (
-    <header className="h-73px bg-th-bar border-b border-th-brd flex items-center px-4 sticky top-0 z-30 shadow-sm shadow-black/5 dark:shadow-black/40">
-      {/* Left: Hamburger, Logo, name */}
-      <div className="flex items-center gap-4">
+    <header className="h-73px bg-th-bar border-b border-th-brd flex items-center sticky top-0 z-30 shadow-sm shadow-black/5 dark:shadow-black/40">
+
+      {/* Desktop logo column — width mirrors the sidebar so logo is centred directly above it */}
+      <div className={`hidden lg:flex items-center justify-center flex-shrink-0 h-full border-r border-th-brd transition-all duration-200 ${isCollapsed ? 'w-[60px]' : 'w-48'}`}>
+        <img
+          src="/FortiBank%20LogoO.png"
+          alt="FortiBank"
+          className="max-w-[110px] max-h-11 w-auto object-contain"
+        />
+      </div>
+
+      {/* Mobile: hamburger + logo */}
+      <div className="lg:hidden flex items-center gap-2 pl-3">
         <button
           onClick={handleSidebarToggle}
-          className="lg:hidden flex items-center justify-center text-th-txt2 hover:text-th-txt transition-all duration-150 p-1 rounded-lg hover:bg-th-hov"
+          className="flex items-center justify-center text-th-txt2 hover:text-th-txt transition-all duration-150 p-1 rounded-lg hover:bg-th-hov"
           aria-label="Toggle sidebar"
         >
           <Icon path="M4 6h16M4 12h16M4 18h16" className="w-5 h-5" />
         </button>
+        <img
+          src="/FortiBank%20LogoO.png"
+          alt="FortiBank"
+          className="max-w-[100px] max-h-7 w-auto object-contain"
+        />
+      </div>
 
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 bg-blue-500 rounded flex items-center justify-center flex-shrink-0">
-            <Icon
-              path="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-              className="w-3 h-3 text-white"
-            />
-          </div>
-          <div className="hidden sm:flex items-center gap-1.5 text-sm">
-            <span className="text-th-txt font-semibold">FortiBank</span>
+      {/* Username + page breadcrumb — sits right of the logo column */}
+      <div className="hidden sm:flex items-center gap-1.5 text-sm px-4">
+        <span className="text-th-txt2">{firstName}</span>
+        {pageLabel && (
+          <>
             <span className="text-th-muted">|</span>
-            <span className="text-th-txt2">{firstName}</span>
-            {pageLabel && (
-              <>
-                <span className="text-th-muted">|</span>
-                <span className="text-th-txt font-semibold">{pageLabel}</span>
-              </>
-            )}
-          </div>
-        </div>
+            <span className="text-th-txt font-semibold">{pageLabel}</span>
+          </>
+        )}
       </div>
 
       {/* Right: Search + Risk score + profile */}
-      <div className="ml-auto flex items-center gap-3">
+      <div className="ml-auto flex items-center gap-3 pr-4">
         {/* Search bar */}
         <div className="hidden sm:flex relative items-center w-48">
           <input
@@ -119,18 +125,22 @@ export default function Topbar({ toggleSidebar, isCollapsed, toggleMobileSidebar
         <NotificationBell inboxHref="/notifications" />
 
         <div className="relative">
-          <button
+          <div
             onClick={() => setMenuOpen(!menuOpen)}
-            className="flex items-center gap-2 px-2 py-1.5 bg-th-hov hover:bg-th-act border border-th-brd rounded-lg transition-all duration-150"
+            className="flex items-center gap-1 cursor-pointer"
           >
-            <div className="w-6 h-6 rounded-full bg-blue-500/20 border border-blue-500/40 flex items-center justify-center flex-shrink-0">
-              <span className="text-blue-600 dark:text-blue-300 font-semibold text-xs">{userInitial}</span>
+            <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0">
+              <img
+                src={profile?.avatar_url || '/avatar%20placeholder.jpg'}
+                alt="Avatar"
+                className="w-full h-full object-cover"
+              />
             </div>
             <Icon
               path="M19 9l-7 7-7-7"
-              className={`w-4 h-4 text-th-muted transition-transform duration-150 ${menuOpen ? 'rotate-180' : ''}`}
+              className={`w-3.5 h-3.5 text-th-muted transition-transform duration-150 ${menuOpen ? 'rotate-180' : ''}`}
             />
-          </button>
+          </div>
 
           {menuOpen && (
             <>

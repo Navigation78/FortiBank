@@ -8,9 +8,10 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata = {
   title: 'FortiBank | Systems Security Training',
   description: 'Role-based cybersecurity awareness training for FortiBank employees.',
-  icons: {
-    icon: '/FortiBank%20Favicon1%20transparent.png',
-  },
+  icons: [
+    { rel: 'icon', url: '/FortiBank%20Favicon1%20transparent.png', media: '(prefers-color-scheme: light)' },
+    { rel: 'icon', url: '/FortiBank%20Favicon1.PNG',               media: '(prefers-color-scheme: dark)'  },
+  ],
 }
 
 export default function RootLayout({ children }) {

@@ -56,6 +56,28 @@ const STEPS = [
   { n: '4', t: 'Compliance confirmed', d: 'Risk scores update, certificates are issued, and compliance reports are ready for CBK audit.' },
 ]
 
+const TESTIMONIALS = [
+  {
+    quote: 'FortiBank LMS transformed how we handle security awareness. Our phishing click rates dropped 60% within three months of deploying the platform.',
+    name: 'Amara Osei',
+    role: 'Head of IT Security, KCB',
+    img: 'https://images.unsplash.com/photo-1611432579402-7037e3e2c1e4?auto=format&fit=crop&w=200&q=80',
+  },
+  {
+    quote: 'The role-based modules are exactly what we needed. Tellers and managers now get training that is actually relevant to their daily risk exposure.',
+    name: 'Kwame Muthoni',
+    role: 'Compliance Manager, Equity Bank',
+    img: 'https://images.unsplash.com/photo-1679117349740-c46c819d0373?auto=format&fit=crop&w=200&q=80',
+  },
+  {
+    quote: 'Audit season used to be stressful. Now we export a compliance report in seconds — every certificate is verified, dated, and CBK-ready.',
+    name: 'Fatuma Njoroge',
+    role: 'Branch Manager, Standard Chartered',
+    img: 'https://images.unsplash.com/photo-1612115958726-9af4b6bd28d1?auto=format&fit=crop&w=200&q=80',
+  },
+]
+
+
 export default function LandingPage() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -75,7 +97,6 @@ export default function LandingPage() {
         />
 
         <div className="flex items-center gap-3">
-          {/* Theme toggle */}
           {mounted && (
             <button
               onClick={() => setTheme(isDark ? 'light' : 'dark')}
@@ -150,17 +171,11 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-th-brd rounded-2xl overflow-hidden border border-th-brd">
             {FEATURES.map((f, i) => {
-              const color = isDark ? f.colorDark : f.colorLight
-              const bg    = isDark ? f.bgDark    : f.bgLight
+              const color = mounted && isDark ? f.colorDark : f.colorLight
+              const bg    = mounted && isDark ? f.bgDark    : f.bgLight
               return (
-                <div
-                  key={i}
-                  className="bg-th-srf p-7 hover:bg-th-hov transition-colors duration-150"
-                >
-                  <div
-                    className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
-                    style={{ background: bg }}
-                  >
+                <div key={i} className="bg-th-srf p-7 hover:bg-th-hov transition-colors duration-150">
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-5" style={{ background: bg }}>
                     <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke={color} strokeWidth={1.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d={f.icon} />
                     </svg>
@@ -170,6 +185,43 @@ export default function LandingPage() {
                 </div>
               )
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section className="px-6 sm:px-12 py-20 border-t border-th-brds">
+        <div className="max-w-[1100px] mx-auto">
+          <div className="text-xs text-blue-600 dark:text-blue-400 tracking-widest uppercase mb-3 font-medium">
+            Trusted by Kenyan banks
+          </div>
+          <h2 className="text-[clamp(28px,3vw,36px)] font-semibold text-th-txt mb-12 tracking-tight">
+            What security leaders say
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {TESTIMONIALS.map((t, i) => (
+              <div key={i} className="bg-th-srf border border-th-brd rounded-2xl p-6 flex flex-col">
+                <div className="flex gap-0.5 mb-4">
+                  {[...Array(5)].map((_, j) => (
+                    <svg key={j} width="13" height="13" viewBox="0 0 24 24" fill="#f59e0b">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-sm text-th-txt2 leading-relaxed flex-1 mb-5">"{t.quote}"</p>
+                <div className="flex items-center gap-3 pt-4 border-t border-th-brds">
+                  <img
+                    src={t.img}
+                    alt={t.name}
+                    className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                  />
+                  <div>
+                    <div className="text-sm font-medium text-th-txt">{t.name}</div>
+                    <div className="text-xs text-th-muted">{t.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -188,7 +240,6 @@ export default function LandingPage() {
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative">
-            {/* Connector line */}
             <div className="absolute hidden lg:block top-[27px] left-[12.5%] right-[12.5%] h-px bg-blue-200 dark:bg-blue-500/20" />
             {STEPS.map((step, i) => (
               <div key={i} className="text-center relative z-10">

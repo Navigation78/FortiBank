@@ -27,7 +27,7 @@ export default function StatsCard({
   return (
     <div className="bg-th-srf border border-th-brd rounded-xl p-5 flex items-center gap-4 shadow-sm shadow-black/5 dark:shadow-black/30 transition-all duration-150 hover:shadow-md hover:shadow-black/5 dark:hover:shadow-black/40 hover:-translate-y-0.5">
       {icon && (
-        <div className={`flex-shrink-0 w-11 h-11 ${c.bg} border ${c.border} rounded-xl flex items-center justify-center`}>
+        <div className="flex-shrink-0">
           {renderIcon()}
         </div>
       )}

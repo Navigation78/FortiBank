@@ -30,7 +30,7 @@ function Icon({ path, className = 'w-5 h-5' }) {
 const SEARCH_ICON = 'M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z'
 
 export default function Topbar({ toggleSidebar, toggleMobileSidebar, search = '', setSearch }) {
-  const { profile, signOut } = useAuth()
+  const { profile, user, signOut } = useAuth()
   const { role } = useRole()
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -64,11 +64,8 @@ export default function Topbar({ toggleSidebar, toggleMobileSidebar, search = ''
 
       {/* Desktop logo column — width mirrors the sidebar so logo is centred directly above it */}
       <div className="hidden lg:flex items-center justify-center flex-shrink-0 h-full border-r border-th-brd w-48">
-        <img
-          src="/FortiBank%20LogoO.png"
-          alt="FortiBank"
-          className="max-w-[110px] max-h-11 w-auto object-contain dark:brightness-0 dark:invert"
-        />
+        <img src="/FortiBank%20LogoO.png" alt="FortiBank" className="max-w-[110px] max-h-13hy w-auto object-contain dark:hidden" />
+        <img src="/FortiBank%20Logo%20darkmode%20clean.png" alt="FortiBank" className="max-w-[110px] max-h-11 w-auto object-contain hidden dark:block" />
       </div>
 
       {/* Mobile: hamburger + logo */}
@@ -80,11 +77,8 @@ export default function Topbar({ toggleSidebar, toggleMobileSidebar, search = ''
         >
           <Icon path="M4 6h16M4 12h16M4 18h16" className="w-5 h-5" />
         </button>
-        <img
-          src="/FortiBank%20LogoO.png"
-          alt="FortiBank"
-          className="max-w-[100px] max-h-7 w-auto object-contain dark:brightness-0 dark:invert"
-        />
+        <img src="/FortiBank%20LogoO.png" alt="FortiBank" className="max-w-[100px] max-h-7 w-auto object-contain dark:hidden" />
+        <img src="/FortiBank%20Logo%20darkmode%20clean.png" alt="FortiBank" className="max-w-[100px] max-h-7 w-auto object-contain hidden dark:block" />
       </div>
 
       {/* Username + page breadcrumb — sits right of the logo column */}
@@ -122,7 +116,7 @@ export default function Topbar({ toggleSidebar, toggleMobileSidebar, search = ''
             className="flex items-center gap-1 cursor-pointer"
           >
             <img
-              src={profile?.avatar_url || '/avatar%20placeholder.jpg'}
+              src={profile?.avatar_url || user?.user_metadata?.avatar_url || '/avatar%20placeholder.jpg'}
               alt="Avatar"
               className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-full object-cover flex-shrink-0"
             />

@@ -45,5 +45,11 @@ export async function POST(request) {
   // Bust CDN cache by appending a timestamp query param
   const publicUrl = `${urlData.publicUrl}?t=${Date.now()}`
 
+  // Persist avatar URL to the users table so all UI reads (topbar, profile, etc.) see it
+  await supabaseAdmin
+    .from('users')
+    .update({ avatar_url: publicUrl })
+    .eq('id', user.id)
+
   return NextResponse.json({ url: publicUrl })
 }

@@ -17,11 +17,8 @@ export default function AuthLayout({ children }) {
       <div className="relative w-full max-w-md">
         {/* Logo */}
         <div className="flex items-center justify-center mb-10">
-          <img
-            src="/FortiBank%20LogoO.png"
-            alt="FortiBank Logo"
-            className="w-full max-w-[200px] h-auto object-contain dark:brightness-0 dark:invert"
-          />
+          <img src="/FortiBank%20LogoO.png" alt="FortiBank Logo" className="w-full max-w-[200px] h-auto object-contain dark:hidden" />
+          <img src="/FortiBank%20Logo%20darkmode%20clean.png" alt="FortiBank Logo" className="w-full max-w-[200px] h-auto object-contain hidden dark:block" />
         </div>
 
         {children}

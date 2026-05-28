@@ -90,11 +90,8 @@ export default function LandingPage() {
 
       {/* NAV */}
       <nav className="flex items-center justify-between px-6 sm:px-12 py-4 border-b border-th-brd sticky top-0 bg-th-bar z-50 backdrop-blur-sm">
-        <img
-          src="/FortiBank%20LogoO.png"
-          alt="FortiBank"
-          className="max-w-[140px] max-h-9 w-auto object-contain dark:brightness-0 dark:invert"
-        />
+        <img src="/FortiBank%20LogoO.png" alt="FortiBank" className="max-w-[140px] max-h-9 w-auto object-contain dark:hidden" />
+        <img src="/FortiBank%20Logo%20darkmode%20clean.png" alt="FortiBank" className="max-w-[140px] max-h-9 w-auto object-contain hidden dark:block" />
 
         <div className="flex items-center gap-3">
           {mounted && (

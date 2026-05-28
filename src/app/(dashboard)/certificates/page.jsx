@@ -82,13 +82,13 @@ export default function CertificatesPage() {
         {/* Progress summary */}
         <div className="grid grid-cols-3 gap-4 mb-8">
           {[
-            { label: 'Modules Completed', value: `${stats.completed}/${stats.total}`, Icon: BookOpen },
-            { label: 'Certificates Earned', value: certificates.length, Icon: Medal },
-            { label: 'Status', value: stats.completed === stats.total && stats.total > 0 ? 'Eligible!' : 'In Progress', Icon: BarChart3 },
+            { label: 'Modules Completed', value: `${stats.completed}/${stats.total}`, Icon: BookOpen, iconClass: 'text-blue-500 dark:text-blue-400' },
+            { label: 'Certificates Earned', value: certificates.length, Icon: Medal, iconClass: 'text-yellow-500 dark:text-yellow-400' },
+            { label: 'Status', value: stats.completed === stats.total && stats.total > 0 ? 'Eligible!' : 'In Progress', Icon: BarChart3, iconClass: 'text-purple-500 dark:text-purple-400' },
           ].map((s, i) => (
             <div key={i} className="bg-th-srf border border-th-brd rounded-xl p-4 text-center">
               <div className="flex justify-center mb-1">
-                <s.Icon className="w-6 h-6 text-th-muted" />
+                <s.Icon className={`w-6 h-6 ${s.iconClass}`} />
               </div>
               <p className="text-th-txt font-bold text-lg">{s.value}</p>
               <p className="text-th-muted text-xs">{s.label}</p>

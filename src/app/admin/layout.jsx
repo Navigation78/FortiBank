@@ -221,11 +221,8 @@ function AdminTopbar({ toggleMobileSidebar, search, setSearch }) {
         </button>
 
         <div className="flex items-center gap-3">
-          <img
-            src="/FortiBank%20LogoO.png"
-            alt="FortiBank"
-            className="max-w-[120px] max-h-8 w-auto object-contain flex-shrink-0 dark:brightness-0 dark:invert"
-          />
+          <img src="/FortiBank%20LogoO.png" alt="FortiBank" className="max-w-[120px] max-h-8 w-auto object-contain flex-shrink-0 dark:hidden" />
+          <img src="/FortiBank%20Logo%20darkmode%20clean.png" alt="FortiBank" className="max-w-[120px] max-h-8 w-auto object-contain flex-shrink-0 hidden dark:block" />
           <div className="hidden sm:flex items-center gap-1.5 text-sm">
             <span className="text-th-txt2">{firstName}</span>
             <span className="text-green-600 dark:text-green-400 text-[10px] tracking-widest uppercase ml-1 font-medium">Admin</span>

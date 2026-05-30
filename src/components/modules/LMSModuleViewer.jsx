@@ -269,7 +269,24 @@ function ContentRenderer({ section }) {
   if (!section) return null
   const { content_type, content_url, content_body, image_caption } = section
 
-  if (content_type === 'video') return <VideoPlayer url={content_url} title={section.title} />
+  if (content_type === 'video') return (
+    <div className="rounded-lg overflow-hidden border border-th-brd bg-th-srf">
+      <div className="flex items-center gap-2.5 px-4 py-2.5 bg-th-hov border-b border-th-brd">
+        <span className="text-[10px] font-semibold uppercase tracking-widest text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded-full flex-shrink-0">
+          Video
+        </span>
+        {section.title && (
+          <span className="text-th-txt2 text-xs font-medium truncate">{section.title}</span>
+        )}
+      </div>
+      <VideoPlayer url={content_url} title={section.title} />
+      {image_caption && (
+        <div className="px-4 py-2.5 border-t border-th-brd">
+          <p className="text-th-muted text-xs italic">{image_caption}</p>
+        </div>
+      )}
+    </div>
+  )
 
   if (content_type === 'pdf') return (
     <div className="space-y-3">
@@ -283,11 +300,21 @@ function ContentRenderer({ section }) {
   )
 
   if (content_type === 'image') return (
-    <figure className="space-y-2">
-      <div className="rounded-lg overflow-hidden border border-th-brd bg-th-hov flex items-center justify-center">
-        <img src={content_url} alt={section.title} className="max-w-full object-contain" style={{ maxHeight: 480 }} />
+    <figure className="rounded-lg overflow-hidden border border-th-brd bg-th-srf">
+      <div className="bg-th-hov flex items-center justify-center p-6 min-h-28">
+        <img
+          src={content_url}
+          alt={section.title}
+          className="max-w-full object-contain rounded"
+          style={{ maxHeight: 460 }}
+        />
       </div>
-      {image_caption && <figcaption className="text-th-muted text-xs text-center italic">{image_caption}</figcaption>}
+      {(image_caption || section.title) && (
+        <figcaption className="flex items-center gap-2 px-4 py-2.5 border-t border-th-brd">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-th-muted flex-shrink-0">Figure</span>
+          <span className="text-th-muted text-xs italic">{image_caption || section.title}</span>
+        </figcaption>
+      )}
     </figure>
   )
 
@@ -299,7 +326,7 @@ function ContentRenderer({ section }) {
 
   if (content_type === 'text') return (
     <div
-      className="prose prose-sm max-w-none text-th-txt2 leading-relaxed dark:prose-invert prose-headings:text-th-txt prose-headings:font-semibold prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-strong:text-th-txt prose-code:bg-th-hov prose-code:text-blue-600 dark:prose-code:text-blue-300 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-ul:text-th-txt2 prose-ol:text-th-txt2 prose-blockquote:border-l-th-brds prose-blockquote:text-th-muted"
+      className="lms-content"
       dangerouslySetInnerHTML={{ __html: content_body }}
     />
   )
@@ -309,26 +336,52 @@ function ContentRenderer({ section }) {
 
 // ─── Subtopic quiz (3 embedded MCQs) ─────────────────────────────────────────
 
-function SubtopicQuizPanel({ questions, onComplete }) {
+function SubtopicQuizPanel({ questions, onComplete, moduleId, contentId, sectionNumber, contentTitle }) {
   const [answers, setAnswers]   = useState({})
+  const answersRef              = useRef({})
   const [revealed, setRevealed] = useState(false)
   const [done, setDone]         = useState(false)
 
-  if (!questions?.length) {
-    useEffect(() => { onComplete() }, [])
-    return null
-  }
+  useEffect(() => {
+    if (!questions?.length) onComplete()
+  }, [])
+
+  if (!questions?.length) return null
 
   const allAnswered = questions.every(q => answers[q.id] !== undefined)
 
   function select(qId, optId) {
     if (revealed) return
-    setAnswers(prev => ({ ...prev, [qId]: optId }))
+    const next = { ...answersRef.current, [qId]: optId }
+    answersRef.current = next
+    setAnswers(next)
   }
 
   function submit() {
     setRevealed(true)
     setDone(true)
+
+    // Use ref to guarantee the latest answers, avoiding any stale closure
+    if (moduleId) {
+      const latest = answersRef.current
+      const correctCount = questions.filter(q => {
+        const correctOpt = q.options?.find(o => o.correct)
+        return correctOpt && latest[q.id] === correctOpt.id
+      }).length
+      fetch('/api/quiz/submit-kc', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          module_id:      moduleId,
+          content_id:     contentId     || null,
+          section_number: sectionNumber || null,
+          content_title:  contentTitle  || null,
+          correct_count:  correctCount,
+          total_count:    questions.length,
+        }),
+      }).catch(() => {})
+    }
+
     onComplete()
   }
 
@@ -975,37 +1028,44 @@ export default function LMSModuleViewer({ module, nextModule }) {
               return (
                 <>
                   <div className="mb-8">
-                    <div className="flex items-center gap-2 mb-3">
-                      {sec.section_number && (
-                        <span className="font-mono text-xs text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 rounded">
-                          {sec.section_number}
-                        </span>
-                      )}
+                    <div className="flex items-center gap-2 flex-wrap mb-3">
+                      <span className="text-th-muted text-xs">{currentPage.topicNumber} · {currentPage.topicTitle}</span>
                       {currentPage.type === 'topic_header' && (
-                        <span className="text-[11px] text-th-muted border border-th-brd px-2 py-0.5 rounded">
+                        <span className="text-[10px] font-semibold uppercase tracking-widest text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full ml-auto">
                           Topic Overview
                         </span>
                       )}
                     </div>
-                    <h1 className="text-2xl font-bold text-th-txt leading-tight">{sec.title}</h1>
-                    <p className="text-th-muted text-sm mt-1">{currentPage.topicNumber} · {currentPage.topicTitle}</p>
+                    <div className="flex items-center gap-2.5 mb-1">
+                      {sec.section_number && (
+                        <span className="font-mono text-[11px] text-blue-500 bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 rounded flex-shrink-0">
+                          {sec.section_number}
+                        </span>
+                      )}
+                      <p className="text-lg font-bold text-th-txt leading-tight">{sec.title}</p>
+                    </div>
+                    <div className="w-10 h-0.5 bg-blue-500 rounded-full mt-3" />
                   </div>
 
                   {currentPage.type === 'topic_header' && currentPage.topicObjectives?.length > 0 && (
-                    <div className="mb-8 border border-th-brd rounded-lg p-5">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Target className="w-3.5 h-3.5 text-th-muted" />
-                        <span className="text-th-muted text-xs font-semibold uppercase tracking-widest">Learning Objectives</span>
+                    <div className="mb-8 rounded-lg border border-th-brd bg-th-srf overflow-hidden">
+                      <div className="flex items-center gap-2.5 px-4 py-3 bg-th-hov border-b border-th-brd">
+                        <Target className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
+                        <span className="text-xs font-semibold uppercase tracking-widest text-th-txt">Learning Objectives</span>
                       </div>
-                      <p className="text-th-muted text-sm mb-3">After completing this topic you will be able to:</p>
-                      <ul className="space-y-2">
-                        {currentPage.topicObjectives.map((obj, i) => (
-                          <li key={i} className="flex items-start gap-2.5 text-sm text-th-txt2">
-                            <span className="text-th-muted mt-0.5 flex-shrink-0">→</span>
-                            <span>{obj}</span>
-                          </li>
-                        ))}
-                      </ul>
+                      <div className="px-5 py-4">
+                        <p className="text-th-muted text-xs mb-3.5">After completing this topic you will be able to:</p>
+                        <ul className="space-y-2.5">
+                          {currentPage.topicObjectives.map((obj, i) => (
+                            <li key={i} className="flex items-start gap-3 text-sm text-th-txt2">
+                              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mt-0.5">
+                                <span className="text-blue-500 font-bold" style={{ fontSize: '0.625rem' }}>{i + 1}</span>
+                              </span>
+                              <span className="leading-relaxed">{obj}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
                   )}
 
@@ -1031,21 +1091,26 @@ export default function LMSModuleViewer({ module, nextModule }) {
               return (
                 <>
                   <div className="mb-6">
-                    <div className="flex items-center gap-2 mb-2">
+                    <p className="text-th-muted text-xs mb-3">{currentPage.topicNumber} · {currentPage.topicTitle}</p>
+                    <div className="flex items-center gap-2.5 mb-1">
                       {currentPage.section.section_number && (
-                        <span className="font-mono text-xs text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 rounded">
+                        <span className="font-mono text-[11px] text-blue-500 bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 rounded flex-shrink-0">
                           {currentPage.section.section_number}
                         </span>
                       )}
+                      <p className="text-lg font-bold text-th-txt">{currentPage.section.title || 'Knowledge Check'}</p>
                     </div>
-                    <h1 className="text-2xl font-bold text-th-txt">{currentPage.section.title || 'Knowledge Check'}</h1>
-                    <p className="text-th-muted text-sm mt-1">{currentPage.topicNumber} · {currentPage.topicTitle}</p>
+                    <div className="w-10 h-0.5 bg-blue-500 rounded-full mt-3" />
                   </div>
 
                   <SubtopicQuizPanel
                     key={`kc-${pageIdx}`}
                     questions={questions}
                     onComplete={onKcComplete}
+                    moduleId={module.id}
+                    contentId={currentPage.section.id}
+                    sectionNumber={currentPage.section.section_number}
+                    contentTitle={currentPage.section.title}
                   />
 
                   <div className="flex items-center justify-between gap-3 mt-10 pt-6 border-t border-th-brd">
@@ -1069,11 +1134,12 @@ export default function LMSModuleViewer({ module, nextModule }) {
             {currentPage.type === 'checkpoint' && (
               <>
                 <div className="mb-8">
-                  <p className="text-th-muted text-xs font-semibold uppercase tracking-widest mb-2">Topic Checkpoint</p>
-                  <h1 className="text-2xl font-bold text-th-txt">
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-th-muted bg-th-hov border border-th-brd px-2.5 py-1 rounded-full">Topic Checkpoint</span>
+                  <p className="text-lg font-bold text-th-txt mt-3 mb-1">
                     {currentPage.topicNumber} · {currentPage.topicTitle}
-                  </h1>
-                  <p className="text-th-muted text-sm mt-2">
+                  </p>
+                  <div className="w-10 h-0.5 bg-blue-500 rounded-full mb-3" />
+                  <p className="text-th-muted text-sm">
                     Complete this checkpoint to unlock the next topic. You must achieve the passing score to continue.
                   </p>
                 </div>
@@ -1103,9 +1169,10 @@ export default function LMSModuleViewer({ module, nextModule }) {
             {currentPage.type === 'final_exam' && (
               <>
                 <div className="mb-8">
-                  <p className="text-th-muted text-xs font-semibold uppercase tracking-widest mb-2">Final Exam</p>
-                  <h1 className="text-2xl font-bold text-th-txt">{module.title}</h1>
-                  <p className="text-th-muted text-sm mt-2">
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-th-muted bg-th-hov border border-th-brd px-2.5 py-1 rounded-full">Final Exam</span>
+                  <p className="text-lg font-bold text-th-txt mt-3 mb-1">{module.title}</p>
+                  <div className="w-10 h-0.5 bg-blue-500 rounded-full mb-3" />
+                  <p className="text-th-muted text-sm">
                     This exam covers all topics in the module. You must pass to earn your completion certificate.
                   </p>
                 </div>

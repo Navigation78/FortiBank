@@ -163,7 +163,7 @@ export async function POST(request) {
       ? `You scored ${scorePct}% — well done! You have passed this quiz.`
       : `You scored ${scorePct}%. The passing score is ${quiz.pass_score}%.${attemptNumber < quiz.max_attempts ? ' You may retake the quiz.' : ' No more attempts remaining.'}`,
     type:    NOTIFICATION_TYPES.QUIZ,
-    link:    `/modules`,
+    link:    `/modules/${quiz.module_id}`,
   })
 
   // 9. Return results with correct answers revealed

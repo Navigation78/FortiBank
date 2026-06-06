@@ -68,7 +68,7 @@ const STEPS = [
     n: '01',
     icon: 'M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z',
     title: 'Role Assignment',
-    desc: 'Admin invites employees by email and assigns their banking role. No self-signup — full access control from day one.',
+    desc: 'Admin invites employees by email and assigns their banking role. No self-signup, so you have full access control from day one.',
   },
   {
     n: '02',
@@ -96,7 +96,7 @@ const TESTIMONIALS = [
     img: 'https://images.unsplash.com/photo-1679117349740-c46c819d0373?auto=format&fit=crop&w=200&q=80',
   },
   {
-    quote: 'Audit season used to be stressful. Now we export a compliance report in seconds — every certificate is CBK-ready.',
+    quote: 'Audit season used to be stressful. Now we export a compliance report in seconds. Every certificate is CBK-ready.',
     name: 'Fatuma Njoroge', role: 'Branch Manager, Standard Chartered',
     img: 'https://images.unsplash.com/photo-1612115958726-9af4b6bd28d1?auto=format&fit=crop&w=200&q=80',
   },
@@ -106,7 +106,7 @@ const TESTIMONIALS = [
     img: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80',
   },
   {
-    quote: 'Certificate generation for CBK audits used to take days. FortiBank does it instantly — verified and downloadable.',
+    quote: 'Certificate generation for CBK audits used to take days. FortiBank does it instantly. Verified and downloadable.',
     name: 'Grace Wanjiku', role: 'IT Manager, NCBA Bank',
     img: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80',
   },
@@ -135,13 +135,13 @@ export default function LandingPage() {
     <div className="min-h-screen w-full bg-th-bg text-th-txt overflow-x-hidden" style={{ fontFamily: 'system-ui, sans-serif' }}>
 
       {/* ── NAV ─────────────────────────────────────────────────────── */}
-      <nav className="flex items-center justify-between px-6 sm:px-16 py-4 border-b border-th-brd sticky top-0 bg-th-bar/95 z-50 backdrop-blur-sm">
+      <nav className="flex items-center justify-between px-6 sm:px-16 py-4 border-b border-th-brd fixed top-0 left-0 w-full bg-th-bar/95 z-50 backdrop-blur-sm">
         <img src="/FortiBank%20LogoO.png" alt="FortiBank" className="max-w-[140px] max-h-9 w-auto object-contain dark:hidden" />
         <img src="/FortiBank%20Logo%20darkmode%20clean.png" alt="FortiBank" className="max-w-[140px] max-h-9 w-auto object-contain hidden dark:block" />
 
         <div className="hidden md:flex items-center gap-8">
           {NAV_LINKS.map(l => (
-            <a key={l.label} href={l.href} className="text-sm text-th-txt2 hover:text-th-txt transition-colors">
+            <a key={l.label} href={l.href} className="text-sm text-th-txt2 hover:text-th-txt hover:underline underline-offset-4 transition-colors">
               {l.label}
             </a>
           ))}
@@ -171,17 +171,15 @@ export default function LandingPage() {
         </div>
       </nav>
 
+      {/* spacer so fixed nav doesn't cover content */}
+      <div className="h-[73px]" />
+
       {/* ── HERO ─────────────────────────────────────────────────────── */}
       <section className="px-6 sm:px-16 py-16 md:py-24 max-w-[1200px] mx-auto">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
 
           {/* Left — copy */}
           <div className="flex-1 text-left">
-            <div className="inline-flex items-center gap-2 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/25 text-blue-700 dark:text-blue-400 text-xs px-3 py-1.5 rounded-full mb-6">
-              <div className="w-1.5 h-1.5 bg-blue-600 dark:bg-blue-400 rounded-full animate-pulse" />
-              Built for Kenyan banking institutions
-            </div>
-
             <h1 className="text-[clamp(36px,4.5vw,60px)] font-bold leading-[1.1] text-th-txt mb-6 tracking-tight">
               Fortify Every<br />
               Employee.{' '}
@@ -191,7 +189,7 @@ export default function LandingPage() {
 
             <p className="text-base text-th-txt2 max-w-[420px] mb-8 leading-relaxed">
               Role-based cybersecurity training, live phishing simulations, and real-time
-              risk scoring — purpose-built for the financial sector.
+              risk scoring, all purpose-built for the financial sector.
             </p>
 
             <div className="flex items-center gap-4 flex-wrap">
@@ -204,22 +202,16 @@ export default function LandingPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
               </Link>
-              <div className="inline-flex items-center gap-2 border border-th-brd bg-th-srf text-th-txt2 px-4 py-3 rounded-lg text-sm">
-                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-                </svg>
-                CBK compliant
-              </div>
             </div>
           </div>
 
-          {/* Right — arch hero image */}
+          {/* Right — hero image */}
           <div className="flex-1 flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-[420px]">
-              {/* arch frame */}
+            <div className="relative w-full max-w-[540px]">
+              {/* square card frame */}
               <div
                 className="relative overflow-hidden w-full shadow-2xl"
-                style={{ borderRadius: '200px 200px 24px 24px', aspectRatio: '4/5' }}
+                style={{ borderRadius: '24px', aspectRatio: '1/1' }}
               >
                 <img
                   src="https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=800&q=80"
@@ -244,7 +236,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── BENEFITS STRIP ───────────────────────────────────────────── */}
-      <section className="border-y border-th-brds bg-th-srf px-6 sm:px-16 py-8">
+      <section id="features" className="border-y border-th-brd bg-th-srf px-6 sm:px-16 py-8">
         <div className="max-w-[1200px] mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-th-brds">
           {[
             {
@@ -349,7 +341,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── MODULES SECTION ──────────────────────────────────────────── */}
-      <section id="modules" className="px-6 sm:px-16 py-16 border-t border-th-brds">
+      <section id="modules" className="px-6 sm:px-16 py-16 bg-th-srf">
         <div className="max-w-[1200px] mx-auto">
 
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
@@ -444,7 +436,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── HOW IT WORKS ─────────────────────────────────────────────── */}
-      <section id="about" className="px-6 sm:px-16 py-16 border-t border-th-brds">
+      <section id="about" className="px-6 sm:px-16 py-16 bg-th-srf">
         <div className="max-w-[1200px] mx-auto">
           <div className="text-center mb-4">
             <div className="text-xs text-blue-600 dark:text-blue-400 tracking-widest uppercase font-medium mb-2">Simple process</div>
@@ -501,7 +493,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── BLOG / CONTENT SECTION ───────────────────────────────────── */}
-      <section className="px-6 sm:px-16 py-16 border-t border-th-brds">
+      <section className="px-6 sm:px-16 py-16">
         <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col lg:flex-row items-center gap-14">
 
@@ -513,7 +505,7 @@ export default function LandingPage() {
               </h2>
               <p className="text-base text-th-txt2 mb-4 leading-relaxed">
                 Banking institutions are the most targeted sector in East Africa. FortiBank LMS arms your entire
-                workforce — from tellers to branch managers — with the knowledge to detect, avoid, and report
+                workforce, from tellers to branch managers, with the knowledge to detect, avoid, and report
                 threats before damage occurs.
               </p>
               <p className="text-sm text-th-txt2 mb-8 leading-relaxed">
@@ -547,7 +539,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── TESTIMONIALS ─────────────────────────────────────────────── */}
-      <section className="px-6 sm:px-16 py-16 border-t border-th-brds bg-th-srf">
+      <section className="px-6 sm:px-16 py-16 bg-th-srf">
         <div className="max-w-[1200px] mx-auto">
           <div className="text-center mb-10">
             <div className="text-xs text-blue-600 dark:text-blue-400 tracking-widest uppercase font-medium mb-2">Trusted by Kenyan banks</div>
@@ -579,7 +571,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── NEWSLETTER ───────────────────────────────────────────────── */}
-      <section id="contact" className="px-6 sm:px-16 py-16 border-t border-th-brds">
+      <section id="contact" className="px-6 sm:px-16 py-16">
         <div className="max-w-[1200px] mx-auto text-center">
           <h2 className="text-2xl font-bold text-th-txt mb-2">
             Stay in the loop with cyber threat intelligence
@@ -604,7 +596,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── FOOTER ───────────────────────────────────────────────────── */}
-      <footer className="border-t border-th-brds bg-th-srf px-6 sm:px-16 py-12">
+      <footer className="border-t border-th-brd bg-th-srf px-6 sm:px-16 py-12">
         <div className="max-w-[1200px] mx-auto">
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
 
@@ -653,8 +645,8 @@ export default function LandingPage() {
           <div className="pt-6 border-t border-th-brds flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="text-sm text-th-muted">&copy; 2026 FortiBank Security Training. All rights reserved.</div>
             <div className="flex gap-5">
-              <Link href="/privacy-policy" className="text-sm text-th-muted hover:text-th-txt2 transition-colors">Privacy policy</Link>
-              <Link href="/terms-of-use" className="text-sm text-th-muted hover:text-th-txt2 transition-colors">Terms of use</Link>
+              <Link href="/privacy-policy" className="text-sm text-th-muted hover:text-th-txt2 underline underline-offset-2 transition-colors">Privacy policy</Link>
+              <Link href="/terms-of-use" className="text-sm text-th-muted hover:text-th-txt2 underline underline-offset-2 transition-colors">Terms of use</Link>
             </div>
           </div>
         </div>

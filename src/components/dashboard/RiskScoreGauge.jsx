@@ -58,7 +58,7 @@ export default function RiskScoreGauge({ score = null, loading = false }) {
           {/* Center label */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className={`text-4xl font-bold leading-none ${risk.color}`}>
-              {score !== null ? score : '—'}
+              {score !== null ? score : 'N/A'}
             </span>
             <span className="text-th-muted text-xs mt-1">out of 100</span>
           </div>

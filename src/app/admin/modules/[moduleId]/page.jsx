@@ -20,7 +20,7 @@ const PROGRESS_COLORS = {
 }
 
 function fmt(iso) {
-  if (!iso) return '—'
+  if (!iso) return 'N/A'
   return new Date(iso).toLocaleString('en-GB', {
     day: '2-digit', month: 'short', year: 'numeric',
     hour: '2-digit', minute: '2-digit',
@@ -156,7 +156,7 @@ export default function EditModulePage() {
         <div>
           <p className="text-th-muted text-xs mb-1">Status</p>
           <span className={`text-xs font-medium px-2 py-1 rounded-lg capitalize ${STATUS_COLORS[module?.status] || ''}`}>
-            {module?.status || '—'}
+            {module?.status || 'N/A'}
           </span>
         </div>
         <div>

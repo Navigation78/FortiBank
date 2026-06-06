@@ -224,8 +224,8 @@ function getTimeOfDay() {
 
 function getRiskLabel(score) {
   if (score === null) return 'No score yet'
-  if (score >= 63) return 'High risk — take action'
+  if (score >= 63) return 'High risk. Take action.'
   if (score >= 45) return 'Medium risk'
-  if (score > 0)   return 'Low risk — well done'
+  if (score > 0)   return 'Low risk. Well done.'
   return 'Score pending'
 }

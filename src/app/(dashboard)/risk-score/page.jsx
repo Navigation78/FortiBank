@@ -102,7 +102,7 @@ export default function RiskScorePage() {
           {/* Thresholds */}
           <div className="bg-th-srf border border-th-brd rounded-xl p-6">
             <h3 className="text-th-txt font-semibold mb-4">
-              Your Thresholds — {ROLE_LABELS[role]}
+              Your Thresholds: {ROLE_LABELS[role]}
             </h3>
             <div className="relative h-8 bg-th-track rounded-full overflow-hidden">
               {/* Green zone */}
@@ -127,7 +127,7 @@ export default function RiskScorePage() {
               />
             </div>
             <div className="flex justify-between text-xs text-th-muted mt-2">
-              <span>0 — Low Risk</span>
+              <span>0: Low Risk</span>
               <span className="text-yellow-600 dark:text-yellow-400">Warning: {thresholds.warning}</span>
               <span className="text-red-600 dark:text-red-400">Critical: {thresholds.critical}</span>
               <span>100</span>

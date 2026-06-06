@@ -109,7 +109,7 @@ export default function EditModulePage() {
     <PageWrapper>
 
       {/* Header: breadcrumb + action buttons */}
-      <div className="flex items-center justify-between mb-6 gap-4">
+      <div className="flex flex-wrap items-center justify-between mb-6 gap-4">
         <div className="flex items-center gap-2 text-sm text-th-muted min-w-0">
           <Link href="/admin/modules" className="hover:text-th-txt2 shrink-0">Modules</Link>
           <span>/</span>

@@ -80,7 +80,7 @@ export default function CertificatesPage() {
         )}
 
         {/* Progress summary */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           {[
             { label: 'Modules Completed', value: `${stats.completed}/${stats.total}`, Icon: BookOpen, iconClass: 'text-blue-500 dark:text-blue-400' },
             { label: 'Certificates Earned', value: certificates.length, Icon: Medal, iconClass: 'text-yellow-500 dark:text-yellow-400' },

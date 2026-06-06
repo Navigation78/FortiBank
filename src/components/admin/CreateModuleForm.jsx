@@ -390,7 +390,7 @@ export default function CreateModuleForm({ existingModule }) {
                 </div>
 
                 {/* Row 2: section number + title */}
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
                     <label className="block text-th-muted text-xs mb-1">
                       Section Number

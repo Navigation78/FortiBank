@@ -83,6 +83,7 @@ body {
 
 /* ─── Smooth theme colour transitions ─────────────────────────────────────── */
 html {
+  scroll-behavior: smooth;
   transition: background-color 150ms ease, color 150ms ease;
 }
 

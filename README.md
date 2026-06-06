@@ -394,26 +394,27 @@ vercel
 
 ---
 
-## Test Accounts
+## Access & Authentication
 
-For development and testing, 12 test accounts cover all roles. All accounts use Gmail `+` aliases and land in the same inbox.
+This system uses role-based access control. Accounts are provisioned by the **System Admin**.
 
-| Role | Email | Password |
-|---|---|---|
-| System Admin | julianjeri650+admin@gmail.com | FortiBank@2024! |
-| Branch Manager | julianjeri650+branchmanager@gmail.com | FortiBank@2024! |
-| Assistant Branch Manager | julianjeri650+asstmanager@gmail.com | FortiBank@2024! |
-| Credit Manager | julianjeri650+creditmanager@gmail.com | FortiBank@2024! |
-| Customer Service Manager | julianjeri650+csmanager@gmail.com | FortiBank@2024! |
-| Relationship Manager | julianjeri650+relmanager@gmail.com | FortiBank@2024! |
-| Relationship Officer | julianjeri650+relofficer@gmail.com | FortiBank@2024! |
-| Credit Officer | julianjeri650+creditofficer@gmail.com | FortiBank@2024! |
-| Service Recovery Officer | julianjeri650+recoveryofficer@gmail.com | FortiBank@2024! |
-| Head Teller | julianjeri650+headteller@gmail.com | FortiBank@2024! |
-| Bank Teller | julianjeri650+teller@gmail.com | FortiBank@2024! |
-| Customer Service Assistant | julianjeri650+csassistant@gmail.com | FortiBank@2024! |
+To get access, contact your system administrator to have an account created for your role.
 
-> Remove or change all test accounts before deploying to production.
+### Available Roles
+| Role | Description |
+|------|-------------|
+| System Admin | Full system access and user management |
+| Branch Manager | Branch-level oversight and reporting |
+| Assistant Branch Manager | Supports branch manager functions |
+| Credit Manager | Manages credit workflows |
+| Customer Service Manager | Oversees customer service operations |
+| Relationship Manager | Manages client relationships |
+| Relationship Officer | Handles day-to-day client interactions |
+| Credit Officer | Processes credit applications |
+| Service Recovery Officer | Handles service complaints and recovery |
+| Head Teller | Oversees teller operations |
+| Bank Teller | Handles teller transactions |
+| Customer Service Assistant | Front-line customer support |
 
 ---
 

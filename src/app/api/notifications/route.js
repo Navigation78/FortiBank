@@ -5,16 +5,18 @@
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
+import { withApiHandler } from '@/lib/apiHandler'
+import { ValidationError } from '@/lib/errors'
 
 const PAGE_SIZE = 20
 
-export async function GET(request) {
+export const GET = withApiHandler(async (request) => {
   const { user, supabase, networkError } = await getRouteUser(request)
   if (!user) return unauthorizedResponse(networkError)
 
   const { searchParams } = new URL(request.url)
-  const filter = searchParams.get('filter') || 'all'  // all | unread | read
-  const type   = searchParams.get('type')  || null    // module | quiz | etc.
+  const filter = searchParams.get('filter') || 'all'
+  const type   = searchParams.get('type')  || null
   const page   = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
   const offset = (page - 1) * PAGE_SIZE
 
@@ -39,10 +41,9 @@ export async function GET(request) {
     pageSize:      PAGE_SIZE,
     hasMore:       (count || 0) > offset + PAGE_SIZE,
   })
-}
+})
 
-export async function POST(request) {
-  // Internal: only system_admin may POST notifications via the API
+export const POST = withApiHandler(async (request) => {
   const { user, networkError } = await getRouteUser(request)
   if (!user) return unauthorizedResponse(networkError)
 
@@ -55,7 +56,7 @@ export async function POST(request) {
   const body = await request.json()
   const { user_id, title, message, type, link } = body
   if (!user_id || !title || !message) {
-    return NextResponse.json({ error: 'user_id, title, and message are required' }, { status: 400 })
+    throw new ValidationError('user_id, title, and message are required', { fields: ['user_id', 'title', 'message'] })
   }
 
   const { data, error } = await supabaseAdmin
@@ -66,4 +67,4 @@ export async function POST(request) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ notification: data }, { status: 201 })
-}
+})

@@ -1,18 +1,15 @@
 // src/app/api/results/modules/route.js
-// GET /api/results/modules
-// Returns all modules where the user has any activity, structured
-// to mirror the exact learning journey:
-//   module -> topics -> subtopic KCs + checkpoint -> final exam
+// GET /api/results/modules - full learning journey results for current user
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
+import { withApiHandler } from '@/lib/apiHandler'
 
-export async function GET(request) {
+export const GET = withApiHandler(async (request) => {
   const { user, networkError } = await getRouteUser(request)
   if (!user) return unauthorizedResponse(networkError)
 
-  // Fetch all user activity in parallel
   const [progressRes, quizRes, kcRes] = await Promise.all([
     supabaseAdmin
       .from('user_module_progress')
@@ -35,7 +32,6 @@ export async function GET(request) {
       .order('submitted_at', { ascending: false }),
   ])
 
-  // Collect all module IDs with any activity
   const moduleIdSet = new Set([
     ...(progressRes.data  || []).map(p => p.module_id),
     ...(quizRes.data      || []).filter(a => a.quizzes?.module_id).map(a => a.quizzes.module_id),
@@ -44,7 +40,6 @@ export async function GET(request) {
 
   if (moduleIdSet.size === 0) return NextResponse.json({ modules: [] })
 
-  // Fetch module structure for all active modules
   const { data: modules, error: modError } = await supabaseAdmin
     .from('modules')
     .select(`
@@ -57,15 +52,12 @@ export async function GET(request) {
 
   if (modError || !modules) return NextResponse.json({ modules: [] })
 
-  // Build lookup maps ---------------------------------------------------
-
   const progressByModule = Object.fromEntries(
     (progressRes.data || []).map(p => [p.module_id, p])
   )
 
-  // Best score + total attempt count per quiz_id
-  const bestByQuizId   = {}
-  const countByQuizId  = {}
+  const bestByQuizId  = {}
+  const countByQuizId = {}
   for (const a of quizRes.data || []) {
     const qId = a.quizzes?.id
     if (!qId) continue
@@ -75,7 +67,6 @@ export async function GET(request) {
     }
   }
 
-  // Best KC result per content_id (fallback key: moduleId:sectionNumber)
   const bestKcByKey = {}
   for (const kc of kcRes.data || []) {
     const key = kc.content_id || `${kc.module_id}:${kc.section_number}`
@@ -84,16 +75,13 @@ export async function GET(request) {
     }
   }
 
-  // Structure each module -----------------------------------------------
-
   const result = modules.map(mod => {
-    const content   = [...(mod.module_content || [])].sort((a, b) => a.order_index - b.order_index)
+    const content    = [...(mod.module_content || [])].sort((a, b) => a.order_index - b.order_index)
     const allQuizzes = mod.quizzes || []
     const checkpoints = allQuizzes.filter(q => q.quiz_type === 'checkpoint')
     const finalExam   = allQuizzes.find(q => !q.quiz_type || q.quiz_type === 'final_exam') || null
     const progress    = progressByModule[mod.id] || { status: 'not_started', progress_pct: 0 }
 
-    // Group content into topics, collecting KC subtopics per topic
     const topics = []
     let curTopic = null
     for (const sec of content) {
@@ -116,33 +104,30 @@ export async function GET(request) {
       }
     }
 
-    // Attach checkpoint quiz + best result to each topic
     for (const topic of topics) {
       const cp = checkpoints.find(q => q.section_number === topic.number)
-      topic.checkpoint_quiz           = cp || null
-      topic.checkpoint_result         = cp ? (bestByQuizId[cp.id] || null) : null
-      topic.checkpoint_attempt_count  = cp ? (countByQuizId[cp.id]  || 0)  : 0
+      topic.checkpoint_quiz          = cp || null
+      topic.checkpoint_result        = cp ? (bestByQuizId[cp.id] || null) : null
+      topic.checkpoint_attempt_count = cp ? (countByQuizId[cp.id]  || 0)  : 0
     }
 
-    // Final exam
     const feResult       = finalExam ? (bestByQuizId[finalExam.id] || null) : null
     const feAttemptCount = finalExam ? (countByQuizId[finalExam.id]  || 0)  : 0
 
     return {
-      id:                      mod.id,
-      title:                   mod.title,
-      order_index:             mod.order_index,
-      progress_pct:            progress.progress_pct  || 0,
-      status:                  progress.status        || 'not_started',
-      completed_at:            progress.completed_at  || null,
+      id:                       mod.id,
+      title:                    mod.title,
+      order_index:              mod.order_index,
+      progress_pct:             progress.progress_pct  || 0,
+      status:                   progress.status        || 'not_started',
+      completed_at:             progress.completed_at  || null,
       topics,
-      final_exam_quiz:         finalExam,
-      final_exam_result:       feResult,
+      final_exam_quiz:          finalExam,
+      final_exam_result:        feResult,
       final_exam_attempt_count: feAttemptCount,
     }
   })
 
-  // Sort: in_progress first, then completed, then not_started; tie-break by order_index
   const ORDER = { in_progress: 0, completed: 1, not_started: 2 }
   result.sort((a, b) => {
     const diff = (ORDER[a.status] ?? 2) - (ORDER[b.status] ?? 2)
@@ -150,4 +135,4 @@ export async function GET(request) {
   })
 
   return NextResponse.json({ modules: result })
-}
+})

@@ -1,23 +1,22 @@
 // src/app/api/progress/reset-module/route.js
 // POST /api/progress/reset-module
-// Called when a user exhausts all exam attempts and chooses to redo the module.
-// Resets module progress and topic progress, and clears exam attempts so the
-// user gets 3 fresh attempts after completing the module content again.
+// Resets module + topic progress and clears exam attempts so user can redo the module.
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
+import { withApiHandler } from '@/lib/apiHandler'
+import { ValidationError } from '@/lib/errors'
 
-export async function POST(request) {
+export const POST = withApiHandler(async (request) => {
   const { user, networkError } = await getRouteUser(request)
   if (!user) return unauthorizedResponse(networkError)
 
   const { module_id, quiz_id } = await request.json()
   if (!module_id || !quiz_id) {
-    return NextResponse.json({ error: 'module_id and quiz_id are required' }, { status: 400 })
+    throw new ValidationError('module_id and quiz_id are required', { fields: ['module_id', 'quiz_id'] })
   }
 
-  // 1. Reset module progress to the beginning
   await supabaseAdmin
     .from('user_module_progress')
     .upsert(
@@ -32,14 +31,12 @@ export async function POST(request) {
       { onConflict: 'user_id,module_id', ignoreDuplicates: false }
     )
 
-  // 2. Clear topic-level progress for this module
   await supabaseAdmin
     .from('user_topic_progress')
     .delete()
     .eq('user_id', user.id)
     .eq('module_id', module_id)
 
-  // 3. Delete exam attempts so the user gets 3 fresh attempts
   await supabaseAdmin
     .from('quiz_attempts')
     .delete()
@@ -47,4 +44,4 @@ export async function POST(request) {
     .eq('quiz_id', quiz_id)
 
   return NextResponse.json({ ok: true })
-}
+})

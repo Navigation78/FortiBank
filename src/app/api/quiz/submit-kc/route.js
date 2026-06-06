@@ -1,13 +1,14 @@
 // src/app/api/quiz/submit-kc/route.js
 // POST /api/quiz/submit-kc
 // Saves the result of a subtopic inline knowledge-check quiz.
-// These are the 3-MCQ panels embedded at the end of each subtopic page.
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
+import { withApiHandler } from '@/lib/apiHandler'
+import { ValidationError } from '@/lib/errors'
 
-export async function POST(request) {
+export const POST = withApiHandler(async (request) => {
   const { user, networkError } = await getRouteUser(request)
   if (!user) return unauthorizedResponse(networkError)
 
@@ -15,10 +16,9 @@ export async function POST(request) {
   const { module_id, content_id, section_number, content_title, correct_count, total_count } = body
 
   if (!module_id || total_count == null || correct_count == null) {
-    return NextResponse.json(
-      { error: 'module_id, correct_count, and total_count are required' },
-      { status: 400 }
-    )
+    throw new ValidationError('module_id, correct_count, and total_count are required', {
+      fields: ['module_id', 'correct_count', 'total_count'],
+    })
   }
 
   const score_pct = total_count > 0
@@ -30,7 +30,7 @@ export async function POST(request) {
     .insert({
       user_id:        user.id,
       module_id,
-      content_id:     content_id   || null,
+      content_id:     content_id    || null,
       section_number: section_number || null,
       content_title:  content_title  || null,
       correct_count,
@@ -43,4 +43,4 @@ export async function POST(request) {
   }
 
   return NextResponse.json({ success: true, score_pct })
-}
+})

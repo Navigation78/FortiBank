@@ -1,14 +1,14 @@
 // src/app/api/quiz/submit/route.js
-// POST /api/quiz/submit - scores a quiz attempt, saves it,
-// and triggers a risk score recalculation.
-
+// POST /api/quiz/submit - scores a quiz attempt, saves it, triggers risk score recalculation.
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 import { createNotification, NOTIFICATION_TYPES } from '@/lib/notificationService'
+import { withApiHandler } from '@/lib/apiHandler'
+import { ValidationError } from '@/lib/errors'
 
-export async function POST(request) {
+export const POST = withApiHandler(async (request) => {
   const { user, networkError } = await getRouteUser(request)
   if (!user) return unauthorizedResponse(networkError)
 
@@ -16,10 +16,9 @@ export async function POST(request) {
   const { quiz_id, answers, time_taken_secs } = body
 
   if (!quiz_id || !answers) {
-    return NextResponse.json({ error: 'quiz_id and answers are required' }, { status: 400 })
+    throw new ValidationError('quiz_id and answers are required', { fields: ['quiz_id', 'answers'] })
   }
 
-  // 1. Fetch quiz details + correct answers (use admin to bypass RLS on options)
   const { data: quiz, error: quizError } = await supabaseAdmin
     .from('quizzes')
     .select(`
@@ -46,7 +45,6 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Quiz not found' }, { status: 404 })
   }
 
-  // 2. Check attempt limit
   const { count: attemptCount } = await supabaseAdmin
     .from('quiz_attempts')
     .select('*', { count: 'exact', head: true })
@@ -60,7 +58,6 @@ export async function POST(request) {
     )
   }
 
-  // 3. Score each question
   let totalPoints  = 0
   let earnedPoints = 0
   const questionResults = []
@@ -75,12 +72,10 @@ export async function POST(request) {
 
     let isCorrect = false
     if (question.question_type === 'multi_select') {
-      // All correct options selected and no wrong ones
       const allCorrectSelected = correctOptionIds.every(id => userAnswers.includes(id))
       const noWrongSelected    = userAnswers.every(id => correctOptionIds.includes(id))
       isCorrect = allCorrectSelected && noWrongSelected
     } else {
-      // Single answer - check if selected option is correct
       isCorrect = userAnswers.length === 1 && correctOptionIds.includes(userAnswers[0])
     }
 
@@ -93,15 +88,9 @@ export async function POST(request) {
     })
   }
 
-  // 4. Calculate score percentage
-  const scorePct = totalPoints > 0
-    ? Math.round((earnedPoints / totalPoints) * 100)
-    : 0
-
-  // 5. Get attempt number
+  const scorePct      = totalPoints > 0 ? Math.round((earnedPoints / totalPoints) * 100) : 0
   const attemptNumber = (attemptCount || 0) + 1
 
-  // 6. Save the attempt (use admin client to ensure it saves regardless of RLS)
   const { data: attempt, error: attemptError } = await supabaseAdmin
     .from('quiz_attempts')
     .insert({
@@ -119,7 +108,6 @@ export async function POST(request) {
     return NextResponse.json({ error: attemptError.message }, { status: 500 })
   }
 
-  // 7. Save individual answers
   if (questionResults.length > 0) {
     await supabaseAdmin
       .from('quiz_attempt_answers')
@@ -133,7 +121,6 @@ export async function POST(request) {
       )
   }
 
-  // 8. If this is a checkpoint quiz, record topic progress
   if (quiz.quiz_type === 'checkpoint' && quiz.module_id && quiz.section_number) {
     await supabaseAdmin
       .from('user_topic_progress')
@@ -151,10 +138,8 @@ export async function POST(request) {
       )
   }
 
-  // 8b. Recalculate risk score
   await supabaseAdmin.rpc('calculate_user_risk_score', { p_user_id: user.id })
 
-  // 8b. Notify user of their quiz result
   const passed = attempt.passed
   await createNotification({
     userId:  user.id,
@@ -166,7 +151,6 @@ export async function POST(request) {
     link:    `/modules/${quiz.module_id}`,
   })
 
-  // 9. Return results with correct answers revealed
   const questionsWithAnswers = quiz.quiz_questions.map(q => ({
     id:          q.id,
     correctIds:  q.quiz_options.filter(o => o.is_correct).map(o => o.id),
@@ -184,4 +168,4 @@ export async function POST(request) {
     can_retake:     attemptNumber < quiz.max_attempts && !attempt.passed,
     questions:      questionsWithAnswers,
   })
-}
+})

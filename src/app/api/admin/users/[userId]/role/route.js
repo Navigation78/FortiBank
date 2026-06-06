@@ -1,4 +1,3 @@
-
 // src/app/api/admin/users/[userId]/role/route.js
 // PUT - reassigns a user's role
 
@@ -6,8 +5,10 @@ import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { ROLES } from '@/constants/roles'
 import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
+import { withApiHandler } from '@/lib/apiHandler'
+import { ValidationError, ForbiddenError } from '@/lib/errors'
 
-export async function PUT(request, { params }) {
+export const PUT = withApiHandler(async (request, { params }) => {
   const { userId }  = await params
   const { user, supabase, networkError } = await getRouteUser(request)
   if (!user) return unauthorizedResponse(networkError)
@@ -19,14 +20,14 @@ export async function PUT(request, { params }) {
     .single()
 
   if (roleError || adminCheck?.roles?.name !== ROLES.SYSTEM_ADMIN) {
-    return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+    throw new ForbiddenError('Admin access required')
   }
 
   const body = await request.json()
   const { role_id } = body
 
   if (!role_id) {
-    return NextResponse.json({ error: 'role_id is required' }, { status: 400 })
+    throw new ValidationError('role_id is required', { field: 'role_id' })
   }
 
   const { error: deleteError } = await supabaseAdmin
@@ -44,4 +45,4 @@ export async function PUT(request, { params }) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ success: true })
-}
+})

@@ -1,72 +1,54 @@
-
 // src/app/api/phishing/click/route.js
 // POST - records when an employee clicks a phishing link.
-// Updates phishing_targets, logs event, recalculates risk score.
 // No auth required - token identifies the target.
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { createNotification, NOTIFICATION_TYPES } from '@/lib/notificationService'
+import { withApiHandler } from '@/lib/apiHandler'
+import { ValidationError } from '@/lib/errors'
+import { logger } from '@/lib/logger'
 
-export async function POST(request) {
+export const POST = withApiHandler(async (request) => {
   const body = await request.json()
   const { token } = body
 
   if (!token) {
-    return NextResponse.json({ error: 'Token required' }, { status: 400 })
+    throw new ValidationError('Token required', { field: 'token' })
   }
 
-  try {
-    // Find target by tracking token
-    const { data: target, error: targetError } = await supabaseAdmin
-      .from('phishing_targets')
-      .select('id, user_id, result, campaign_id')
-      .eq('tracking_token', token)
-      .single()
+  const { data: target, error: targetError } = await supabaseAdmin
+    .from('phishing_targets')
+    .select('id, user_id, result, campaign_id')
+    .eq('tracking_token', token)
+    .single()
 
-    if (targetError || !target) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 404 })
-    }
+  if (targetError || !target) {
+    return NextResponse.json({ error: 'Invalid token' }, { status: 404 })
+  }
 
-    const now = new Date().toISOString()
+  const now = new Date().toISOString()
 
-    // Update result to clicked (only if not already reported)
-    if (target.result !== 'reported') {
-      await supabaseAdmin
-        .from('phishing_targets')
-        .update({
-          result:     'clicked',
-          clicked_at: now,
-        })
-        .eq('id', target.id)
-    }
-
-    // Log click event
+  if (target.result !== 'reported') {
     await supabaseAdmin
-      .from('phishing_click_events')
-      .insert({
-        target_id:   target.id,
-        event_type:  'clicked',
-        occurred_at: now,
-      })
-
-    // Recalculate risk score for this user
-    await supabaseAdmin.rpc('calculate_user_risk_score', {
-      p_user_id: target.user_id,
-    })
-
-    // Notify the employee — this is a teachable moment
-    await createNotification({
-      userId:  target.user_id,
-      title:   'Phishing simulation alert',
-      message: 'You clicked a simulated phishing link. This was a security awareness test. Please review the phishing awareness module to learn how to spot suspicious emails.',
-      type:    NOTIFICATION_TYPES.PHISHING,
-      link:    '/results',
-    })
-
-    return NextResponse.json({ recorded: true })
-  } catch (err) {
-    console.error('Click recording error:', err)
-    return NextResponse.json({ error: 'Failed to record click' }, { status: 500 })
+      .from('phishing_targets')
+      .update({ result: 'clicked', clicked_at: now })
+      .eq('id', target.id)
   }
-}
+
+  await supabaseAdmin
+    .from('phishing_click_events')
+    .insert({ target_id: target.id, event_type: 'clicked', occurred_at: now })
+
+  await supabaseAdmin.rpc('calculate_user_risk_score', { p_user_id: target.user_id })
+
+  await createNotification({
+    userId:  target.user_id,
+    title:   'Phishing simulation alert',
+    message: 'You clicked a simulated phishing link. This was a security awareness test. Please review the phishing awareness module to learn how to spot suspicious emails.',
+    type:    NOTIFICATION_TYPES.PHISHING,
+    link:    '/results',
+  })
+
+  return NextResponse.json({ recorded: true })
+})

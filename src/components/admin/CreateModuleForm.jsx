@@ -373,7 +373,7 @@ export default function CreateModuleForm({ existingModule }) {
                         isHeader ? 'text-blue-400 bg-blue-500/10' : 'text-th-muted bg-th-hov'
                       }`}>
                         {block.section_number}
-                        {isHeader ? ' — Topic Header' : ''}
+                        {isHeader ? ' (Topic Header)' : ''}
                       </span>
                     )}
                   </span>

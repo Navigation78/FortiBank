@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useTheme } from 'next-themes'
@@ -58,7 +58,9 @@ const ICON_PATHS = {
 
 function SidebarInner({ collapsed, onToggle, isActive, onCloseMobile, search }) {
   const { theme, setTheme } = useTheme()
-  const isDark = theme === 'dark'
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  const isDark = mounted && theme === 'dark'
 
   const filtered = search.trim()
     ? NAV_ITEMS.filter(item => item.label.toLowerCase().includes(search.toLowerCase()))
@@ -132,7 +134,7 @@ function SidebarInner({ collapsed, onToggle, isActive, onCloseMobile, search }) 
                 onClick={() => setTheme(opt.value)}
                 title={`${opt.label} mode`}
                 className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition-all duration-150
-                  ${theme === opt.value
+                  ${mounted && theme === opt.value
                     ? 'bg-th-srf text-th-txt shadow-sm dark:shadow-black/30'
                     : 'text-th-muted hover:text-th-txt2'
                   }`}
@@ -210,33 +212,40 @@ function AdminTopbar({ toggleMobileSidebar, search, setSearch }) {
   })()
 
   return (
-    <header className="bg-th-bar border-b border-th-brd flex items-center px-4 py-3 z-30 shadow-sm shadow-black/5 dark:shadow-black/40 flex-shrink-0">
-      <div className="flex items-center gap-4">
+    <header className="bg-th-bar border-b border-th-brd flex items-center z-30 shadow-sm shadow-black/5 dark:shadow-black/40 flex-shrink-0">
+
+      {/* Desktop logo column — width mirrors the sidebar */}
+      <div className="hidden lg:flex items-center justify-center flex-shrink-0 h-full border-r border-th-brd w-48 py-3">
+        <img src="/FortiBank%20LogoO.png" alt="FortiBank" className="max-w-[110px] max-h-8 w-auto object-contain dark:hidden" />
+        <img src="/FortiBank%20Logo%20darkmode%20clean.png" alt="FortiBank" className="max-w-[110px] max-h-8 w-auto object-contain hidden dark:block" />
+      </div>
+
+      {/* Mobile: hamburger + logo */}
+      <div className="lg:hidden flex items-center gap-2 pl-3 py-3">
         <button
           onClick={toggleMobileSidebar}
-          className="lg:hidden flex items-center justify-center text-th-txt2 hover:text-th-txt transition-all duration-150 p-1 rounded-lg hover:bg-th-hov"
+          className="flex items-center justify-center text-th-txt2 hover:text-th-txt transition-all duration-150 p-1 rounded-lg hover:bg-th-hov"
           aria-label="Open sidebar"
         >
           <Icon path="M4 6h16M4 12h16M4 18h16" className="w-5 h-5" />
         </button>
-
-        <div className="flex items-center gap-3">
-          <img src="/FortiBank%20LogoO.png" alt="FortiBank" className="max-w-[120px] max-h-8 w-auto object-contain flex-shrink-0 dark:hidden" />
-          <img src="/FortiBank%20Logo%20darkmode%20clean.png" alt="FortiBank" className="max-w-[120px] max-h-8 w-auto object-contain flex-shrink-0 hidden dark:block" />
-          <div className="hidden sm:flex items-center gap-1.5 text-sm">
-            <span className="text-th-txt2">{firstName}</span>
-            <span className="text-green-600 dark:text-green-400 text-[10px] tracking-widest uppercase ml-1 font-medium">Admin</span>
-            {pageLabel && (
-              <>
-                <span className="text-th-muted">|</span>
-                <span className="text-th-txt font-semibold">{pageLabel}</span>
-              </>
-            )}
-          </div>
-        </div>
+        <img src="/FortiBank%20LogoO.png" alt="FortiBank" className="max-w-[100px] max-h-7 w-auto object-contain dark:hidden" />
+        <img src="/FortiBank%20Logo%20darkmode%20clean.png" alt="FortiBank" className="max-w-[100px] max-h-7 w-auto object-contain hidden dark:block" />
       </div>
 
-      <div className="ml-auto flex items-center gap-3">
+      {/* Username + role badge + page label */}
+      <div className="hidden sm:flex items-center gap-1.5 text-sm px-4 py-3">
+        <span className="text-th-txt2">{firstName}</span>
+        <span className="text-green-600 dark:text-green-400 text-[10px] tracking-widest uppercase ml-1 font-medium">Admin</span>
+        {pageLabel && (
+          <>
+            <span className="text-th-muted">|</span>
+            <span className="text-th-txt font-semibold">{pageLabel}</span>
+          </>
+        )}
+      </div>
+
+      <div className="ml-auto flex items-center gap-3 pr-4 py-3">
         {/* Search bar */}
         <div className="hidden sm:flex relative items-center w-48">
           <input
@@ -258,12 +267,8 @@ function AdminTopbar({ toggleMobileSidebar, search, setSearch }) {
             onClick={() => setMenuOpen(!menuOpen)}
             className="flex items-center gap-1 cursor-pointer"
           >
-            <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0">
-              <img
-                src={profile?.avatar_url || '/Placeholder%20avatar.jpg'}
-                alt="Avatar"
-                className="w-full h-full object-cover"
-              />
+            <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+              <span className="text-white text-xs font-semibold leading-none">{userInitial}</span>
             </div>
             <Icon
               path="M19 9l-7 7-7-7"

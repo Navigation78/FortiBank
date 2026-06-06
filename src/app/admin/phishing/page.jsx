@@ -95,7 +95,7 @@ export default function AdminPhishingPage() {
                             rate > 30 ? 'text-red-400' :
                             rate > 10 ? 'text-orange-400' : 'text-green-400'
                           }`}>
-                            {rate !== null ? `${rate}%` : '—'}
+                            {rate !== null ? `${rate}%` : 'N/A'}
                           </span>
                         )
                       })()}

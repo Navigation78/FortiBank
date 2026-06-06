@@ -11,18 +11,18 @@ import { Trophy, RotateCcw, BookOpen, ChevronRight, AlertTriangle } from 'lucide
 
 function quizMessage(pct, correct, total) {
   if (correct === total) return { headline: 'Awesome! Perfect Score!', sub: `You nailed every question.` }
-  if (pct >= 80)         return { headline: 'Great Job!',             sub: `${correct} out of ${total} — impressive work.` }
-  if (pct >= 60)         return { headline: 'Good Effort',            sub: `${correct} out of ${total} — review any you missed.` }
-  return                        { headline: 'Keep Trying',            sub: `${correct} out of ${total} — review the material and retry.` }
+  if (pct >= 80)         return { headline: 'Great Job!',             sub: `${correct} out of ${total}. Impressive work.` }
+  if (pct >= 60)         return { headline: 'Good Effort',            sub: `${correct} out of ${total}. Review any you missed.` }
+  return                        { headline: 'Keep Trying',            sub: `${correct} out of ${total}. Review the material and retry.` }
 }
 
 function examMessage(pct, passed, attemptsLeft) {
-  if (passed && pct === 100) return { headline: 'Perfect Exam!',        sub: 'Flawless — exceptional result.' }
+  if (passed && pct === 100) return { headline: 'Perfect Exam!',        sub: 'Flawless. Exceptional result.' }
   if (passed && pct >= 90)   return { headline: 'Excellent!',           sub: 'Passed with distinction.' }
-  if (passed)                return { headline: 'Exam Passed!',         sub: 'Well done — module complete.' }
+  if (passed)                return { headline: 'Exam Passed!',         sub: 'Well done. Module complete.' }
   if (attemptsLeft === 0)    return { headline: 'Attempts Exhausted',   sub: 'Redo the module to unlock 3 fresh attempts.' }
-  if (pct >= 70)             return { headline: 'So Close!',            sub: `${attemptsLeft} attempt${attemptsLeft !== 1 ? 's' : ''} left — you need 80% to pass.` }
-  return                            { headline: 'Not Quite Yet',        sub: `${attemptsLeft} attempt${attemptsLeft !== 1 ? 's' : ''} left — review the module material.` }
+  if (pct >= 70)             return { headline: 'So Close!',            sub: `${attemptsLeft} attempt${attemptsLeft !== 1 ? 's' : ''} left. You need 80% to pass.` }
+  return                            { headline: 'Not Quite Yet',        sub: `${attemptsLeft} attempt${attemptsLeft !== 1 ? 's' : ''} left. Review the module material.` }
 }
 
 // ── Gradient ring colours ────────────────────────────────────────────────────

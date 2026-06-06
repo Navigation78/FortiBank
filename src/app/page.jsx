@@ -612,13 +612,9 @@ export default function LandingPage() {
                 <a href="#" className="w-8 h-8 rounded-lg bg-th-hov border border-th-brd flex items-center justify-center text-th-txt2 hover:text-blue-600 transition-colors">
                   <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
                 </a>
-                {/* Twitter */}
-                <a href="#" className="w-8 h-8 rounded-lg bg-th-hov border border-th-brd flex items-center justify-center text-th-txt2 hover:text-blue-600 transition-colors">
-                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg>
-                </a>
-                {/* YouTube */}
-                <a href="#" className="w-8 h-8 rounded-lg bg-th-hov border border-th-brd flex items-center justify-center text-th-txt2 hover:text-red-500 transition-colors">
-                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg>
+                {/* X (formerly Twitter) */}
+                <a href="#" className="w-8 h-8 rounded-lg bg-th-hov border border-th-brd flex items-center justify-center text-th-txt2 hover:text-th-txt transition-colors">
+                  <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.738-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
                 </a>
               </div>
             </div>

@@ -390,7 +390,7 @@ function SubtopicQuizPanel({ questions, onComplete, moduleId, contentId, section
       <div className="flex items-center gap-2 mb-6">
         <BookOpen className="w-4 h-4 text-th-muted" />
         <span className="text-th-muted text-xs font-semibold uppercase tracking-widest">Subtopic Quiz</span>
-        <span className="text-th-muted text-xs opacity-60">— Answer all questions to continue</span>
+        <span className="text-th-muted text-xs opacity-60">Answer all questions to continue</span>
       </div>
 
       <div className="space-y-8">
@@ -728,7 +728,7 @@ function FinalExamPanel({ quiz, moduleId, onComplete, nextModule }) {
     <div className="py-8 space-y-4 max-w-md">
       <div className="flex items-center gap-2 text-amber-400 text-sm">
         <AlertCircle className="w-4 h-4" />
-        All {meta?.max_attempts || 3} exam attempts used — you did not reach 80%.
+        All {meta?.max_attempts || 3} exam attempts used. You did not reach 80%.
       </div>
       <p className="text-th-muted text-sm">
         You need to redo the module content to unlock 3 fresh attempts.

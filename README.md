@@ -450,6 +450,6 @@ This project was built as a portfolio and academic project. All rights reserved.
 
 ## Author
 
-Built by Julia Migwi · [GitHub](https://github.com/yourusername) · [LinkedIn](https://linkedin.com/in/yourprofile)
+Built by Julia Migwi · [GitHub](https://github.com/Navigation78) · [LinkedIn](https://www.linkedin.com/in/julia-migwi-a611a7323/)
 
 > *"The weakest link in any security system is the human element."*

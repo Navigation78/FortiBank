@@ -1,5 +1,4 @@
 'use client'
-// src/app/(auth)/login/page.jsx
 
 import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -25,7 +24,6 @@ function LoginForm() {
 
     const { error, redirectTo: roleRedirect } = await signIn({ email, password })
 
-
     if (error) {
       setError(
         error.message === 'Invalid login credentials'
@@ -43,30 +41,29 @@ function LoginForm() {
       ? redirectTo
       : null
 
-    // Redirect to a protected page they tried to visit, or their role dashboard.
     router.push(safeRedirectTo || roleRedirect || '/dashboard')
   }
 
   return (
-    <div className="bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl">
+    <div className="bg-th-srf border border-th-brd rounded-2xl p-8 shadow-xl shadow-black/5 dark:shadow-black/40">
       <div className="mb-6">
-        <h4 className="text-white text-2xl font-bold">Welcome back</h4>
-        <p className="text-slate-400 text-sm mt-1">Sign in to your training portal</p>
+        <h4 className="text-th-txt text-2xl font-bold">Welcome back</h4>
+        <p className="text-th-txt2 text-sm mt-1">Sign in to your training portal</p>
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-2">
-          <svg className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="mb-4 p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-lg flex items-start gap-2">
+          <svg className="w-4 h-4 text-red-500 dark:text-red-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <p className="text-red-400 text-sm">{error}</p>
+          <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Email */}
         <div>
-          <label className="block text-slate-300 text-sm font-medium mb-1.5">
+          <label className="block text-th-txt text-sm font-medium mb-1.5">
             Email address
           </label>
           <input
@@ -76,19 +73,19 @@ function LoginForm() {
             placeholder="you@fortibank.com"
             required
             autoComplete="email"
-            className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 transition-all duration-150"
+            className="w-full bg-th-ibg border border-th-ibrd text-th-txt placeholder:text-th-muted rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500/70 focus:ring-1 focus:ring-blue-500/20 transition-all duration-150"
           />
         </div>
 
         {/* Password */}
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <label className="block text-slate-300 text-sm font-medium">
+            <label className="block text-th-txt text-sm font-medium">
               Password
             </label>
             <Link
               href="/forgot-password"
-              className="text-blue-400 text-xs hover:text-blue-300 transition-all duration-150"
+              className="text-blue-600 dark:text-blue-400 text-xs hover:text-blue-700 dark:hover:text-blue-300 transition-all duration-150"
             >
               Forgot password?
             </Link>
@@ -101,12 +98,12 @@ function LoginForm() {
               placeholder="••••••••"
               required
               autoComplete="current-password"
-              className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 transition-all duration-150 pr-10"
+              className="w-full bg-th-ibg border border-th-ibrd text-th-txt placeholder:text-th-muted rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500/70 focus:ring-1 focus:ring-blue-500/20 transition-all duration-150 pr-10"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-th-muted hover:text-th-txt2 transition-colors"
             >
               {showPassword ? (
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -142,9 +139,9 @@ function LoginForm() {
         </button>
       </form>
 
-      <div className="mt-6 pt-6 border-t border-slate-800">
-        <p className="text-slate-500 text-xs text-center">
-          Access is restricted to Akiba Commercial Bank's employees only.
+      <div className="mt-6 pt-6 border-t border-th-brds">
+        <p className="text-th-muted text-xs text-center">
+          Access is restricted to Akiba Commercial Bank employees only.
           <br />Contact your administrator if you need access.
         </p>
       </div>
@@ -154,7 +151,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl" />}>
+    <Suspense fallback={<div className="bg-th-srf border border-th-brd rounded-2xl p-8 shadow-xl" />}>
       <LoginForm />
     </Suspense>
   )

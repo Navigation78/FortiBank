@@ -111,7 +111,7 @@ export function AuthProvider({ children }) {
         setSession(nextSession)
         setUser(nextUser)
 
-        if (!nextUser || nextUser.id !== fetchedUserId.current) {
+        if (!nextUser || (fetchedUserId.current !== null && nextUser.id !== fetchedUserId.current)) {
           resetProfileState()
         }
 

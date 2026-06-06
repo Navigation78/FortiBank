@@ -4,20 +4,23 @@
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
-import { getRouteUser } from '@/lib/supabaseRoute'
+import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 import { notifyUsersWithRoles, NOTIFICATION_TYPES } from '@/lib/notificationService'
+import { withApiHandler } from '@/lib/apiHandler'
+import { ValidationError } from '@/lib/errors'
 
 async function verifyAdmin(request) {
-  const { user } = await getRouteUser(request)
-  if (!user) return null
+  const { user, networkError } = await getRouteUser(request)
+  if (!user) return networkError ? unauthorizedResponse(true) : null
   const { data: roleData } = await supabaseAdmin
     .from('user_roles').select('roles(name)').eq('user_id', user.id).single()
   if (roleData?.roles?.name !== 'system_admin') return null
   return user
 }
 
-export async function GET(request) {
+export const GET = withApiHandler(async (request) => {
   const admin = await verifyAdmin(request)
+  if (admin instanceof Response) return admin
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { data, error } = await supabaseAdmin
@@ -31,21 +34,23 @@ export async function GET(request) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ modules: data })
-}
+})
 
-export async function POST(request) {
+export const POST = withApiHandler(async (request) => {
   const admin = await verifyAdmin(request)
+  if (admin instanceof Response) return admin
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await request.json()
   const { title, description, duration_mins, status, content_blocks, role_ids } = body
 
-  if (!title) return NextResponse.json({ error: 'Title is required' }, { status: 400 })
+  if (!title) {
+    throw new ValidationError('Title is required', { field: 'title' })
+  }
   if (!Array.isArray(role_ids) || role_ids.length === 0) {
-    return NextResponse.json({ error: 'Select at least one role for this module' }, { status: 400 })
+    throw new ValidationError('Select at least one role for this module', { field: 'role_ids' })
   }
 
-  // 1. Get the lowest available order_index so new modules reuse gaps after deletions
   const { data: existingModules, error: existingError } = await supabaseAdmin
     .from('modules')
     .select('order_index')
@@ -58,11 +63,8 @@ export async function POST(request) {
     .filter(Boolean)
 
   let orderIndex = 1
-  while (usedIndexes.includes(orderIndex)) {
-    orderIndex += 1
-  }
+  while (usedIndexes.includes(orderIndex)) orderIndex += 1
 
-  // 2. Create module
   const { data: module, error: moduleError } = await supabaseAdmin
     .from('modules')
     .insert({ title, description, duration_mins, status: status || 'draft', order_index: orderIndex, created_by: admin.id })
@@ -71,7 +73,6 @@ export async function POST(request) {
 
   if (moduleError) return NextResponse.json({ error: moduleError.message }, { status: 500 })
 
-  // 3. Insert content blocks
   if (content_blocks && content_blocks.length > 0) {
     const blocks = content_blocks
       .filter(b => b.title)
@@ -96,7 +97,6 @@ export async function POST(request) {
     }
   }
 
-  // 4. Assign role access
   const uniqueRoleIds = [...new Set(role_ids.map(roleId => Number(roleId)).filter(Number.isInteger))]
   if (uniqueRoleIds.length === 0) {
     await supabaseAdmin.from('modules').delete().eq('id', module.id)
@@ -112,7 +112,6 @@ export async function POST(request) {
     return NextResponse.json({ error: roleAccessError.message }, { status: 500 })
   }
 
-  // Notify assigned users when the module is published immediately
   if ((status || 'draft') === 'published' && uniqueRoleIds.length > 0) {
     await notifyUsersWithRoles(uniqueRoleIds, {
       title:   `New module available: ${title}`,
@@ -125,4 +124,4 @@ export async function POST(request) {
   }
 
   return NextResponse.json({ module }, { status: 201 })
-}
+})

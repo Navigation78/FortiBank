@@ -8,10 +8,10 @@ export default function CreateCampaignPage() {
   return (
     <>
       <PageWrapper>
-        <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-          <Link href="/admin/phishing" className="hover:text-slate-300">Phishing</Link>
+        <div className="flex items-center gap-2 text-sm text-th-muted mb-6">
+          <Link href="/admin/phishing" className="hover:text-th-txt2">Phishing</Link>
           <span>/</span>
-          <span className="text-slate-300">New Campaign</span>
+          <span className="text-th-txt2">New Campaign</span>
         </div>
         <CreateCampaignForm />
       </PageWrapper>

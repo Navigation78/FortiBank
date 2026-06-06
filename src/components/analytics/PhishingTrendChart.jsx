@@ -10,28 +10,28 @@ import {
 export default function PhishingTrendChart({ data = [], loading = false }) {
   if (loading) {
     return (
-      <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
-        <div className="h-4 bg-slate-800 rounded w-1/3 mb-4 animate-pulse" />
-        <div className="h-48 bg-slate-800 rounded animate-pulse" />
+      <div className="bg-th-srf border border-th-brd rounded-xl p-6">
+        <div className="h-4 bg-th-track rounded w-1/3 mb-4 animate-pulse" />
+        <div className="h-48 bg-th-track rounded animate-pulse" />
       </div>
     )
   }
 
   return (
-    <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
-      <h3 className="text-white font-semibold mb-4">Phishing Click Rate Trend</h3>
+    <div className="bg-th-srf border border-th-brd rounded-xl p-6">
+      <h3 className="text-th-txt font-semibold mb-4">Phishing Click Rate Trend</h3>
       {data.length > 0 ? (
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--th-track)" />
             <XAxis
               dataKey="campaign"
-              tick={{ fill: '#64748b', fontSize: 10 }}
+              tick={{ fill: 'var(--th-muted)', fontSize: 10 }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
-              tick={{ fill: '#64748b', fontSize: 11 }}
+              tick={{ fill: 'var(--th-muted)', fontSize: 11 }}
               axisLine={false}
               tickLine={false}
               domain={[0, 100]}
@@ -39,10 +39,10 @@ export default function PhishingTrendChart({ data = [], loading = false }) {
             />
             <Tooltip
               contentStyle={{
-                background: '#1e293b',
-                border: '1px solid #334155',
+                background: 'var(--th-elv)',
+                border: '1px solid var(--th-brd)',
                 borderRadius: '8px',
-                color: '#f1f5f9',
+                color: 'var(--th-txt)',
                 fontSize: '12px',
               }}
               formatter={v => [`${v}%`, 'Click Rate']}
@@ -64,14 +64,14 @@ export default function PhishingTrendChart({ data = [], loading = false }) {
               activeDot={{ r: 6 }}
             />
             <Legend
-              wrapperStyle={{ fontSize: '12px', color: '#64748b', paddingTop: '8px' }}
+              wrapperStyle={{ fontSize: '12px', paddingTop: '8px' }}
               formatter={value => value === 'clickRate' ? 'Click Rate' : 'Report Rate'}
             />
           </LineChart>
         </ResponsiveContainer>
       ) : (
         <div className="h-48 flex items-center justify-center">
-          <p className="text-slate-500 text-sm">No phishing campaigns sent yet</p>
+          <p className="text-th-muted text-sm">No phishing campaigns sent yet</p>
         </div>
       )}
     </div>

@@ -3,19 +3,21 @@
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
-import { getRouteUser } from '@/lib/supabaseRoute'
+import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
+import { withApiHandler } from '@/lib/apiHandler'
 
 async function verifyAdmin(request) {
-  const { user } = await getRouteUser(request)
-  if (!user) return null
+  const { user, networkError } = await getRouteUser(request)
+  if (!user) return networkError ? unauthorizedResponse(true) : null
   const { data: roleData } = await supabaseAdmin
     .from('user_roles').select('roles(name)').eq('user_id', user.id).single()
   if (roleData?.roles?.name !== 'system_admin') return null
   return user
 }
 
-export async function POST(request) {
+export const POST = withApiHandler(async (request) => {
   const admin = await verifyAdmin(request)
+  if (admin instanceof Response) return admin
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { data: modules, error: fetchError } = await supabaseAdmin
@@ -33,9 +35,9 @@ export async function POST(request) {
       .eq('id', module.id)
   )
 
-  const results = await Promise.all(updates)
-  const updateError = results.find(result => result.error)?.error
+  const results      = await Promise.all(updates)
+  const updateError  = results.find(result => result.error)?.error
   if (updateError) return NextResponse.json({ error: updateError.message }, { status: 500 })
 
   return NextResponse.json({ success: true, count: modules?.length || 0 })
-}
+})

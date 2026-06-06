@@ -4,11 +4,12 @@
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
-import { getRouteUser } from '@/lib/supabaseRoute'
+import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
+import { withApiHandler } from '@/lib/apiHandler'
 
 async function verifyAdmin(request) {
-  const { user } = await getRouteUser(request)
-  if (!user) return null
+  const { user, networkError } = await getRouteUser(request)
+  if (!user) return networkError ? unauthorizedResponse(true) : null
   const { data } = await supabaseAdmin
     .from('user_roles').select('roles(name)').eq('user_id', user.id).single()
   if (data?.roles?.name !== 'system_admin') return null
@@ -28,8 +29,9 @@ function toCSV(headers, rows) {
   return [headerRow, ...dataRows].join('\n')
 }
 
-export async function GET(request) {
+export const GET = withApiHandler(async (request) => {
   const admin = await verifyAdmin(request)
+  if (admin instanceof Response) return admin
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { searchParams } = new URL(request.url)
@@ -62,7 +64,6 @@ export async function GET(request) {
       .select('user_id, composite_score, phishing_score, quiz_score, phishing_clicks, phishing_attempts, quizzes_taken, quizzes_passed, is_warning, is_critical, calculated_at')
       .order('calculated_at', { ascending: false })
 
-    // Latest per user
     const latest = {}
     scores?.forEach(s => { if (!latest[s.user_id]) latest[s.user_id] = s })
 
@@ -100,14 +101,14 @@ export async function GET(request) {
       .order('sent_at', { ascending: false })
 
     const rows = (data || []).map(t => ({
-      employee_name:  t.users?.full_name,
-      email:          t.users?.email,
-      campaign:       t.phishing_campaigns?.name,
-      subject:        t.phishing_campaigns?.email_subject,
-      result:         t.result,
-      sent_at:        t.sent_at?.split('T')[0] || '',
-      clicked_at:     t.clicked_at?.split('T')[0] || '',
-      reported_at:    t.reported_at?.split('T')[0] || '',
+      employee_name: t.users?.full_name,
+      email:         t.users?.email,
+      campaign:      t.phishing_campaigns?.name,
+      subject:       t.phishing_campaigns?.email_subject,
+      result:        t.result,
+      sent_at:       t.sent_at?.split('T')[0] || '',
+      clicked_at:    t.clicked_at?.split('T')[0] || '',
+      reported_at:   t.reported_at?.split('T')[0] || '',
     }))
 
     filename = `fortibank-phishing-results-${date}.csv`
@@ -128,12 +129,12 @@ export async function GET(request) {
       .order('updated_at', { ascending: false })
 
     const rows = (data || []).map(p => ({
-      employee:    p.users?.full_name,
-      email:       p.users?.email,
-      module:      p.modules?.title,
-      status:      p.status,
-      progress:    `${p.progress_pct}%`,
-      started_at:  p.started_at?.split('T')[0] || '',
+      employee:     p.users?.full_name,
+      email:        p.users?.email,
+      module:       p.modules?.title,
+      status:       p.status,
+      progress:     `${p.progress_pct}%`,
+      started_at:   p.started_at?.split('T')[0] || '',
       completed_at: p.completed_at?.split('T')[0] || '',
     }))
 
@@ -151,4 +152,4 @@ export async function GET(request) {
       'Content-Disposition': `attachment; filename="${filename}"`,
     },
   })
-}
+})

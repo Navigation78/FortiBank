@@ -3,16 +3,14 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import PageWrapper from '@/components/layout/PageWrapper'
-import { createClient } from '@/lib/supabase'
 
 const STATUS_COLORS = {
   published: 'bg-green-500/15 text-green-400',
-  draft:     'bg-white/[0.06] text-slate-300',
+  draft:     'bg-th-hov text-th-txt2',
   archived:  'bg-red-500/15 text-red-400',
 }
 
 export default function AdminModulesPage() {
-  const supabase        = createClient()
   const [modules, setModules] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -26,31 +24,6 @@ export default function AdminModulesPage() {
     setLoading(false)
   }
 
-  async function togglePublish(module) {
-    const newStatus = module.status === 'published' ? 'draft' : 'published'
-    await supabase.from('modules').update({ status: newStatus }).eq('id', module.id)
-    fetchModules()
-  }
-
-  async function archiveModule(module) {
-    const newStatus = module.status === 'archived' ? 'draft' : 'archived'
-    await supabase.from('modules').update({ status: newStatus }).eq('id', module.id)
-    fetchModules()
-  }
-
-  async function deleteModule(moduleId) {
-    if (confirm('Are you sure you want to delete this module?')) {
-      const response = await fetch(`/api/admin/modules/${moduleId}`, {
-        method: 'DELETE',
-      })
-      if (response.ok) {
-        fetchModules()
-      } else {
-        alert('Failed to delete module')
-      }
-    }
-  }
-
   function formatModuleCode(orderIndex) {
     return orderIndex ? `FBM${String(orderIndex).padStart(3, '0')}` : '-'
   }
@@ -58,10 +31,10 @@ export default function AdminModulesPage() {
   return (
     <>
       <PageWrapper>
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
           <div>
-            <h4 className="text-white text-xl font-bold">All Modules</h4>
-            <p className="text-slate-400 text-sm mt-0.5">{modules.length} total modules</p>
+            <h4 className="text-th-txt text-xl font-bold">All Modules</h4>
+            <p className="text-th-muted text-sm mt-0.5">{modules.length} total modules</p>
           </div>
           <div className="flex items-center gap-2">
             <Link
@@ -79,29 +52,29 @@ export default function AdminModulesPage() {
         {loading ? (
           <div className="space-y-3">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-16 bg-slate-800 border border-white/[0.06] rounded-xl animate-pulse" />
+              <div key={i} className="h-16 bg-th-hov border border-th-brd rounded-xl animate-pulse" />
             ))}
           </div>
         ) : (
-          <div className="bg-slate-800 border border-white/[0.08] rounded-xl overflow-hidden">
+          <div className="bg-th-srf border border-th-brd rounded-xl overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/[0.06]">
-                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3">Code</th>
-                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3">Module</th>
-                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3 hidden sm:table-cell">Status</th>
-                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3 hidden md:table-cell">Duration</th>
-                  <th className="text-left text-slate-400 text-xs font-medium px-5 py-3">Actions</th>
+                <tr className="border-b border-th-brd">
+                  <th className="text-left text-th-muted text-xs font-medium px-5 py-3">Code</th>
+                  <th className="text-left text-th-muted text-xs font-medium px-5 py-3">Module</th>
+                  <th className="text-left text-th-muted text-xs font-medium px-5 py-3 hidden sm:table-cell">Status</th>
+                  <th className="text-left text-th-muted text-xs font-medium px-5 py-3 hidden md:table-cell">Duration</th>
+                  <th className="text-left text-th-muted text-xs font-medium px-5 py-3"></th>
                 </tr>
               </thead>
               <tbody>
                 {modules.map((module) => (
-                  <tr key={module.id} className="border-b border-white/[0.06] last:border-0 hover:bg-white/[0.04] transition-all duration-150">
-                    <td className="px-5 py-3 text-slate-400 text-sm">{formatModuleCode(module.order_index)}</td>
+                  <tr key={module.id} className="border-b border-th-brd last:border-0 hover:bg-th-hov/30 transition-all duration-150">
+                    <td className="px-5 py-3 text-th-muted text-sm">{formatModuleCode(module.order_index)}</td>
                     <td className="px-5 py-3">
-                      <p className="text-white text-sm font-medium">{module.title}</p>
+                      <p className="text-th-txt text-sm font-medium">{module.title}</p>
                       {module.description && (
-                        <p className="text-slate-500 text-xs truncate max-w-xs">{module.description}</p>
+                        <p className="text-th-muted text-xs truncate max-w-xs">{module.description}</p>
                       )}
                     </td>
                     <td className="px-5 py-3 hidden sm:table-cell">
@@ -110,34 +83,18 @@ export default function AdminModulesPage() {
                       </span>
                     </td>
                     <td className="px-5 py-3 hidden md:table-cell">
-                      <span className="text-slate-400 text-sm">{module.duration_mins ? `${module.duration_mins} min` : '-'}</span>
+                      <span className="text-th-txt2 text-sm">{module.duration_mins ? `${module.duration_mins} min` : '-'}</span>
                     </td>
-                    <td className="px-5 py-3">
-                      <div className="flex items-center gap-3">
-                        <Link href={`/admin/modules/${module.id}`} className="text-blue-400 hover:text-blue-300 text-xs font-medium">Edit</Link>
-                        {module.status !== 'archived' && (
-                          <button
-                            onClick={() => togglePublish(module)}
-                            className={`text-xs font-medium transition-all duration-150 ${module.status === 'published' ? 'text-yellow-400 hover:text-yellow-300' : 'text-green-400 hover:text-green-300'}`}
-                          >
-                            {module.status === 'published' ? 'Unpublish' : 'Publish'}
-                          </button>
-                        )}
-                        <button
-                          onClick={() => archiveModule(module)}
-                          className={`text-xs font-medium transition-all duration-150 ${module.status === 'archived' ? 'text-blue-400 hover:text-blue-300' : 'text-orange-400 hover:text-orange-300'}`}
-                        >
-                          {module.status === 'archived' ? 'Unarchive' : 'Archive'}
-                        </button>
-                        <button
-                          onClick={() => deleteModule(module.id)}
-                          className="text-red-400 hover:text-red-300 text-xs font-medium transition-all duration-150"
-                        >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
-                      </div>
+                    <td className="px-5 py-3 text-right">
+                      <Link
+                        href={`/admin/modules/${module.id}`}
+                        className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-xs font-medium transition-all duration-150"
+                      >
+                        View Details
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </Link>
                     </td>
                   </tr>
                 ))}

@@ -27,19 +27,15 @@ export default function AnalyticsPage() {
     setLoading(true)
 
     const [progressRes, scoresRes, campaignsRes, usersRes] = await Promise.all([
-      // Module progress per role
       supabase.from('user_module_progress')
         .select('status, users!inner(user_roles!inner(roles(name, display_name, category)))'),
 
-      // Latest risk scores per user
       supabase.from('risk_scores')
         .select('user_id, composite_score, phishing_score, quiz_score, phishing_clicks, phishing_attempts, quizzes_taken, quizzes_passed, is_warning, is_critical, calculated_at')
         .order('calculated_at', { ascending: false }),
 
-      // Campaign stats view
       supabase.from('campaign_stats').select('*'),
 
-      // Users with roles
       supabase.from('users_with_roles').select('id, full_name, email, role, role_display_name, role_category, is_active'),
     ])
 
@@ -48,7 +44,6 @@ export default function AnalyticsPage() {
     const campaigns = campaignsRes.data || []
     const users     = usersRes.data     || []
 
-    // Get latest score per user
     const latestScores = {}
     scores.forEach(s => {
       if (!latestScores[s.user_id] || s.calculated_at > latestScores[s.user_id].calculated_at) {
@@ -56,7 +51,6 @@ export default function AnalyticsPage() {
       }
     })
 
-    // Completion rate by role (simplified)
     const roleCompletion = {}
     progress.forEach(p => {
       const role = p.users?.user_roles?.[0]?.roles?.display_name || 'Unknown'
@@ -66,11 +60,10 @@ export default function AnalyticsPage() {
     })
 
     const completionData = Object.entries(roleCompletion).map(([role, d]) => ({
-      role: role.split(' ')[0], // short name
+      role: role.split(' ')[0],
       completionRate: d.total > 0 ? Math.round((d.completed / d.total) * 100) : 0,
     }))
 
-    // Risk by category
     const categoryScores = {}
     users.forEach(u => {
       const cat   = u.role_category || 'Unknown'
@@ -85,7 +78,6 @@ export default function AnalyticsPage() {
       avgScore: d.count > 0 ? Math.round((d.total / d.count) * 10) / 10 : 0,
     }))
 
-    // Phishing trend per campaign
     const phishingTrend = campaigns.map(c => ({
       campaign:   c.campaign_name?.substring(0, 15) + '...',
       clickRate:  Number(c.click_rate_pct) || 0,
@@ -94,7 +86,6 @@ export default function AnalyticsPage() {
         : 0,
     }))
 
-    // Users with latest scores
     const usersWithScores = users.map(u => ({
       ...u,
       latest_score:      latestScores[u.id]?.composite_score || 0,
@@ -106,7 +97,6 @@ export default function AnalyticsPage() {
       is_critical:       latestScores[u.id]?.is_critical || false,
     }))
 
-    // Summary stats
     const activeUsers    = users.filter(u => u.is_active).length
     const scoredUsers    = Object.keys(latestScores).length
     const criticalUsers  = Object.values(latestScores).filter(s => s.is_critical).length
@@ -130,21 +120,21 @@ export default function AnalyticsPage() {
       <PageWrapper>
 
         <div className="mb-6">
-          <h4 className="text-white text-xl font-bold">Platform Analytics</h4>
-          <p className="text-slate-400 text-sm mt-1">Overview of training progress and cybersecurity risk across the branch.</p>
+          <h4 className="text-th-txt text-xl font-bold">Platform Analytics</h4>
+          <p className="text-th-txt2 text-sm mt-1">Overview of training progress and cybersecurity risk across the branch.</p>
         </div>
 
         {/* Summary stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
-            { label: 'Active Employees',   value: loading ? '-' : data.summary?.activeUsers,   color: 'text-white' },
-            { label: 'With Risk Scores',   value: loading ? '-' : data.summary?.scoredUsers,   color: 'text-blue-400' },
-            { label: 'At Critical Risk',   value: loading ? '-' : data.summary?.criticalUsers,  color: 'text-red-400' },
-            { label: 'Avg Risk Score',     value: loading ? '-' : data.summary?.avgScore,       color: 'text-yellow-400' },
+            { label: 'Active Employees',   value: loading ? '-' : data.summary?.activeUsers,   color: 'text-th-txt' },
+            { label: 'With Risk Scores',   value: loading ? '-' : data.summary?.scoredUsers,   color: 'text-blue-600 dark:text-blue-400' },
+            { label: 'At Critical Risk',   value: loading ? '-' : data.summary?.criticalUsers,  color: 'text-red-600 dark:text-red-400' },
+            { label: 'Avg Risk Score',     value: loading ? '-' : data.summary?.avgScore,       color: 'text-yellow-600 dark:text-yellow-400' },
           ].map((s, i) => (
-            <div key={i} className="bg-slate-800 border border-white/[0.08] rounded-xl p-4 text-center">
+            <div key={i} className="bg-th-srf border border-th-brd rounded-xl p-4 text-center">
               <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
-              <p className="text-slate-400 text-xs mt-1">{s.label}</p>
+              <p className="text-th-muted text-xs mt-1">{s.label}</p>
             </div>
           ))}
         </div>

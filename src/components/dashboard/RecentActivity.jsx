@@ -1,6 +1,6 @@
 
 // src/components/dashboard/RecentActivity.jsx
-// Shows recent quiz attempts and module completions
+// Shows the last in-progress module (with Continue button) and recent quiz attempts
 
 import Link from 'next/link'
 
@@ -14,18 +14,19 @@ function timeAgo(dateString) {
   return `${Math.floor(diff / 86400)}d ago`
 }
 
-export default function RecentActivity({ activities = [], loading = false }) {
+export default function RecentActivity({ activities = [], lastModule = null, loading = false }) {
   if (loading) {
     return (
-      <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
+      <div className="bg-th-srf border border-th-brd rounded-xl p-6 shadow-sm shadow-black/5 dark:shadow-black/30">
         <div className="animate-pulse space-y-4">
-          <div className="h-4 bg-slate-700 rounded w-1/3" />
-          {[...Array(4)].map((_, i) => (
+          <div className="h-4 bg-th-track rounded w-1/3" />
+          <div className="h-16 bg-th-hov rounded-lg" />
+          {[...Array(3)].map((_, i) => (
             <div key={i} className="flex gap-3">
-              <div className="w-8 h-8 bg-slate-700 rounded-lg" />
+              <div className="w-8 h-8 bg-th-track rounded-lg" />
               <div className="flex-1 space-y-2">
-                <div className="h-3 bg-slate-700 rounded w-3/4" />
-                <div className="h-3 bg-slate-700 rounded w-1/2" />
+                <div className="h-3 bg-th-track rounded w-3/4" />
+                <div className="h-3 bg-th-track rounded w-1/2" />
               </div>
             </div>
           ))}
@@ -35,39 +36,69 @@ export default function RecentActivity({ activities = [], loading = false }) {
   }
 
   return (
-    <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 transition-all duration-150 hover:border-white/[0.14] hover:shadow-md hover:shadow-black/40">
+    <div className="bg-th-srf border border-th-brd rounded-xl p-6 shadow-sm shadow-black/5 dark:shadow-black/30 transition-all duration-150 hover:shadow-md hover:shadow-black/5 dark:hover:shadow-black/40">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-slate-100 font-semibold">Recent Activity</h3>
-        <Link href="/results" className="text-blue-400 hover:text-blue-300 text-xs transition-all duration-150">
+        <h3 className="text-th-txt font-semibold">Recent Activity</h3>
+        <Link href="/results" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-xs transition-all duration-150">
           View all →
         </Link>
       </div>
 
+      {/* Continue Learning section */}
+      {lastModule && (
+        <div className="mb-5 p-4 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/25 rounded-xl">
+          <p className="text-blue-600 dark:text-blue-400 text-xs mb-1">Continue where you left off</p>
+          <p className="text-th-txt text-sm font-semibold mb-2 truncate">{lastModule.title}</p>
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-1.5 bg-blue-200 dark:bg-blue-900/60 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-blue-500 rounded-full transition-all duration-500"
+                style={{ width: `${lastModule.progress?.progress_pct || 0}%` }}
+              />
+            </div>
+            <span className="text-th-muted text-xs shrink-0">
+              {lastModule.progress?.progress_pct || 0}%
+            </span>
+          </div>
+          <Link
+            href={`/modules/${lastModule.id}`}
+            className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition-all duration-150"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Continue Module
+          </Link>
+        </div>
+      )}
+
+      {/* Recent quiz activity */}
       {activities.length > 0 ? (
         <div className="space-y-3">
           {activities.map((activity, i) => (
             <div key={i} className="flex items-start gap-3">
-              <svg className="w-4 h-4 text-white flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={
-                    activity.type === 'quiz_passed'    ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' :
-                    activity.type === 'quiz_failed'    ? 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z' :
-                    activity.type === 'module_done'    ? 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' :
-                    activity.type === 'phishing_click' ? 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' :
-                    'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-                  } />
+              <svg className="w-4 h-4 text-th-txt2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={
+                  activity.type === 'quiz_passed'    ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' :
+                  activity.type === 'quiz_failed'    ? 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z' :
+                  activity.type === 'module_done'    ? 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' :
+                  activity.type === 'phishing_click' ? 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' :
+                  'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                } />
               </svg>
 
               <div className="flex-1 min-w-0">
-                <p className="text-slate-200 text-sm">{activity.title}</p>
+                <p className="text-th-txt text-sm">{activity.title}</p>
                 <div className="flex items-center gap-2 mt-0.5">
                   {activity.score !== undefined && (
                     <span className={`text-xs font-medium ${
-                      activity.score >= 70 ? 'text-green-400' : 'text-red-400'
+                      activity.score >= 70 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'
                     }`}>
                       {activity.score}%
                     </span>
                   )}
-                  <span className="text-slate-500 text-xs">{timeAgo(activity.date)}</span>
+                  <span className="text-th-muted text-xs">{timeAgo(activity.date)}</span>
                 </div>
               </div>
             </div>
@@ -75,8 +106,8 @@ export default function RecentActivity({ activities = [], loading = false }) {
         </div>
       ) : (
         <div className="text-center py-6">
-          <p className="text-slate-400 text-sm">No activity yet.</p>
-          <p className="text-slate-500 text-xs mt-1">Complete a module or quiz to see your activity here.</p>
+          <p className="text-th-txt2 text-sm">No activity yet.</p>
+          <p className="text-th-muted text-xs mt-1">Complete a module or quiz to see your activity here.</p>
         </div>
       )}
     </div>

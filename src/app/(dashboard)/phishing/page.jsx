@@ -8,7 +8,6 @@ import { useState, useEffect } from 'react'
 import PageWrapper from '@/components/layout/PageWrapper'
 import PhishingStats from '@/components/phishing/PhishingStats'
 import CampaignCard from '@/components/phishing/CampaignCard'
-import SimulationBadge from '@/components/phishing/SimulationBadge'
 import { createClient } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 
@@ -43,12 +42,11 @@ export default function PhishingPage() {
         {/* Header */}
         <div className="flex items-start justify-between mb-6">
           <div>
-            <h4 className="text-white text-xl font-bold">My Phishing Test History</h4>
-            <p className="text-slate-400 text-sm mt-1">
-              These are simulated phishing tests conducted by your organization.
+            <h4 className="text-th-txt text-xl font-bold">My Phishing Test History</h4>
+            <p className="text-th-txt2 text-sm mt-1">
+              A record of phishing tests your organization has sent you.
             </p>
           </div>
-          <SimulationBadge />
         </div>
 
         {/* Stats */}
@@ -57,12 +55,11 @@ export default function PhishingPage() {
         </div>
 
         {/* Info banner */}
-        <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 mb-6">
-          <p className="text-blue-400 text-sm font-semibold mb-1">About phishing simulations</p>
-          <p className="text-slate-400 text-sm">
-            Your organization regularly sends simulated phishing emails to test your awareness.
-            These are not real attacks - they are training exercises. Clicking a link in a
-            simulation is recorded and affects your risk score. The goal is to help you
+        <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-xl p-4 mb-6">
+          <p className="text-blue-700 dark:text-blue-400 text-sm font-semibold mb-1">About phishing tests</p>
+          <p className="text-blue-600/80 dark:text-blue-300/70 text-sm">
+            Your organization regularly sends phishing tests to help you build security awareness.
+            Clicking a link in a test is recorded and affects your risk score. The goal is to help you
             recognise and avoid real phishing attacks.
           </p>
         </div>
@@ -71,9 +68,9 @@ export default function PhishingPage() {
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-slate-800 border border-white/[0.08] rounded-xl p-5 animate-pulse">
-                <div className="h-4 bg-slate-800 rounded w-3/4 mb-3" />
-                <div className="h-3 bg-slate-800 rounded w-1/2" />
+              <div key={i} className="bg-th-hov border border-th-brd rounded-xl p-5 animate-pulse">
+                <div className="h-4 bg-th-track rounded w-3/4 mb-3" />
+                <div className="h-3 bg-th-track rounded w-1/2" />
               </div>
             ))}
           </div>
@@ -85,14 +82,14 @@ export default function PhishingPage() {
           </div>
         ) : (
           <div className="text-center py-16">
-            <div className="w-14 h-14 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-7 h-7 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="w-14 h-14 bg-th-hov border border-th-brd rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-7 h-7 text-th-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
                   d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
-            <p className="text-slate-400 font-medium">No phishing tests yet</p>
-            <p className="text-slate-600 text-sm mt-1">
+            <p className="text-th-txt2 font-medium">No phishing tests yet</p>
+            <p className="text-th-muted text-sm mt-1">
               Your organization has not sent any simulations yet. Check back later.
             </p>
           </div>

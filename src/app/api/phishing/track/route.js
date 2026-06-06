@@ -1,12 +1,12 @@
 // src/app/api/phishing/track/route.js
 // GET - tracks email opens via 1x1 pixel.
-// Called when the email is opened by the recipient.
 // No auth required - token is the identifier.
+// Always returns the pixel — never breaks email rendering.
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
+import { logger } from '@/lib/logger'
 
-// 1x1 transparent GIF
 const PIXEL = Buffer.from(
   'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
   'base64'
@@ -19,7 +19,6 @@ export async function GET(request) {
 
   if (token) {
     try {
-      // Find the target by token
       const { data: target } = await supabaseAdmin
         .from('phishing_targets')
         .select('id, result')
@@ -29,7 +28,6 @@ export async function GET(request) {
       if (target) {
         const now = new Date().toISOString()
 
-        // Only update if not already clicked (preserve first interaction)
         if (target.result === 'sent') {
           await supabaseAdmin
             .from('phishing_targets')
@@ -37,22 +35,16 @@ export async function GET(request) {
             .eq('id', target.id)
         }
 
-        // Log the event
         await supabaseAdmin
           .from('phishing_click_events')
-          .insert({
-            target_id:  target.id,
-            event_type: eventType,
-            occurred_at: now,
-          })
+          .insert({ target_id: target.id, event_type: eventType, occurred_at: now })
       }
     } catch (err) {
-      // Silently fail - never break the email rendering
-      console.error('Tracking pixel error:', err)
+      // Never break email rendering — log silently
+      logger.error(err, { context: 'phishing/track', token })
     }
   }
 
-  // Always return the pixel regardless of errors
   return new NextResponse(PIXEL, {
     status: 200,
     headers: {

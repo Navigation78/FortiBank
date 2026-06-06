@@ -101,8 +101,8 @@ export default function CreateCampaignForm() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <p className="text-white font-semibold text-lg">Campaign created!</p>
-        <p className="text-slate-400 text-sm mt-1 mb-6">
+        <p className="text-th-txt font-semibold text-lg">Campaign created!</p>
+        <p className="text-th-muted text-sm mt-1 mb-6">
           Ready to send to {selectedRoles.length > 0 ? 'selected roles' : 'all employees'}.
         </p>
         <div className="flex flex-col gap-3">
@@ -115,7 +115,7 @@ export default function CreateCampaignForm() {
           </button>
           <button
             onClick={() => router.push('/admin/phishing')}
-            className="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-all duration-150"
+            className="w-full bg-th-hov hover:bg-th-act text-th-txt2 font-medium rounded-lg py-2.5 text-sm border border-th-brd transition-all duration-150"
           >
             Save as Draft - Send Later
           </button>
@@ -128,77 +128,77 @@ export default function CreateCampaignForm() {
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
         <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-          <p className="text-red-400 text-sm">{error}</p>
+          <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
         </div>
       )}
 
       {/* Campaign details */}
-      <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 space-y-4">
-        <h3 className="text-white font-semibold">Campaign Details</h3>
+      <div className="bg-th-srf border border-th-brd rounded-xl p-6 space-y-4">
+        <h3 className="text-th-txt font-semibold">Campaign Details</h3>
         <div>
-          <label className="block text-slate-300 text-sm font-medium mb-1.5">Campaign Name *</label>
+          <label className="block text-th-txt2 text-sm font-medium mb-1.5">Campaign Name *</label>
           <input name="name" value={form.name} onChange={handleChange} required
             placeholder="e.g. Q2 IT Password Reset Phishing Test"
-            className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
+            className="w-full bg-th-ibg border border-th-ibrd text-th-txt placeholder:text-th-muted rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
           />
         </div>
         <div>
-          <label className="block text-slate-300 text-sm font-medium mb-1.5">Description</label>
+          <label className="block text-th-txt2 text-sm font-medium mb-1.5">Description</label>
           <input name="description" value={form.description} onChange={handleChange}
             placeholder="Internal note about this campaign"
-            className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
+            className="w-full bg-th-ibg border border-th-ibrd text-th-txt placeholder:text-th-muted rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
           />
         </div>
       </div>
 
       {/* Email template */}
-      <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 space-y-4">
+      <div className="bg-th-srf border border-th-brd rounded-xl p-6 space-y-4">
         <div>
-          <h3 className="text-white font-semibold">Email Template</h3>
-          <p className="text-slate-500 text-xs mt-1">
-            Use <code className="bg-slate-800 px-1 rounded">{'{{name}}'}</code> for recipient name and{' '}
-            <code className="bg-slate-800 px-1 rounded">{'{{phishing_link}}'}</code> for the tracking link.
+          <h3 className="text-th-txt font-semibold">Email Template</h3>
+          <p className="text-th-muted text-xs mt-1">
+            Use <code className="bg-th-hov px-1 rounded">{'{{name}}'}</code> for recipient name and{' '}
+            <code className="bg-th-hov px-1 rounded">{'{{phishing_link}}'}</code> for the tracking link.
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label className="block text-slate-300 text-sm font-medium mb-1.5">Email Subject *</label>
+            <label className="block text-th-txt2 text-sm font-medium mb-1.5">Email Subject *</label>
             <input name="email_subject" value={form.email_subject} onChange={handleChange} required
               placeholder="URGENT: Action required"
-              className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
+              className="w-full bg-th-ibg border border-th-ibrd text-th-txt placeholder:text-th-muted rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
             />
           </div>
           <div>
-            <label className="block text-slate-300 text-sm font-medium mb-1.5">Sender Name</label>
+            <label className="block text-th-txt2 text-sm font-medium mb-1.5">Sender Name</label>
             <input name="email_sender_name" value={form.email_sender_name} onChange={handleChange}
-              className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
+              className="w-full bg-th-ibg border border-th-ibrd text-th-txt rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
             />
           </div>
           <div>
-            <label className="block text-slate-300 text-sm font-medium mb-1.5">Sender Address</label>
+            <label className="block text-th-txt2 text-sm font-medium mb-1.5">Sender Address</label>
             <input name="email_sender_addr" value={form.email_sender_addr} onChange={handleChange}
-              className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
+              className="w-full bg-th-ibg border border-th-ibrd text-th-txt rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-all duration-150"
             />
           </div>
         </div>
         <div>
-          <label className="block text-slate-300 text-sm font-medium mb-1.5">Email Body (HTML) *</label>
+          <label className="block text-th-txt2 text-sm font-medium mb-1.5">Email Body (HTML) *</label>
           <textarea name="email_body_html" value={form.email_body_html} onChange={handleChange} required rows={10}
-            className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm font-mono focus:outline-none focus:border-blue-500 transition-all duration-150 resize-y"
+            className="w-full bg-th-ibg border border-th-ibrd text-th-txt placeholder:text-th-muted rounded-lg px-4 py-2.5 text-sm font-mono focus:outline-none focus:border-blue-500 transition-all duration-150 resize-y"
           />
         </div>
       </div>
 
       {/* Target roles */}
-      <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6">
-        <h3 className="text-white font-semibold mb-1">Target Roles</h3>
-        <p className="text-slate-400 text-sm mb-4">
+      <div className="bg-th-srf border border-th-brd rounded-xl p-6">
+        <h3 className="text-th-txt font-semibold mb-1">Target Roles</h3>
+        <p className="text-th-muted text-sm mb-4">
           {selectedRoles.length === 0 ? 'No roles selected - campaign will target ALL employees.' : `${selectedRoles.length} role(s) selected.`}
         </p>
         <div className="space-y-4">
           {Object.entries(rolesByCategory).map(([category, categoryRoles]) => (
             <div key={category}>
-              <p className="text-slate-500 text-xs font-medium mb-2 uppercase tracking-wider">{category}</p>
+              <p className="text-th-muted text-xs font-medium mb-2 uppercase tracking-wider">{category}</p>
               <div className="flex flex-wrap gap-2">
                 {categoryRoles.map(role => (
                   <button
@@ -207,8 +207,8 @@ export default function CreateCampaignForm() {
                     onClick={() => toggleRole(role.id)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
                       selectedRoles.includes(role.id)
-                        ? 'bg-green-600/20 border-green-500/40 text-green-300'
-                        : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white'
+                        ? 'bg-green-600/20 border-green-500/40 text-green-400'
+                        : 'bg-th-hov border-th-brd text-th-txt2 hover:text-th-txt'
                     }`}
                   >
                     {role.display_name}
@@ -227,7 +227,7 @@ export default function CreateCampaignForm() {
           {loading ? 'Creating...' : 'Create Campaign'}
         </button>
         <button type="button" onClick={() => router.back()}
-          className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm font-medium transition-all duration-150"
+          className="px-5 py-2.5 bg-th-hov hover:bg-th-act text-th-txt2 border border-th-brd rounded-lg text-sm font-medium transition-all duration-150"
         >
           Cancel
         </button>

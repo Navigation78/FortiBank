@@ -8,14 +8,14 @@ export default function CreateUserPage() {
   return (
     <>
       <PageWrapper>
-        <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-          <Link href="/admin/users" className="hover:text-slate-300">Users</Link>
+        <div className="flex items-center gap-2 text-sm text-th-muted mb-6">
+          <Link href="/admin/users" className="hover:text-th-txt2">Users</Link>
           <span>/</span>
-          <span className="text-slate-300">Add Employee</span>
+          <span className="text-th-txt2">Add Employee</span>
         </div>
-        <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 max-w-2xl">
-          <h4 className="text-white font-semibold mb-1">Create Employee Account</h4>
-          <p className="text-slate-400 text-sm mb-6">
+        <div className="bg-th-srf border border-th-brd rounded-xl p-6 max-w-2xl">
+          <h4 className="text-th-txt font-semibold mb-1">Create Employee Account</h4>
+          <p className="text-th-muted text-sm mb-6">
             Creates a Supabase auth account and assigns the employee their training role.
             They will receive a welcome email with login instructions.
           </p>

@@ -8,7 +8,6 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import PageWrapper from '@/components/layout/PageWrapper'
-import SimulationBadge from '@/components/phishing/SimulationBadge'
 import { createClient } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 
@@ -45,8 +44,8 @@ export default function CampaignDetailPage() {
     return (
       <PageWrapper>
         <div className="animate-pulse space-y-4 max-w-2xl">
-            <div className="h-5 bg-slate-800 rounded w-1/3" />
-            <div className="h-32 bg-slate-800 rounded-xl" />
+            <div className="h-5 bg-th-hov rounded w-1/3" />
+            <div className="h-32 bg-th-hov rounded-xl" />
           </div>
         </PageWrapper>
     )
@@ -56,8 +55,8 @@ export default function CampaignDetailPage() {
     return (
       <PageWrapper>
           <div className="text-center py-16">
-            <p className="text-slate-400 mb-4">Campaign not found.</p>
-            <Link href="/phishing" className="text-blue-400 text-sm">← Back to phishing tests</Link>
+            <p className="text-th-muted mb-4">Campaign not found.</p>
+            <Link href="/phishing" className="text-blue-600 dark:text-blue-400 text-sm">← Back to phishing tests</Link>
           </div>
         </PageWrapper>
     )
@@ -72,10 +71,10 @@ export default function CampaignDetailPage() {
         <div className="max-w-2xl mx-auto">
 
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-            <Link href="/phishing" className="hover:text-slate-300">Phishing Tests</Link>
+          <div className="flex items-center gap-2 text-sm text-th-muted mb-6">
+            <Link href="/phishing" className="hover:text-th-txt2">Phishing Tests</Link>
             <span>/</span>
-            <span className="text-slate-300 truncate">{campaign?.name}</span>
+            <span className="text-th-txt2 truncate">{campaign?.name}</span>
           </div>
 
           {/* Result banner */}
@@ -96,63 +95,62 @@ export default function CampaignDetailPage() {
                 <p className={`font-bold ${clicked ? 'text-red-400' : reported ? 'text-green-400' : 'text-blue-400'}`}>
                   {clicked ? 'You clicked this phishing link' : reported ? 'You correctly reported this' : 'Email received'}
                 </p>
-                <SimulationBadge />
               </div>
             </div>
             {clicked && (
-              <p className="text-slate-300 text-sm">
-                This was a simulated phishing test. In a real attack, clicking this link
-                could have resulted in credential theft or malware installation.
+              <p className="text-th-txt2 text-sm">
+                Clicking this link could result in credential theft or malware installation.
+                Review the red flags below to improve your awareness.
               </p>
             )}
             {reported && (
-              <p className="text-slate-300 text-sm">
+              <p className="text-th-txt2 text-sm">
                 Excellent security awareness! Reporting phishing attempts protects the entire organization.
               </p>
             )}
           </div>
 
           {/* Campaign details */}
-          <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 mb-6">
-            <h3 className="text-white font-semibold mb-4">Email Details</h3>
+          <div className="bg-th-srf border border-th-brd rounded-xl p-6 mb-6">
+            <h3 className="text-th-txt font-semibold mb-4">Email Details</h3>
             <div className="space-y-3 text-sm">
               <div className="flex gap-3">
-                <span className="text-slate-500 w-24 flex-shrink-0">Campaign</span>
-                <span className="text-slate-300">{campaign?.name}</span>
+                <span className="text-th-muted w-24 flex-shrink-0">Campaign</span>
+                <span className="text-th-txt2">{campaign?.name}</span>
               </div>
               <div className="flex gap-3">
-                <span className="text-slate-500 w-24 flex-shrink-0">Subject</span>
-                <span className="text-slate-300">{campaign?.email_subject}</span>
+                <span className="text-th-muted w-24 flex-shrink-0">Subject</span>
+                <span className="text-th-txt2">{campaign?.email_subject}</span>
               </div>
               <div className="flex gap-3">
-                <span className="text-slate-500 w-24 flex-shrink-0">Sender name</span>
-                <span className="text-red-400">{campaign?.email_sender_name} ← fake sender</span>
+                <span className="text-th-muted w-24 flex-shrink-0">Sender name</span>
+                <span className="text-red-600 dark:text-red-400">{campaign?.email_sender_name} ← fake sender</span>
               </div>
               <div className="flex gap-3">
-                <span className="text-slate-500 w-24 flex-shrink-0">Sender email</span>
-                <span className="text-red-400">{campaign?.email_sender_addr} ← not a real address</span>
+                <span className="text-th-muted w-24 flex-shrink-0">Sender email</span>
+                <span className="text-red-600 dark:text-red-400">{campaign?.email_sender_addr} ← not a real address</span>
               </div>
             </div>
           </div>
 
           {/* What to look for */}
-          <div className="bg-slate-800 border border-white/[0.08] rounded-xl p-6 mb-6">
-            <h3 className="text-white font-semibold mb-4">Red Flags in This Email</h3>
-            <ul className="space-y-2 text-sm text-slate-400">
+          <div className="bg-th-srf border border-th-brd rounded-xl p-6 mb-6">
+            <h3 className="text-th-txt font-semibold mb-4">Red Flags in This Email</h3>
+            <ul className="space-y-2 text-sm text-th-txt2">
               <li className="flex items-start gap-2">
-                <span className="text-red-400 mt-0.5 flex-shrink-0">⚠</span>
+                <span className="text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0">⚠</span>
                 The sender domain does not match your organization's official domain
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-red-400 mt-0.5 flex-shrink-0">⚠</span>
+                <span className="text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0">⚠</span>
                 The email created urgency to pressure you into acting quickly
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-red-400 mt-0.5 flex-shrink-0">⚠</span>
+                <span className="text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0">⚠</span>
                 The link URL did not match a legitimate organizational domain
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-red-400 mt-0.5 flex-shrink-0">⚠</span>
+                <span className="text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0">⚠</span>
                 Legitimate IT systems never ask for credentials via email links
               </li>
             </ul>
@@ -160,7 +158,7 @@ export default function CampaignDetailPage() {
 
           <Link
             href="/phishing"
-            className="flex items-center gap-2 text-slate-500 hover:text-slate-300 text-sm transition-all duration-150"
+            className="flex items-center gap-2 text-th-muted hover:text-th-txt2 text-sm transition-all duration-150"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />

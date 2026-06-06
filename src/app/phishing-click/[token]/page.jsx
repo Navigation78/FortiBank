@@ -31,7 +31,7 @@ export default function PhishingClickPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-th-bg flex items-center justify-center p-4">
       <div className="max-w-lg w-full">
 
         {status === 'recording' && (
@@ -41,7 +41,7 @@ export default function PhishingClickPage() {
         )}
 
         {(status === 'done' || status === 'error') && (
-          <div className="bg-slate-900 border border-orange-500/30 rounded-2xl overflow-hidden">
+          <div className="bg-th-srf border border-orange-500/30 rounded-2xl overflow-hidden">
             {/* Warning header */}
             <div className="bg-orange-500/10 border-b border-orange-500/30 px-6 py-5">
               <div className="flex items-center gap-3">
@@ -53,45 +53,45 @@ export default function PhishingClickPage() {
                 </div>
                 <div>
                   <p className="text-orange-400 font-bold text-sm">SIMULATED PHISHING ATTACK</p>
-                  <p className="text-slate-300 font-semibold">You clicked a phishing link</p>
+                  <p className="text-th-txt2 font-semibold">You clicked a phishing link</p>
                 </div>
               </div>
             </div>
 
             {/* Body */}
             <div className="px-6 py-5 space-y-4">
-              <p className="text-slate-300 text-sm leading-relaxed">
-                This was a <strong className="text-white">simulated phishing test</strong> conducted
+              <p className="text-th-txt2 text-sm leading-relaxed">
+                This was a <strong className="text-th-txt">simulated phishing test</strong> conducted
                 by your organization as part of the FortiBank cybersecurity training program.
                 The email you received was not real  but a real attacker could have used the
                 same technique to compromise your account or steal sensitive information.
               </p>
 
-              <div className="bg-slate-800 rounded-xl p-4 space-y-2">
-                <p className="text-white text-sm font-semibold">What you should have done:</p>
-                <ul className="text-slate-400 text-sm space-y-1.5">
+              <div className="bg-th-hov border border-th-brd rounded-xl p-4 space-y-2">
+                <p className="text-th-txt text-sm font-semibold">What you should have done:</p>
+                <ul className="text-th-txt2 text-sm space-y-1.5">
                   <li className="flex items-start gap-2">
-                    <span className="text-green-400 mt-0.5">✓</span>
+                    <span className="text-green-500 dark:text-green-400 mt-0.5">✓</span>
                     Check the sender email address carefully for misspellings
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-green-400 mt-0.5">✓</span>
+                    <span className="text-green-500 dark:text-green-400 mt-0.5">✓</span>
                     Hover over links to preview the actual URL before clicking
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-green-400 mt-0.5">✓</span>
+                    <span className="text-green-500 dark:text-green-400 mt-0.5">✓</span>
                     Be suspicious of urgency  legitimate systems don't demand immediate action
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-green-400 mt-0.5">✓</span>
+                    <span className="text-green-500 dark:text-green-400 mt-0.5">✓</span>
                     Report suspicious emails to IT security immediately
                   </li>
                 </ul>
               </div>
 
               <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
-                <p className="text-red-400 text-sm font-semibold mb-1">Impact on your risk score</p>
-                <p className="text-slate-400 text-sm">
+                <p className="text-red-600 dark:text-red-400 text-sm font-semibold mb-1">Impact on your risk score</p>
+                <p className="text-th-txt2 text-sm">
                   This click has been recorded and will affect your cybersecurity risk score.
                   Complete your training modules to bring your score down.
                 </p>
@@ -108,7 +108,7 @@ export default function PhishingClickPage() {
               </Link>
               <Link
                 href="/login"
-                className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-all duration-150 text-center"
+                className="flex-1 bg-th-hov hover:bg-th-act text-th-txt2 border border-th-brd font-medium rounded-lg py-2.5 text-sm transition-all duration-150 text-center"
               >
                 Go to Dashboard
               </Link>
@@ -116,7 +116,7 @@ export default function PhishingClickPage() {
           </div>
         )}
 
-        <p className="text-center text-slate-600 text-xs mt-6">
+        <p className="text-center text-th-muted text-xs mt-6">
           FortiBank Cybersecurity Training Program · This test was authorized by your organization
         </p>
       </div>

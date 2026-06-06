@@ -3,20 +3,20 @@
 // DELETE /api/notifications/:id  - delete a notification
 
 import { NextResponse } from 'next/server'
-import { getRouteUser } from '@/lib/supabaseRoute'
+import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
+import { withApiHandler } from '@/lib/apiHandler'
+import { ValidationError } from '@/lib/errors'
 
-export async function PATCH(request, { params }) {
-  const { user, error: authError, supabase } = await getRouteUser(request)
-  if (authError || !user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+export const PATCH = withApiHandler(async (request, { params }) => {
+  const { user, supabase, networkError } = await getRouteUser(request)
+  if (!user) return unauthorizedResponse(networkError)
 
   const { id } = await params
   const body = await request.json()
   const { is_read } = body
 
   if (typeof is_read !== 'boolean') {
-    return NextResponse.json({ error: 'is_read (boolean) is required' }, { status: 400 })
+    throw new ValidationError('is_read (boolean) is required', { field: 'is_read' })
   }
 
   const { data, error } = await supabase
@@ -31,13 +31,11 @@ export async function PATCH(request, { params }) {
   if (!data)  return NextResponse.json({ error: 'Not found' },  { status: 404 })
 
   return NextResponse.json({ notification: data })
-}
+})
 
-export async function DELETE(request, { params }) {
-  const { user, error: authError, supabase } = await getRouteUser(request)
-  if (authError || !user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+export const DELETE = withApiHandler(async (request, { params }) => {
+  const { user, supabase, networkError } = await getRouteUser(request)
+  if (!user) return unauthorizedResponse(networkError)
 
   const { id } = await params
 
@@ -50,4 +48,4 @@ export async function DELETE(request, { params }) {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   return NextResponse.json({ success: true })
-}
+})

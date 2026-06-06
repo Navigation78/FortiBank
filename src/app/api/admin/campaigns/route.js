@@ -4,19 +4,22 @@
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
-import { getRouteUser } from '@/lib/supabaseRoute'
+import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
+import { withApiHandler } from '@/lib/apiHandler'
+import { ValidationError } from '@/lib/errors'
 
 async function verifyAdmin(request) {
-  const { user } = await getRouteUser(request)
-  if (!user) return null
+  const { user, networkError } = await getRouteUser(request)
+  if (!user) return networkError ? unauthorizedResponse(true) : null
   const { data: roleData } = await supabaseAdmin
     .from('user_roles').select('roles(name)').eq('user_id', user.id).single()
   if (roleData?.roles?.name !== 'system_admin') return null
   return user
 }
 
-export async function GET(request) {
+export const GET = withApiHandler(async (request) => {
   const admin = await verifyAdmin(request)
+  if (admin instanceof Response) return admin
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { data, error } = await supabaseAdmin
@@ -26,10 +29,11 @@ export async function GET(request) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ campaigns: data })
-}
+})
 
-export async function POST(request) {
+export const POST = withApiHandler(async (request) => {
   const admin = await verifyAdmin(request)
+  if (admin instanceof Response) return admin
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await request.json()
@@ -39,14 +43,12 @@ export async function POST(request) {
   } = body
 
   if (!name || !email_subject || !email_body_html) {
-    return NextResponse.json({ error: 'name, email_subject and email_body_html are required' }, { status: 400 })
+    throw new ValidationError('name, email_subject and email_body_html are required', {
+      fields: ['name', 'email_subject', 'email_body_html'],
+    })
   }
 
-  // Get role IDs from names if provided
-  let targetRoleIds = null
-  if (role_ids && role_ids.length > 0) {
-    targetRoleIds = role_ids
-  }
+  const targetRoleIds = (role_ids && role_ids.length > 0) ? role_ids : null
 
   const { data: campaign, error } = await supabaseAdmin
     .from('phishing_campaigns')
@@ -57,13 +59,13 @@ export async function POST(request) {
       email_sender_name: email_sender_name || 'IT Helpdesk',
       email_sender_addr: email_sender_addr || 'helpdesk@fortibank-it.com',
       email_body_html,
-      target_role_ids: targetRoleIds,
-      status:          'draft',
-      created_by:      admin.id,
+      target_role_ids:   targetRoleIds,
+      status:            'draft',
+      created_by:        admin.id,
     })
     .select()
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ campaign }, { status: 201 })
-}
+})

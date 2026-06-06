@@ -2,7 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
+/* ─── Design-system CSS variables ───────────────────────────────────────────
+   :root  = light mode defaults
+   .dark  = dark mode overrides (applied by next-themes on <html>)
+   ──────────────────────────────────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --th-bg:    #f9fafb;          /* gray-50  – page canvas          */
+  --th-srf:   #ffffff;          /* white    – cards, panels        */
+  --th-elv:   #ffffff;          /* white    – modals, dropdowns    */
+  --th-bar:   #ffffff;          /* white    – topbar / sidebar     */
+
+  /* Borders */
+  --th-brd:   rgba(0,0,0,0.09);
+  --th-brds:  rgba(0,0,0,0.05);
+
+  /* Text */
+  --th-txt:   #111827;          /* gray-900 – primary              */
+  --th-txt2:  #4b5563;          /* gray-600 – secondary            */
+  --th-muted: #9ca3af;          /* gray-400 – muted / placeholder  */
+
+  /* Interactive */
+  --th-hov:   rgba(0,0,0,0.04);
+  --th-act:   rgba(0,0,0,0.08);
+
+  /* Inputs */
+  --th-ibg:   #f3f4f6;          /* gray-100 */
+  --th-ibrd:  rgba(0,0,0,0.14);
+
+  /* Misc */
+  --th-track: #e5e7eb;          /* gray-200 – progress bar track   */
+}
+
+.dark {
+  --th-bg:    #080f1e;
+  --th-srf:   #0d1526;
+  --th-elv:   #1e293b;
+  --th-bar:   #0f172a;
+
+  --th-brd:   rgba(255,255,255,0.08);
+  --th-brds:  rgba(255,255,255,0.05);
+
+  --th-txt:   #f1f5f9;
+  --th-txt2:  #94a3b8;
+  --th-muted: #64748b;
+
+  --th-hov:   rgba(255,255,255,0.06);
+  --th-act:   rgba(255,255,255,0.10);
+
+  --th-ibg:   rgba(255,255,255,0.05);
+  --th-ibrd:  rgba(255,255,255,0.10);
+
+  --th-track: #1e293b;
+}
+
+/* ─── Base resets ─────────────────────────────────────────────────────────── */
+*, *::before, *::after {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
@@ -16,5 +71,215 @@ body {
   padding: 0;
   max-width: 100vw;
   overflow-x: hidden;
-  background: #0f172a;
+  background: var(--th-bg);
+  color: var(--th-txt);
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: var(--th-brd); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--th-txt2); }
+
+/* ─── Smooth theme colour transitions ─────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+/* ─── LMS Module Content Typography ──────────────────────────────────────── */
+.lms-content {
+  font-size: 0.9375rem;
+  line-height: 1.8;
+  color: var(--th-txt2);
+}
+
+.lms-content p {
+  margin-bottom: 1.1rem;
+  line-height: 1.8;
+}
+
+.lms-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* h1/h2 inside content body rendered at paragraph-heading size — no page dominance */
+.lms-content h1,
+.lms-content h2 {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--th-txt);
+  margin-top: 1.75rem;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.375rem;
+  border-bottom: 1px solid var(--th-brd);
+  letter-spacing: -0.01em;
+}
+
+.lms-content h3 {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--th-txt);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+.lms-content h4,
+.lms-content h5,
+.lms-content h6 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--th-txt);
+  margin-top: 1.25rem;
+  margin-bottom: 0.4rem;
+}
+
+.lms-content strong,
+.lms-content b {
+  font-weight: 700;
+  color: var(--th-txt);
+}
+
+.lms-content em,
+.lms-content i {
+  font-style: italic;
+}
+
+.lms-content ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0.625rem 0 1rem;
+}
+
+.lms-content ul li {
+  position: relative;
+  padding-left: 1.25rem;
+  margin-bottom: 0.45rem;
+  line-height: 1.75;
+}
+
+.lms-content ul li::before {
+  content: '';
+  position: absolute;
+  left: 0.25rem;
+  top: 0.62em;
+  width: 0.3125rem;
+  height: 0.3125rem;
+  border-radius: 50%;
+  background-color: #3b82f6;
+  opacity: 0.75;
+}
+
+.lms-content ol {
+  padding-left: 1.5rem;
+  margin: 0.625rem 0 1rem;
+}
+
+.lms-content ol li {
+  margin-bottom: 0.45rem;
+  padding-left: 0.2rem;
+  line-height: 1.75;
+}
+
+.lms-content blockquote {
+  border-left: 3px solid #3b82f6;
+  background: rgba(59, 130, 246, 0.05);
+  padding: 0.75rem 1rem;
+  margin: 1.25rem 0;
+  border-radius: 0 0.375rem 0.375rem 0;
+}
+
+.dark .lms-content blockquote {
+  background: rgba(59, 130, 246, 0.07);
+}
+
+.lms-content blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.lms-content code {
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 0.85em;
+  background: var(--th-hov);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  color: #3b82f6;
+}
+
+.dark .lms-content code {
+  color: #60a5fa;
+}
+
+.lms-content pre {
+  background: var(--th-hov);
+  border: 1px solid var(--th-brd);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.lms-content pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.875rem;
+}
+
+.lms-content a {
+  color: #3b82f6;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.dark .lms-content a {
+  color: #60a5fa;
+}
+
+.lms-content a:hover {
+  opacity: 0.8;
+}
+
+.lms-content hr {
+  border: none;
+  border-top: 1px solid var(--th-brd);
+  margin: 1.75rem 0;
+}
+
+.lms-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.875rem;
+}
+
+.lms-content th {
+  font-weight: 600;
+  color: var(--th-txt);
+  background: var(--th-hov);
+  padding: 0.5625rem 0.8125rem;
+  text-align: left;
+  border: 1px solid var(--th-brd);
+}
+
+.lms-content td {
+  padding: 0.5rem 0.8125rem;
+  border: 1px solid var(--th-brd);
+  line-height: 1.6;
+}
+
+.lms-content tr:nth-child(even) td {
+  background: rgba(0, 0, 0, 0.018);
+}
+
+.dark .lms-content tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.lms-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1rem auto;
+  display: block;
 }

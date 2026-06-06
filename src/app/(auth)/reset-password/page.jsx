@@ -108,15 +108,15 @@ export default function ResetPasswordPage() {
   // Still checking session
   if (checkingSession) {
     return (
-      <div className="bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl text-center">
-        <div className="flex items-center justify-center gap-3 text-slate-400">
+      <div className="bg-th-srf border border-th-brd rounded-2xl p-8 shadow-xl shadow-black/5 dark:shadow-black/40 text-center">
+        <div className="flex items-center justify-center gap-3 text-th-txt2">
           <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
           </svg>
           <span className="text-sm">Verifying your link...</span>
         </div>
-        <p className="text-slate-600 text-xs mt-3">This takes just a moment</p>
+        <p className="text-th-muted text-xs mt-3">This takes just a moment</p>
       </div>
     )
   }
@@ -124,15 +124,15 @@ export default function ResetPasswordPage() {
   // Invalid or expired link
   if (!validSession) {
     return (
-      <div className="bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl text-center">
-        <div className="w-14 h-14 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg className="w-7 h-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="bg-th-srf border border-th-brd rounded-2xl p-8 shadow-xl shadow-black/5 dark:shadow-black/40 text-center">
+        <div className="w-14 h-14 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/25 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg className="w-7 h-7 text-red-500 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
               d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <h4 className="text-white text-xl font-bold mb-2">Link expired or invalid</h4>
-        <p className="text-slate-400 text-sm mb-6">
+        <h4 className="text-th-txt text-xl font-bold mb-2">Link expired or invalid</h4>
+        <p className="text-th-txt2 text-sm mb-6">
           This link has expired or has already been used.
           Please request a new one or contact your administrator.
         </p>
@@ -142,7 +142,7 @@ export default function ResetPasswordPage() {
             Request new reset link
           </Link>
           <Link href="/login"
-            className="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg py-2.5 text-sm transition-all duration-150 block text-center">
+            className="w-full bg-th-hov hover:bg-th-act text-th-txt2 border border-th-brd font-medium rounded-lg py-2.5 text-sm transition-all duration-150 block text-center">
             Back to login
           </Link>
         </div>
@@ -153,16 +153,16 @@ export default function ResetPasswordPage() {
   // Success state
   if (success) {
     return (
-      <div className="bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl text-center">
+      <div className="bg-th-srf border border-th-brd rounded-2xl p-8 shadow-xl shadow-black/5 dark:shadow-black/40 text-center">
         <div className="w-14 h-14 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
           <svg className="w-7 h-7 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h4 className="text-white text-xl font-bold mb-2">
+        <h4 className="text-th-txt text-xl font-bold mb-2">
           {isInvite ? 'Account activated!' : 'Password updated!'}
         </h4>
-        <p className="text-slate-400 text-sm mb-4">
+        <p className="text-th-txt2 text-sm mb-4">
           {isInvite
             ? 'Your account is ready. Please log in with your new password.'
             : 'Your password has been reset. Redirecting to login...'}
@@ -177,12 +177,12 @@ export default function ResetPasswordPage() {
 
   // Password form
   return (
-    <div className="bg-slate-800 border border-white/[0.08] rounded-2xl p-8 shadow-2xl">
+    <div className="bg-th-srf border border-th-brd rounded-2xl p-8 shadow-xl shadow-black/5 dark:shadow-black/40">
       <div className="mb-6">
-        <h4 className="text-white text-2xl font-bold">
+        <h4 className="text-th-txt text-2xl font-bold">
           {isInvite ? 'Set your password' : 'Set new password'}
         </h4>
-        <p className="text-slate-400 text-sm mt-1">
+        <p className="text-th-txt2 text-sm mt-1">
           {isInvite
             ? 'Welcome to FortiBank! Choose a password to activate your account.'
             : 'Choose a strong password for your account.'}
@@ -191,13 +191,13 @@ export default function ResetPasswordPage() {
 
       {error && (
         <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-          <p className="text-red-400 text-sm">{error}</p>
+          <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-slate-300 text-sm font-medium mb-1.5">
+          <label className="block text-th-txt text-sm font-medium mb-1.5">
             {isInvite ? 'Create password' : 'New password'}
           </label>
           <div className="relative">
@@ -208,10 +208,10 @@ export default function ResetPasswordPage() {
               placeholder="At least 8 characters"
               required
               minLength={8}
-              className="w-full bg-slate-900/80 border border-white/[0.10] text-slate-100 placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40 transition-all duration-150 pr-10"
+              className="w-full bg-th-ibg border border-th-ibrd text-th-txt placeholder:text-th-muted rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500/70 focus:ring-1 focus:ring-blue-500/20 transition-all duration-150 pr-10"
             />
             <button type="button" onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300">
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-th-muted hover:text-th-txt2">
               {showPassword ? (
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -234,7 +234,7 @@ export default function ResetPasswordPage() {
                     ? password.length >= 12 ? 'bg-green-500'
                       : password.length >= 8  ? 'bg-yellow-500'
                       : 'bg-red-500'
-                    : 'bg-slate-700'
+                    : 'bg-th-track'
                 }`} />
               ))}
             </div>
@@ -242,7 +242,7 @@ export default function ResetPasswordPage() {
         </div>
 
         <div>
-          <label className="block text-slate-300 text-sm font-medium mb-1.5">
+          <label className="block text-th-txt text-sm font-medium mb-1.5">
             Confirm password
           </label>
           <input
@@ -251,14 +251,14 @@ export default function ResetPasswordPage() {
             onChange={e => setConfirm(e.target.value)}
             placeholder="Repeat your password"
             required
-            className={`w-full bg-slate-800 border text-white placeholder-slate-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-1 transition-all duration-150 ${
+            className={`w-full bg-th-ibg border text-th-txt placeholder:text-th-muted rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-1 transition-all duration-150 ${
               confirm && password !== confirm
                 ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                : 'border-slate-700 focus:border-blue-500 focus:ring-blue-500'
+                : 'border-th-ibrd focus:border-blue-500/70 focus:ring-blue-500/20'
             }`}
           />
           {confirm && password !== confirm && (
-            <p className="text-red-400 text-xs mt-1">Passwords do not match</p>
+            <p className="text-red-600 dark:text-red-400 text-xs mt-1">Passwords do not match</p>
           )}
         </div>
 

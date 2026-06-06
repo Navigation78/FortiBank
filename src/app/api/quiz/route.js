@@ -1,26 +1,22 @@
-// ============================================================
 // src/app/api/quiz/route.js
-// GET /api/quiz?quizId=xxx - returns quiz with all questions,
-// options, and the user's attempt count.
-// ============================================================
+// GET /api/quiz?quizId=xxx - returns quiz with all questions, options, and attempt count.
 
 import { NextResponse } from 'next/server'
-import { getRouteUser } from '@/lib/supabaseRoute'
+import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
+import { withApiHandler } from '@/lib/apiHandler'
+import { ValidationError } from '@/lib/errors'
 
-export async function GET(request) {
+export const GET = withApiHandler(async (request) => {
   const { searchParams } = new URL(request.url)
-  const quizId      = searchParams.get('quizId')
+  const quizId = searchParams.get('quizId')
 
   if (!quizId) {
-    return NextResponse.json({ error: 'quizId is required' }, { status: 400 })
+    throw new ValidationError('quizId is required', { field: 'quizId' })
   }
 
-  const { user, error: authError, supabase } = await getRouteUser(request)
-  if (authError || !user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const { user, supabase, networkError } = await getRouteUser(request)
+  if (!user) return unauthorizedResponse(networkError)
 
-  // Fetch quiz with questions and options
   const { data: quiz, error: quizError } = await supabase
     .from('quizzes')
     .select(`
@@ -53,14 +49,12 @@ export async function GET(request) {
     return NextResponse.json({ error: quizError.message }, { status: 404 })
   }
 
-  // Get attempt count for this user
   const { count } = await supabase
     .from('quiz_attempts')
     .select('*', { count: 'exact', head: true })
     .eq('quiz_id', quizId)
     .eq('user_id', user.id)
 
-  // Get best previous attempt
   const { data: bestAttempt } = await supabase
     .from('quiz_attempts')
     .select('score_pct, passed, submitted_at')
@@ -70,22 +64,19 @@ export async function GET(request) {
     .limit(1)
     .single()
 
-  // Shuffle questions order for security
-  const questions = [...quiz.quiz_questions].sort(
-    (a, b) => a.order_index - b.order_index
-  )
+  const questions = [...quiz.quiz_questions].sort((a, b) => a.order_index - b.order_index)
 
   return NextResponse.json({
     quiz: {
-      id:             quiz.id,
-      title:          quiz.title,
-      description:    quiz.description,
-      pass_score:     quiz.pass_score,
-      max_attempts:   quiz.max_attempts,
+      id:              quiz.id,
+      title:           quiz.title,
+      description:     quiz.description,
+      pass_score:      quiz.pass_score,
+      max_attempts:    quiz.max_attempts,
       time_limit_mins: quiz.time_limit_mins,
     },
     questions,
     attemptCount: count || 0,
     bestAttempt:  bestAttempt || null,
   })
-}
+})

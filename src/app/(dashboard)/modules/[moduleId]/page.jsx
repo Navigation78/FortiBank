@@ -41,24 +41,24 @@ export default function ModuleViewerPage() {
     return (
       <div className="flex min-h-full">
         {/* Sidebar skeleton */}
-        <div className="w-72 flex-shrink-0 bg-slate-900 border-r border-white/[0.06] p-4 animate-pulse space-y-3">
-          <div className="h-3 bg-slate-800 rounded w-1/3 mb-5" />
-          <div className="h-4 bg-slate-800 rounded w-4/5" />
-          <div className="h-1.5 bg-slate-800 rounded mt-3" />
+        <div className="w-72 flex-shrink-0 bg-th-bar border-r border-th-brd p-4 animate-pulse space-y-3">
+          <div className="h-3 bg-th-track rounded w-1/3 mb-5" />
+          <div className="h-4 bg-th-track rounded w-4/5" />
+          <div className="h-1.5 bg-th-track rounded mt-3" />
           <div className="mt-6 space-y-2">
-            {[...Array(4)].map((_, i) => <div key={i} className="h-8 bg-slate-800 rounded-lg" />)}
+            {[...Array(4)].map((_, i) => <div key={i} className="h-8 bg-th-track rounded-lg" />)}
           </div>
         </div>
         {/* Content skeleton */}
         <div className="flex-1 p-8 animate-pulse space-y-4">
-          <div className="h-4 bg-slate-800 rounded w-20 mb-6" />
-          <div className="h-7 bg-slate-800 rounded w-2/3" />
-          <div className="h-3 bg-slate-800 rounded w-1/3 mt-2" />
-          <div className="h-48 bg-slate-800 rounded-xl mt-6" />
+          <div className="h-4 bg-th-track rounded w-20 mb-6" />
+          <div className="h-7 bg-th-track rounded w-2/3" />
+          <div className="h-3 bg-th-track rounded w-1/3 mt-2" />
+          <div className="h-48 bg-th-track rounded-xl mt-6" />
           <div className="space-y-2 mt-4">
-            <div className="h-3 bg-slate-800 rounded w-full" />
-            <div className="h-3 bg-slate-800 rounded w-5/6" />
-            <div className="h-3 bg-slate-800 rounded w-4/6" />
+            <div className="h-3 bg-th-track rounded w-full" />
+            <div className="h-3 bg-th-track rounded w-5/6" />
+            <div className="h-3 bg-th-track rounded w-4/6" />
           </div>
         </div>
       </div>
@@ -76,10 +76,10 @@ export default function ModuleViewerPage() {
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5C3.312 18.333 4.274 20 5.814 20z" />
             </svg>
           </div>
-          <p className="text-slate-400 mb-4">
+          <p className="text-th-muted mb-4">
             {error || 'This module could not be found or you do not have access.'}
           </p>
-          <Link href="/modules" className="text-blue-400 hover:text-blue-300 text-sm">
+          <Link href="/modules" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm">
             ← Back to modules
           </Link>
         </div>

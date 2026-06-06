@@ -1,24 +1,26 @@
-// POST /api/admin/campaigns/[campaignId]/resend
-// Resends phishing emails to targets that still have result = 'not_sent'
+// src/app/api/admin/campaigns/[campaignId]/resend/route.js
+// POST - Resends phishing emails to targets that still have result = 'not_sent'
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { sendPhishingEmail } from '@/lib/email'
-import { getRouteUser } from '@/lib/supabaseRoute'
+import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
+import { withApiHandler } from '@/lib/apiHandler'
 
 const isDev = process.env.NODE_ENV === 'development'
 
 async function verifyAdmin(request) {
-  const { user } = await getRouteUser(request)
-  if (!user) return null
+  const { user, networkError } = await getRouteUser(request)
+  if (!user) return networkError ? unauthorizedResponse(true) : null
   const { data: roleData } = await supabaseAdmin
     .from('user_roles').select('roles(name)').eq('user_id', user.id).single()
   if (roleData?.roles?.name !== 'system_admin') return null
   return user
 }
 
-export async function POST(request, { params }) {
+export const POST = withApiHandler(async (request, { params }) => {
   const admin = await verifyAdmin(request)
+  if (admin instanceof Response) return admin
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { campaignId } = await params
@@ -33,7 +35,6 @@ export async function POST(request, { params }) {
     return NextResponse.json({ error: 'Campaign not found' }, { status: 404 })
   }
 
-  // Only resend to targets that never received the email
   const { data: pendingTargets, error: targetsError } = await supabaseAdmin
     .from('phishing_targets')
     .select('*, users(email, full_name)')
@@ -47,14 +48,14 @@ export async function POST(request, { params }) {
   if (!pendingTargets || pendingTargets.length === 0) {
     return NextResponse.json({
       message: 'All targets have already received the email. No resend needed.',
-      sent: 0,
-      failed: 0,
+      sent:    0,
+      failed:  0,
     })
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const appUrl   = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   const devEmail = process.env.DEV_TEST_EMAIL
-  const results = { sent: 0, failed: 0 }
+  const results  = { sent: 0, failed: 0 }
 
   for (const target of pendingTargets) {
     if (!target.users) continue
@@ -95,4 +96,4 @@ export async function POST(request, { params }) {
     ...(devNote && { devNote }),
     ...results,
   })
-}
+})

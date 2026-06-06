@@ -1,20 +1,18 @@
 // src/app/api/phishing/send/route.js
-// POST - sends phishing simulation emails to targeted employees.
-// Admin only. Uses Resend via email.js.
+// POST - sends phishing simulation emails to targeted employees. Admin only.
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { sendPhishingEmail } from '@/lib/email'
-import { getRouteUser } from '@/lib/supabaseRoute'
+import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
+import { withApiHandler } from '@/lib/apiHandler'
+import { ValidationError, ForbiddenError } from '@/lib/errors'
 
 const isDev = process.env.NODE_ENV === 'development'
 
-export async function POST(request) {
-  // Verify admin
-  const { user, error: authError } = await getRouteUser(request)
-  if (authError || !user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+export const POST = withApiHandler(async (request) => {
+  const { user, networkError } = await getRouteUser(request)
+  if (!user) return unauthorizedResponse(networkError)
 
   const { data: adminCheck } = await supabaseAdmin
     .from('user_roles')
@@ -23,10 +21,9 @@ export async function POST(request) {
     .single()
 
   if (adminCheck?.roles?.name !== 'system_admin') {
-    return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+    throw new ForbiddenError('Admin access required')
   }
 
-  // In development, DEV_TEST_EMAIL must be set
   if (isDev && !process.env.DEV_TEST_EMAIL) {
     return NextResponse.json(
       { error: 'DEV_TEST_EMAIL is not set in .env.local — add it to receive phishing test emails.' },
@@ -38,10 +35,9 @@ export async function POST(request) {
   const { campaignId } = body
 
   if (!campaignId) {
-    return NextResponse.json({ error: 'campaignId is required' }, { status: 400 })
+    throw new ValidationError('campaignId is required', { field: 'campaignId' })
   }
 
-  // Fetch campaign details
   const { data: campaign, error: campaignError } = await supabaseAdmin
     .from('phishing_campaigns')
     .select('*')
@@ -56,7 +52,6 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Campaign has already been sent' }, { status: 400 })
   }
 
-  // Get target users based on role_ids
   let usersQuery = supabaseAdmin
     .from('users_with_roles')
     .select('id, email, full_name, role')
@@ -80,7 +75,6 @@ export async function POST(request) {
     return NextResponse.json({ error: 'No target users found' }, { status: 400 })
   }
 
-  // Create phishing_targets records — always uses real user data
   const targets = targetUsers.map(u => ({
     campaign_id: campaignId,
     user_id:     u.id,
@@ -96,38 +90,30 @@ export async function POST(request) {
     return NextResponse.json({ error: insertError.message }, { status: 500 })
   }
 
-  // Update campaign status to active
   await supabaseAdmin
     .from('phishing_campaigns')
     .update({ status: 'active', started_at: new Date().toISOString() })
     .eq('id', campaignId)
 
-  // Send emails
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   const results = { sent: 0, failed: 0, errors: [] }
-
-  // In dev: all emails go to DEV_TEST_EMAIL so Resend actually delivers them.
-  // In production: emails go to each employee's real address.
   const devEmail = process.env.DEV_TEST_EMAIL
 
   for (const target of insertedTargets) {
     const targetUser = targetUsers.find(u => u.id === target.user_id)
     if (!targetUser) continue
 
-    // Delivery address — overridden in dev, real in production
     const deliveryEmail = isDev ? devEmail : targetUser.email
-
-    // In dev, prefix the subject so you know which employee each email is for
     const subjectPrefix = isDev ? `[DEV → ${targetUser.full_name}] ` : ''
 
     const emailResult = await sendPhishingEmail({
-      to:             deliveryEmail,
-      recipientName:  targetUser.full_name,       // still personalised correctly
-      emailSubject:   subjectPrefix + campaign.email_subject,
-      senderName:     campaign.email_sender_name,
-      senderAddress:  campaign.email_sender_addr,
-      emailBodyHtml:  campaign.email_body_html,
-      trackingToken:  target.tracking_token,      // unique per target — clicks recorded correctly
+      to:            deliveryEmail,
+      recipientName: targetUser.full_name,
+      emailSubject:  subjectPrefix + campaign.email_subject,
+      senderName:    campaign.email_sender_name,
+      senderAddress: campaign.email_sender_addr,
+      emailBodyHtml: campaign.email_body_html,
+      trackingToken: target.tracking_token,
       appUrl,
     })
 
@@ -147,7 +133,6 @@ export async function POST(request) {
       })
     }
 
-    // Small delay to avoid Resend rate limiting
     await new Promise(resolve => setTimeout(resolve, 150))
   }
 
@@ -160,4 +145,4 @@ export async function POST(request) {
     ...(devNote && { devNote }),
     ...results,
   })
-}
+})

@@ -1,14 +1,16 @@
+// src/app/api/admin/roles/route.js
+// GET - list all roles (admin only), syncing defaults if needed
+
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { DEFAULT_ROLE_DEFINITIONS, ROLES } from '@/constants/roles'
-import { getRouteUser } from '@/lib/supabaseRoute'
+import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
+import { withApiHandler } from '@/lib/apiHandler'
+import { ForbiddenError } from '@/lib/errors'
 
-async function getAuthenticatedAdmin(request) {
-  const { user, error: authError, supabase } = await getRouteUser(request)
-
-  if (authError || !user) {
-    return { error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) }
-  }
+export const GET = withApiHandler(async (request) => {
+  const { user, supabase, networkError } = await getRouteUser(request)
+  if (!user) return unauthorizedResponse(networkError)
 
   const { data: adminCheck, error: roleError } = await supabase
     .from('user_roles')
@@ -17,17 +19,7 @@ async function getAuthenticatedAdmin(request) {
     .single()
 
   if (roleError || adminCheck?.roles?.name !== ROLES.SYSTEM_ADMIN) {
-    return { error: NextResponse.json({ error: 'Admin access required' }, { status: 403 }) }
-  }
-
-  return { user }
-}
-
-export async function GET(request) {
-  const auth = await getAuthenticatedAdmin(request)
-
-  if (auth.error) {
-    return auth.error
+    throw new ForbiddenError('Admin access required')
   }
 
   const { data: existingRoles, error: fetchError } = await supabaseAdmin
@@ -69,4 +61,4 @@ export async function GET(request) {
   }
 
   return NextResponse.json({ roles })
-}
+})

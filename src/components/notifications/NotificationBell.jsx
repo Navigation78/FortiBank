@@ -1,8 +1,5 @@
 'use client'
 
-// src/components/notifications/NotificationBell.jsx
-// Bell icon + unread badge + dropdown preview used in both topbars.
-
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { useNotifications } from '@/hooks/useNotifications'
@@ -18,13 +15,13 @@ const TYPE_ICONS = {
 }
 
 const TYPE_COLORS = {
-  module:       'text-blue-400',
-  quiz:         'text-purple-400',
-  phishing:     'text-orange-400',
-  risk_alert:   'text-red-400',
-  certificate:  'text-green-400',
-  announcement: 'text-cyan-400',
-  system:       'text-slate-400',
+  module:       'text-blue-500 dark:text-blue-400',
+  quiz:         'text-purple-500 dark:text-purple-400',
+  phishing:     'text-orange-500 dark:text-orange-400',
+  risk_alert:   'text-red-500 dark:text-red-400',
+  certificate:  'text-green-500 dark:text-green-400',
+  announcement: 'text-cyan-500 dark:text-cyan-400',
+  system:       'text-th-muted',
 }
 
 function Icon({ path, className = 'w-4 h-4' }) {
@@ -54,10 +51,8 @@ export default function NotificationBell({ inboxHref = '/notifications' }) {
   const { notifications, unreadCount, loading, markAsRead, markAllRead } =
     useNotifications({ filter: 'all', page: 1 })
 
-  // Show at most 6 items in the dropdown
   const preview = notifications.slice(0, 6)
 
-  // Close on outside click
   useEffect(() => {
     function handleClick(e) {
       if (dropRef.current && !dropRef.current.contains(e.target)) setOpen(false)
@@ -66,10 +61,6 @@ export default function NotificationBell({ inboxHref = '/notifications' }) {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [open])
 
-  const handleBellClick = () => {
-    setOpen(o => !o)
-  }
-
   const handleItemClick = (n) => {
     if (!n.is_read) markAsRead(n.id, true)
     setOpen(false)
@@ -77,10 +68,9 @@ export default function NotificationBell({ inboxHref = '/notifications' }) {
 
   return (
     <div className="relative" ref={dropRef}>
-      {/* Bell button */}
       <button
-        onClick={handleBellClick}
-        className="relative flex items-center justify-center w-9 h-9 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] border border-transparent hover:border-white/[0.08] transition-all duration-150"
+        onClick={() => setOpen(o => !o)}
+        className="relative flex items-center justify-center w-9 h-9 rounded-lg text-th-txt2 hover:text-th-txt hover:bg-th-hov border border-transparent hover:border-th-brd transition-all duration-150"
         aria-label="Notifications"
       >
         <Icon
@@ -94,15 +84,14 @@ export default function NotificationBell({ inboxHref = '/notifications' }) {
         )}
       </button>
 
-      {/* Dropdown */}
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 bg-slate-800 border border-white/[0.08] rounded-xl shadow-2xl shadow-black/60 z-50 overflow-hidden">
+        <div className="absolute right-0 top-full mt-2 w-80 bg-th-elv border border-th-brd rounded-xl shadow-xl shadow-black/10 dark:shadow-black/60 z-50 overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06]">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-th-brds">
             <div className="flex items-center gap-2">
-              <span className="text-slate-100 text-sm font-semibold">Notifications</span>
+              <span className="text-th-txt text-sm font-semibold">Notifications</span>
               {unreadCount > 0 && (
-                <span className="px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-400 text-[10px] font-bold">
+                <span className="px-1.5 py-0.5 rounded-full bg-red-500/15 text-red-600 dark:text-red-400 text-[10px] font-bold">
                   {unreadCount}
                 </span>
               )}
@@ -110,7 +99,7 @@ export default function NotificationBell({ inboxHref = '/notifications' }) {
             {unreadCount > 0 && (
               <button
                 onClick={markAllRead}
-                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
               >
                 Mark all read
               </button>
@@ -120,11 +109,11 @@ export default function NotificationBell({ inboxHref = '/notifications' }) {
           {/* List */}
           <div className="max-h-[340px] overflow-y-auto">
             {loading && preview.length === 0 ? (
-              <div className="px-4 py-6 text-center text-slate-500 text-sm">Loading…</div>
+              <div className="px-4 py-6 text-center text-th-muted text-sm">Loading...</div>
             ) : preview.length === 0 ? (
               <div className="px-4 py-8 text-center">
-                <Icon path="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-                <p className="text-slate-500 text-sm">No notifications yet</p>
+                <Icon path="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" className="w-8 h-8 text-th-muted mx-auto mb-2" />
+                <p className="text-th-muted text-sm">No notifications yet</p>
               </div>
             ) : (
               preview.map(n => {
@@ -133,18 +122,18 @@ export default function NotificationBell({ inboxHref = '/notifications' }) {
                 const inner = (
                   <div
                     key={n.id}
-                    className={`flex gap-3 px-4 py-3 hover:bg-white/[0.04] transition-colors cursor-pointer border-b border-white/[0.04] last:border-0 ${!n.is_read ? 'bg-blue-500/[0.04]' : ''}`}
+                    className={`flex gap-3 px-4 py-3 hover:bg-th-hov transition-colors cursor-pointer border-b border-th-brds last:border-0 ${!n.is_read ? 'bg-blue-500/[0.04] dark:bg-blue-500/[0.04]' : ''}`}
                     onClick={() => handleItemClick(n)}
                   >
                     <div className={`flex-shrink-0 mt-0.5 ${iconColor}`}>
                       <Icon path={iconPath} className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className={`text-sm leading-snug truncate ${!n.is_read ? 'text-slate-100 font-medium' : 'text-slate-300'}`}>
+                      <p className={`text-sm leading-snug truncate ${!n.is_read ? 'text-th-txt font-medium' : 'text-th-txt2'}`}>
                         {n.title}
                       </p>
-                      <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{n.message}</p>
-                      <p className="text-[10px] text-slate-600 mt-1">{timeAgo(n.created_at)}</p>
+                      <p className="text-xs text-th-muted mt-0.5 line-clamp-2">{n.message}</p>
+                      <p className="text-[10px] text-th-muted mt-1 opacity-70">{timeAgo(n.created_at)}</p>
                     </div>
                     {!n.is_read && (
                       <div className="flex-shrink-0 mt-1.5">
@@ -166,11 +155,11 @@ export default function NotificationBell({ inboxHref = '/notifications' }) {
           </div>
 
           {/* Footer */}
-          <div className="px-4 py-3 border-t border-white/[0.06]">
+          <div className="px-4 py-3 border-t border-th-brds">
             <Link
               href={inboxHref}
               onClick={() => setOpen(false)}
-              className="flex items-center justify-center gap-1.5 text-xs text-blue-400 hover:text-blue-300 transition-colors no-underline"
+              className="flex items-center justify-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors no-underline"
             >
               View all notifications
               <Icon path="M9 5l7 7-7 7" className="w-3 h-3" />

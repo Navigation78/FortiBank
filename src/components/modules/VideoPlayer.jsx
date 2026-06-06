@@ -46,7 +46,7 @@ export default function VideoPlayer({ url, title }) {
 
   if (!url) {
     return (
-      <div className="aspect-video bg-slate-800 rounded-xl flex items-center justify-center text-slate-500 text-sm">
+      <div className="aspect-video bg-th-hov rounded-xl flex items-center justify-center text-th-muted text-sm">
         No video URL provided.
       </div>
     )
@@ -54,7 +54,7 @@ export default function VideoPlayer({ url, title }) {
 
   if (embedUrl) {
     return (
-      <div className="aspect-video bg-slate-800 rounded-xl overflow-hidden">
+      <div className="aspect-video bg-th-hov rounded-xl overflow-hidden">
         <iframe
           src={embedUrl}
           title={title || 'Module video'}
@@ -68,7 +68,7 @@ export default function VideoPlayer({ url, title }) {
 
   if (isDirectVideoUrl(url)) {
     return (
-      <div className="aspect-video bg-slate-800 rounded-xl overflow-hidden">
+      <div className="aspect-video bg-th-hov rounded-xl overflow-hidden">
         <video
           src={url}
           controls
@@ -80,13 +80,13 @@ export default function VideoPlayer({ url, title }) {
   }
 
   return (
-    <div className="aspect-video bg-slate-800 rounded-xl flex flex-col items-center justify-center gap-3 p-6 text-center">
-      <p className="text-slate-400 text-sm">This video link cannot be embedded.</p>
+    <div className="aspect-video bg-th-hov rounded-xl flex flex-col items-center justify-center gap-3 p-6 text-center">
+      <p className="text-th-muted text-sm">This video link cannot be embedded.</p>
       <a
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-blue-400 hover:text-blue-300 text-sm transition-all duration-150"
+        className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm transition-all duration-150"
       >
         Open video in new tab
       </a>

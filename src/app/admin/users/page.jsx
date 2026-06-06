@@ -33,7 +33,7 @@ export default function AdminUsersPage() {
   return (
     <>
       <PageWrapper>
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
           <div>
             <h4 className="text-th-txt text-xl font-bold">All Employees</h4>
             <p className="text-th-muted text-sm mt-0.5">{users.length} total employees</p>

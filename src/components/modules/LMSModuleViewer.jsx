@@ -73,7 +73,7 @@ function parseKC(section) {
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 
-function Sidebar({ topics, pages, pageIdx, highWaterMark, moduleTitle, durationMins, overallPct, onNavigate }) {
+function Sidebar({ topics, pages, pageIdx, highWaterMark, moduleTitle, durationMins, overallPct, onNavigate, open, onClose }) {
   const [expanded, setExpanded] = useState(() => new Set(topics.map(t => t.number)))
 
   function toggle(n) {
@@ -94,8 +94,16 @@ function Sidebar({ topics, pages, pageIdx, highWaterMark, moduleTitle, durationM
 
   return (
     <nav
-      className="w-64 flex-shrink-0 flex flex-col bg-th-bar border-r border-th-brd sticky top-0 self-start overflow-y-auto"
-      style={{ height: 'calc(100vh - 56px)' }}
+      className={[
+        'w-64 flex flex-col bg-th-bar border-r border-th-brd overflow-y-auto',
+        // Mobile: fixed overlay, slide in/out, full height
+        'fixed top-0 left-0 h-screen z-50 transform transition-transform duration-200',
+        open ? 'translate-x-0' : '-translate-x-full',
+        // Desktop: inline sticky, constrained height for scrollability
+        open
+          ? 'lg:relative lg:sticky lg:top-0 lg:z-auto lg:translate-x-0 lg:h-auto lg:max-h-screen lg:self-start lg:flex-shrink-0'
+          : 'lg:hidden',
+      ].join(' ')}
     >
       {/* Header */}
       <div className="p-4 border-b border-th-brd flex-shrink-0">
@@ -132,7 +140,7 @@ function Sidebar({ topics, pages, pageIdx, highWaterMark, moduleTitle, durationM
             <div key={topic.number}>
               <button
                 onClick={() => toggle(topic.number)}
-                className={`w-full flex items-center gap-2 px-2.5 py-2 rounded text-left transition-colors ${isCurTopic ? 'bg-th-hov' : 'hover:bg-th-hov/50'}`}
+                className={`w-full flex items-center gap-2 px-2.5 py-2.5 rounded text-left transition-colors ${isCurTopic ? 'bg-th-hov' : 'hover:bg-th-hov/50'}`}
               >
                 <StatusDot status={status} size="md" />
                 <div className="flex-1 min-w-0">
@@ -159,7 +167,7 @@ function Sidebar({ topics, pages, pageIdx, highWaterMark, moduleTitle, durationM
                     return (
                       <button
                         key={sec.id || si}
-                        onClick={() => accessible && onNavigate(gi)}
+                        onClick={() => { if (accessible) { onNavigate(gi); onClose?.() } }}
                         disabled={!accessible}
                         className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-left transition-colors ${
                           isCurrent ? 'bg-blue-600/15 text-blue-400'
@@ -195,7 +203,7 @@ function Sidebar({ topics, pages, pageIdx, highWaterMark, moduleTitle, durationM
                     return (
                       <button
                         key="checkpoint"
-                        onClick={() => accessible && onNavigate(cpIdx)}
+                        onClick={() => { if (accessible) { onNavigate(cpIdx); onClose?.() } }}
                         disabled={!accessible}
                         className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-left transition-colors ${
                           isCurrent ? 'bg-blue-600/15 text-blue-400'
@@ -226,7 +234,7 @@ function Sidebar({ topics, pages, pageIdx, highWaterMark, moduleTitle, durationM
           return (
             <div className="mt-2 pt-2 border-t border-th-brd">
               <button
-                onClick={() => accessible && onNavigate(feIdx)}
+                onClick={() => { if (accessible) { onNavigate(feIdx); onClose?.() } }}
                 disabled={!accessible}
                 className={`w-full flex items-center gap-2 px-2.5 py-2 rounded text-left transition-colors ${
                   isCurrent ? 'bg-blue-600/15 text-blue-400'
@@ -865,6 +873,10 @@ export default function LMSModuleViewer({ module, nextModule }) {
   const [moduleComplete, setModuleComplete] = useState(module.progress?.status === 'completed')
   const [sidebarOpen, setSidebarOpen]   = useState(true)
   const [isFullscreen, setIsFullscreen] = useState(false)
+
+  useEffect(() => {
+    if (window.innerWidth < 1024) setSidebarOpen(false)
+  }, [])
   const mainRef = useRef(null)
   const touchStartX = useRef(null)
 
@@ -963,8 +975,16 @@ export default function LMSModuleViewer({ module, nextModule }) {
   return (
     <div className={`flex bg-th-bg ${isFullscreen ? 'fixed inset-0 z-50' : 'min-h-full'}`}>
 
-      {/* Sidebar */}
+      {/* Mobile sidebar backdrop */}
       {sidebarOpen && !isFullscreen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      {!isFullscreen && (
         <Sidebar
           topics={topics}
           pages={pages}
@@ -974,6 +994,8 @@ export default function LMSModuleViewer({ module, nextModule }) {
           durationMins={module.duration_mins}
           overallPct={overallPct}
           onNavigate={goToPage}
+          open={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
         />
       )}
 

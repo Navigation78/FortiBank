@@ -84,8 +84,8 @@ export default function AdminNotificationsPage() {
   }
 
   return (
-    <div className="min-h-full p-6 max-w-3xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+    <div className="min-h-full p-4 sm:p-6 max-w-3xl mx-auto">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="text-xl font-semibold text-th-txt">Notifications</h1>
           <p className="text-sm text-th-muted mt-0.5">{total} total · {unreadCount} unread</p>

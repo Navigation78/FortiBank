@@ -25,7 +25,7 @@ export default function StatsCard({
   }
 
   return (
-    <div className="bg-th-srf border border-th-brd rounded-xl p-5 flex items-center gap-4 shadow-sm shadow-black/5 dark:shadow-black/30 transition-all duration-150 hover:shadow-md hover:shadow-black/5 dark:hover:shadow-black/40 hover:-translate-y-0.5">
+    <div className="bg-th-srf border border-th-brd rounded-xl p-3 sm:p-5 flex items-center gap-2 sm:gap-4 shadow-sm shadow-black/5 dark:shadow-black/30 transition-all duration-150 hover:shadow-md hover:shadow-black/5 dark:hover:shadow-black/40 hover:-translate-y-0.5">
       {icon && (
         <div className="flex-shrink-0">
           {renderIcon()}
@@ -33,7 +33,7 @@ export default function StatsCard({
       )}
       <div className="min-w-0 flex-1">
         <p className="text-th-txt2 text-sm">{title}</p>
-        <p className="text-th-txt text-2xl font-bold mt-0.5">{value}</p>
+        <p className="text-th-txt text-xl sm:text-2xl font-bold mt-0.5">{value}</p>
         {subtitle && (
           <p className="text-th-muted text-xs mt-1">{subtitle}</p>
         )}

@@ -441,8 +441,14 @@ This project was built as a portfolio and academic project. All rights reserved.
 
 ---
 
+## Live Demo
+
+[https://forti-bank.vercel.app](https://forti-bank.vercel.app)
+
+---
+
 ## Author
 
-Built by K. Migwi · [GitHub](https://github.com/yourusername) · [LinkedIn](https://linkedin.com/in/yourprofile)
+Built by Julia Migwi · [GitHub](https://github.com/yourusername) · [LinkedIn](https://linkedin.com/in/yourprofile)
 
 > *"The weakest link in any security system is the human element."*

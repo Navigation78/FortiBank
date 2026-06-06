@@ -1,15 +1,17 @@
+// src/app/api/profile/avatar/route.js
 // POST - uploads a profile avatar to Supabase Storage and returns the public URL.
-// Accepts: multipart/form-data with a single "file" field (images only, max 5 MB).
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
+import { withApiHandler } from '@/lib/apiHandler'
+import { ValidationError } from '@/lib/errors'
 
-const MAX_SIZE    = 5 * 1024 * 1024
-const ALLOWED     = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
-const BUCKET      = 'avatars'
+const MAX_SIZE = 5 * 1024 * 1024
+const ALLOWED  = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
+const BUCKET   = 'avatars'
 
-export async function POST(request) {
+export const POST = withApiHandler(async (request) => {
   const { user, networkError } = await getRouteUser(request)
   if (!user) return unauthorizedResponse(networkError)
 
@@ -17,13 +19,13 @@ export async function POST(request) {
   const file     = formData.get('file')
 
   if (!file || typeof file === 'string') {
-    return NextResponse.json({ error: 'No file provided' }, { status: 400 })
+    throw new ValidationError('No file provided', { field: 'file' })
   }
   if (file.size > MAX_SIZE) {
-    return NextResponse.json({ error: 'File too large. Maximum size is 5 MB.' }, { status: 400 })
+    throw new ValidationError('File too large. Maximum size is 5 MB.', { field: 'file', maxSize: MAX_SIZE })
   }
   if (!ALLOWED.includes(file.type)) {
-    return NextResponse.json({ error: 'Only JPEG, PNG, WebP and GIF images are allowed.' }, { status: 400 })
+    throw new ValidationError('Only JPEG, PNG, WebP and GIF images are allowed.', { field: 'file', type: file.type })
   }
 
   const ext      = file.type.split('/')[1].replace('jpeg', 'jpg')
@@ -41,15 +43,12 @@ export async function POST(request) {
   }
 
   const { data: urlData } = supabaseAdmin.storage.from(BUCKET).getPublicUrl(filePath)
-
-  // Bust CDN cache by appending a timestamp query param
   const publicUrl = `${urlData.publicUrl}?t=${Date.now()}`
 
-  // Persist avatar URL to the users table so all UI reads (topbar, profile, etc.) see it
   await supabaseAdmin
     .from('users')
     .update({ avatar_url: publicUrl })
     .eq('id', user.id)
 
   return NextResponse.json({ url: publicUrl })
-}
+})

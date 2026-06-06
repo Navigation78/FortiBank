@@ -4,8 +4,10 @@
 
 import { NextResponse } from 'next/server'
 import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
+import { withApiHandler } from '@/lib/apiHandler'
+import { ValidationError } from '@/lib/errors'
 
-export async function PATCH(request, { params }) {
+export const PATCH = withApiHandler(async (request, { params }) => {
   const { user, supabase, networkError } = await getRouteUser(request)
   if (!user) return unauthorizedResponse(networkError)
 
@@ -14,7 +16,7 @@ export async function PATCH(request, { params }) {
   const { is_read } = body
 
   if (typeof is_read !== 'boolean') {
-    return NextResponse.json({ error: 'is_read (boolean) is required' }, { status: 400 })
+    throw new ValidationError('is_read (boolean) is required', { field: 'is_read' })
   }
 
   const { data, error } = await supabase
@@ -29,9 +31,9 @@ export async function PATCH(request, { params }) {
   if (!data)  return NextResponse.json({ error: 'Not found' },  { status: 404 })
 
   return NextResponse.json({ notification: data })
-}
+})
 
-export async function DELETE(request, { params }) {
+export const DELETE = withApiHandler(async (request, { params }) => {
   const { user, supabase, networkError } = await getRouteUser(request)
   if (!user) return unauthorizedResponse(networkError)
 
@@ -46,4 +48,4 @@ export async function DELETE(request, { params }) {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   return NextResponse.json({ success: true })
-}
+})

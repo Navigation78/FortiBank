@@ -1,11 +1,13 @@
 // src/app/api/admin/modules/[moduleId]/route.js
-// PUT    - update a module without changing its code/order_index
+// PUT    - update a module
 // DELETE - delete a module
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 import { notifyUsersWithRoles, NOTIFICATION_TYPES } from '@/lib/notificationService'
+import { withApiHandler } from '@/lib/apiHandler'
+import { ValidationError } from '@/lib/errors'
 
 async function verifyAdmin(request) {
   const { user, networkError } = await getRouteUser(request)
@@ -16,23 +18,25 @@ async function verifyAdmin(request) {
   return user
 }
 
-export async function PUT(request, { params }) {
+export const PUT = withApiHandler(async (request, { params }) => {
   const admin = await verifyAdmin(request)
   if (admin instanceof Response) return admin
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  const { moduleId } = await params
 
+  const { moduleId } = await params
   const body = await request.json()
   const { title, description, duration_mins, status, content_blocks, role_ids } = body
 
-  if (!title) return NextResponse.json({ error: 'Title is required' }, { status: 400 })
+  if (!title) {
+    throw new ValidationError('Title is required', { field: 'title' })
+  }
   if (!Array.isArray(role_ids) || role_ids.length === 0) {
-    return NextResponse.json({ error: 'Select at least one role for this module' }, { status: 400 })
+    throw new ValidationError('Select at least one role for this module', { field: 'role_ids' })
   }
 
   const uniqueRoleIds = [...new Set(role_ids.map(roleId => Number(roleId)).filter(Number.isInteger))]
   if (uniqueRoleIds.length === 0) {
-    return NextResponse.json({ error: 'Select at least one valid role for this module' }, { status: 400 })
+    throw new ValidationError('Select at least one valid role for this module', { field: 'role_ids' })
   }
 
   const { data: existingModule, error: fetchError } = await supabaseAdmin
@@ -47,12 +51,7 @@ export async function PUT(request, { params }) {
 
   const { data: updatedModule, error: moduleError } = await supabaseAdmin
     .from('modules')
-    .update({
-      title,
-      description,
-      duration_mins,
-      status: status || 'draft',
-    })
+    .update({ title, description, duration_mins, status: status || 'draft' })
     .eq('id', moduleId)
     .select()
     .single()
@@ -104,7 +103,6 @@ export async function PUT(request, { params }) {
     return NextResponse.json({ error: roleAccessError.message }, { status: 500 })
   }
 
-  // Notify target role users when a draft is newly published
   const wasPublished = existingModule.status !== 'published' && (status || 'draft') === 'published'
   if (wasPublished && uniqueRoleIds.length > 0) {
     await notifyUsersWithRoles(uniqueRoleIds, {
@@ -118,12 +116,13 @@ export async function PUT(request, { params }) {
   }
 
   return NextResponse.json({ module: updatedModule })
-}
+})
 
-export async function DELETE(request, { params }) {
+export const DELETE = withApiHandler(async (request, { params }) => {
   const admin = await verifyAdmin(request)
   if (admin instanceof Response) return admin
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
   const { moduleId } = await params
 
   const { error } = await supabaseAdmin
@@ -133,4 +132,4 @@ export async function DELETE(request, { params }) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ success: true })
-}
+})

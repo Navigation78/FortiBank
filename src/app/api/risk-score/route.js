@@ -2,14 +2,14 @@
 // GET  - returns latest risk score for current user
 // POST - triggers recalculation via Postgres function
 
-
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { sendRiskAlertEmail } from '@/lib/email'
 import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 import { createNotification, NOTIFICATION_TYPES } from '@/lib/notificationService'
+import { withApiHandler } from '@/lib/apiHandler'
 
-export async function GET(request) {
+export const GET = withApiHandler(async (request) => {
   const { user, supabase, networkError } = await getRouteUser(request)
   if (!user) return unauthorizedResponse(networkError)
 
@@ -26,13 +26,12 @@ export async function GET(request) {
   }
 
   return NextResponse.json({ score: data || null })
-}
+})
 
-export async function POST(request) {
+export const POST = withApiHandler(async (request) => {
   const { user, networkError } = await getRouteUser(request)
   if (!user) return unauthorizedResponse(networkError)
 
-  // Trigger recalculation via Postgres function
   const { data: newScore, error: calcError } = await supabaseAdmin
     .rpc('calculate_user_risk_score', { p_user_id: user.id })
 
@@ -40,11 +39,9 @@ export async function POST(request) {
     return NextResponse.json({ error: calcError.message }, { status: 500 })
   }
 
-  // Check if we need to create an alert and send email
   if (newScore?.is_warning || newScore?.is_critical) {
     const severity = newScore.is_critical ? 'critical' : 'warning'
 
-    // Check if we already sent an alert for this severity recently (last 24h)
     const { data: recentAlert } = await supabaseAdmin
       .from('risk_alerts')
       .select('id')
@@ -58,7 +55,6 @@ export async function POST(request) {
     if (!recentAlert) {
       const alertMessage = `Your risk score of ${Math.round(newScore.composite_score)} has exceeded the ${severity} threshold.`
 
-      // Create alert record
       const { data: alert } = await supabaseAdmin
         .from('risk_alerts')
         .insert({
@@ -71,7 +67,6 @@ export async function POST(request) {
         .select()
         .single()
 
-      // In-app notification for the risk alert
       await createNotification({
         userId:  user.id,
         title:   severity === 'critical' ? 'Critical risk alert' : 'Risk score warning',
@@ -80,7 +75,6 @@ export async function POST(request) {
         link:    '/risk-score',
       })
 
-      // Send alert email
       const { data: profile } = await supabaseAdmin
         .from('users_with_roles')
         .select('email, full_name, role_display_name')
@@ -96,7 +90,6 @@ export async function POST(request) {
           roleName:      profile.role_display_name,
         })
 
-        // Mark email as sent
         if (emailResult.success && alert) {
           await supabaseAdmin
             .from('risk_alerts')
@@ -108,4 +101,4 @@ export async function POST(request) {
   }
 
   return NextResponse.json({ score: newScore })
-}
+})

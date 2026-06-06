@@ -1,19 +1,14 @@
 // src/app/api/phishing/route.js
-// GET  - employee: their own phishing results
-//        admin: all campaigns
-
+// GET - employee: their own phishing results
 
 import { NextResponse } from 'next/server'
 import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
+import { withApiHandler } from '@/lib/apiHandler'
 
-export async function GET(request) {
-  const { searchParams } = new URL(request.url)
-  const view = searchParams.get('view') // 'employee' or 'admin'
-
+export const GET = withApiHandler(async (request) => {
   const { user, supabase, networkError } = await getRouteUser(request)
   if (!user) return unauthorizedResponse(networkError)
 
-  // Employee view - their own phishing results
   const { data: targets, error } = await supabase
     .from('phishing_targets')
     .select(`
@@ -40,4 +35,4 @@ export async function GET(request) {
   }
 
   return NextResponse.json({ targets: targets || [] })
-}
+})

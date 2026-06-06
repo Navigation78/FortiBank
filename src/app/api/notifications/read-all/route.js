@@ -3,8 +3,9 @@
 
 import { NextResponse } from 'next/server'
 import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
+import { withApiHandler } from '@/lib/apiHandler'
 
-export async function PATCH(request) {
+export const PATCH = withApiHandler(async (request) => {
   const { user, supabase, networkError } = await getRouteUser(request)
   if (!user) return unauthorizedResponse(networkError)
 
@@ -17,4 +18,4 @@ export async function PATCH(request) {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   return NextResponse.json({ success: true })
-}
+})

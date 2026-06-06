@@ -1,13 +1,12 @@
 // src/app/api/modules/[moduleId]/route.js
 // GET /api/modules/:moduleId – returns one published module with full content
-// (including LMS fields: section_number, learning_objectives, image_caption),
-// the user's progress, the final-exam quiz, and any checkpoint quizzes.
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
+import { withApiHandler } from '@/lib/apiHandler'
 
-export async function GET(request, { params }) {
+export const GET = withApiHandler(async (request, { params }) => {
   const { moduleId } = await params
   const { user, networkError } = await getRouteUser(request)
   if (!user) return unauthorizedResponse(networkError)
@@ -79,7 +78,6 @@ export async function GET(request, { params }) {
     .eq('module_id', moduleId)
     .maybeSingle()
 
-  // Separate quizzes by type (quiz_type column added in migration 011)
   const allQuizzes        = module.quizzes || []
   const finalExamQuiz     = allQuizzes.find(q => !q.quiz_type || q.quiz_type === 'final_exam') || null
   const checkpointQuizzes = allQuizzes.filter(q => q.quiz_type === 'checkpoint')
@@ -98,4 +96,4 @@ export async function GET(request, { params }) {
       checkpointQuizzes,
     },
   })
-}
+})

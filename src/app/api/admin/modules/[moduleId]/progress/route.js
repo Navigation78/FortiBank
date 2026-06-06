@@ -1,9 +1,10 @@
-// GET /api/admin/modules/[moduleId]/progress
-// Returns all users assigned to this module with their progress percentages
+// src/app/api/admin/modules/[moduleId]/progress/route.js
+// GET - all users assigned to this module with their progress
 
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
+import { withApiHandler } from '@/lib/apiHandler'
 
 async function verifyAdmin(request) {
   const { user, networkError } = await getRouteUser(request)
@@ -14,14 +15,13 @@ async function verifyAdmin(request) {
   return user
 }
 
-export async function GET(request, { params }) {
+export const GET = withApiHandler(async (request, { params }) => {
   const admin = await verifyAdmin(request)
   if (admin instanceof Response) return admin
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { moduleId } = await params
 
-  // Get role IDs that have access to this module
   const { data: roleAccess, error: roleAccessError } = await supabaseAdmin
     .from('module_role_access')
     .select('role_id')
@@ -32,7 +32,6 @@ export async function GET(request, { params }) {
   const roleIds = (roleAccess || []).map(r => r.role_id)
   if (roleIds.length === 0) return NextResponse.json({ users: [] })
 
-  // Get all users with those roles
   const { data: userRoles, error: userRolesError } = await supabaseAdmin
     .from('user_roles')
     .select('user_id, roles(name, display_name)')
@@ -46,7 +45,6 @@ export async function GET(request, { params }) {
 
   const userIds = [...new Set(filtered.map(ur => ur.user_id))]
 
-  // Get user details and progress in parallel
   const [usersRes, progressRes] = await Promise.all([
     supabaseAdmin.from('users').select('id, full_name, email').in('id', userIds),
     supabaseAdmin
@@ -56,7 +54,7 @@ export async function GET(request, { params }) {
       .in('user_id', userIds),
   ])
 
-  if (usersRes.error) return NextResponse.json({ error: usersRes.error.message }, { status: 500 })
+  if (usersRes.error)    return NextResponse.json({ error: usersRes.error.message },    { status: 500 })
   if (progressRes.error) return NextResponse.json({ error: progressRes.error.message }, { status: 500 })
 
   const userMap = {}
@@ -65,22 +63,20 @@ export async function GET(request, { params }) {
   const progressMap = {}
   ;(progressRes.data || []).forEach(p => { progressMap[p.user_id] = p })
 
-  // First role display name per user
   const roleMap = {}
   filtered.forEach(ur => {
     if (!roleMap[ur.user_id]) roleMap[ur.user_id] = ur.roles?.display_name || ur.roles?.name || ''
   })
 
   const result = userIds.map(userId => ({
-    user_id: userId,
+    user_id:   userId,
     full_name: userMap[userId]?.full_name || 'Unknown',
-    email: userMap[userId]?.email || '',
-    role: roleMap[userId] || '',
-    progress: progressMap[userId] || { status: 'not_started', progress_pct: 0 },
+    email:     userMap[userId]?.email || '',
+    role:      roleMap[userId] || '',
+    progress:  progressMap[userId] || { status: 'not_started', progress_pct: 0 },
   }))
 
-  // Sort by progress descending so furthest along appear first
   result.sort((a, b) => (b.progress.progress_pct || 0) - (a.progress.progress_pct || 0))
 
   return NextResponse.json({ users: result })
-}
+})

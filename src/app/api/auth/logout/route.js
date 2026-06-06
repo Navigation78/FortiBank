@@ -3,8 +3,9 @@
 
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
+import { withApiHandler } from '@/lib/apiHandler'
 
-export async function POST() {
+export const POST = withApiHandler(async () => {
   const cookieStore = await cookies()
   const allCookies = cookieStore.getAll()
 
@@ -13,14 +14,14 @@ export async function POST() {
   for (const cookie of allCookies) {
     if (cookie.name.startsWith('sb-')) {
       response.cookies.set(cookie.name, '', {
-        maxAge: 0,
-        path: '/',
+        maxAge:   0,
+        path:     '/',
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure:   process.env.NODE_ENV === 'production',
         sameSite: 'lax',
       })
     }
   }
 
   return response
-}
+})

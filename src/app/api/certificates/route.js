@@ -2,7 +2,6 @@
 // GET  - fetch current user's certificates
 // POST - check eligibility and award certificate if qualified
 
-
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { generateCertificatePDF } from '@/lib/pdfGenerator'
@@ -10,8 +9,9 @@ import { uploadCertificate } from '@/lib/storage'
 import { sendCertificateEmail } from '@/lib/email'
 import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 import { createNotification, NOTIFICATION_TYPES } from '@/lib/notificationService'
+import { withApiHandler } from '@/lib/apiHandler'
 
-export async function GET(request) {
+export const GET = withApiHandler(async (request) => {
   const { user, supabase, networkError } = await getRouteUser(request)
   if (!user) return unauthorizedResponse(networkError)
 
@@ -24,13 +24,12 @@ export async function GET(request) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ certificates: data || [] })
-}
+})
 
-export async function POST(request) {
+export const POST = withApiHandler(async (request) => {
   const { user, networkError } = await getRouteUser(request)
   if (!user) return unauthorizedResponse(networkError)
 
-  // Get user profile and role
   const { data: profile } = await supabaseAdmin
     .from('users_with_roles')
     .select('*')
@@ -41,7 +40,6 @@ export async function POST(request) {
     return NextResponse.json({ error: 'No role assigned' }, { status: 400 })
   }
 
-  // Check if certificate already exists
   const { data: existing } = await supabaseAdmin
     .from('certificates')
     .select('id')
@@ -53,7 +51,6 @@ export async function POST(request) {
     return NextResponse.json({ message: 'Certificate already exists', alreadyAwarded: true })
   }
 
-  // Get all modules assigned to this role
   const { data: assignedModules } = await supabaseAdmin
     .from('module_role_access')
     .select(`
@@ -70,7 +67,6 @@ export async function POST(request) {
     return NextResponse.json({ error: 'No modules assigned to this role' }, { status: 400 })
   }
 
-  // Check all modules are completed
   const moduleIds = assignedModules.map(m => m.modules?.id).filter(Boolean)
 
   const { data: progress } = await supabaseAdmin
@@ -83,14 +79,13 @@ export async function POST(request) {
 
   if (completedModules.length < moduleIds.length) {
     return NextResponse.json({
-      eligible: false,
-      message: `Complete all modules first. ${completedModules.length}/${moduleIds.length} done.`,
+      eligible:  false,
+      message:   `Complete all modules first. ${completedModules.length}/${moduleIds.length} done.`,
       completed: completedModules.length,
-      total: moduleIds.length,
+      total:     moduleIds.length,
     })
   }
 
-  // Check all quizzes are passed
   const quizIds = assignedModules
     .flatMap(m => m.modules?.quizzes || [])
     .map(q => q.id)
@@ -107,15 +102,14 @@ export async function POST(request) {
 
     if (passedQuizzes.length < quizIds.length) {
       return NextResponse.json({
-        eligible: false,
-        message: `Pass all quizzes first. ${passedQuizzes.length}/${quizIds.length} passed.`,
+        eligible:      false,
+        message:       `Pass all quizzes first. ${passedQuizzes.length}/${quizIds.length} passed.`,
         passedQuizzes: passedQuizzes.length,
-        totalQuizzes: quizIds.length,
+        totalQuizzes:  quizIds.length,
       })
     }
   }
 
-  // User is eligible - generate certificate
   const { data: roleData } = await supabaseAdmin
     .from('roles')
     .select('id, display_name')
@@ -126,10 +120,8 @@ export async function POST(request) {
   const validUntil = new Date(now)
   validUntil.setFullYear(validUntil.getFullYear() + 1)
 
-  // Generate certificate number
   const certNo = `CERT-${now.getFullYear()}-${Math.random().toString(36).substring(2, 10).toUpperCase()}`
 
-  // Generate PDF
   const pdfBytes = await generateCertificatePDF({
     recipientName: profile.full_name,
     roleName:      roleData.display_name,
@@ -138,14 +130,12 @@ export async function POST(request) {
     validUntil:    validUntil.toISOString(),
   })
 
-  // Upload to Supabase Storage
   const { url: pdfUrl } = await uploadCertificate({
-    userId:         user.id,
-    certificateNo:  certNo,
+    userId:        user.id,
+    certificateNo: certNo,
     pdfBytes,
   })
 
-  // Save certificate record
   const { data: certificate, error: certError } = await supabaseAdmin
     .from('certificates')
     .insert({
@@ -163,7 +153,6 @@ export async function POST(request) {
     return NextResponse.json({ error: certError.message }, { status: 500 })
   }
 
-  // Send congratulations email
   await sendCertificateEmail({
     to:            profile.email,
     recipientName: profile.full_name,
@@ -172,7 +161,6 @@ export async function POST(request) {
     issuedAt:      now.toISOString(),
   })
 
-  // In-app notification for the awarded certificate
   await createNotification({
     userId:  user.id,
     title:   'Certificate awarded!',
@@ -181,9 +169,5 @@ export async function POST(request) {
     link:    '/certificates',
   })
 
-  return NextResponse.json({
-    eligible:    true,
-    certificate,
-    message:     'Certificate awarded successfully!',
-  }, { status: 201 })
-}
+  return NextResponse.json({ eligible: true, certificate, message: 'Certificate awarded successfully!' }, { status: 201 })
+})

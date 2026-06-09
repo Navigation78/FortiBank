@@ -119,30 +119,12 @@ export async function generateCertificatePDF({
     thickness: 1, color: gold, opacity: 0.6,
   })
 
-  // Congratulations line
-  const congratsText  = 'Congratulations on completing this module!'
-  const congratsWidth = helveticaOblique.widthOfTextAtSize(congratsText, 12)
-  page.drawText(congratsText, {
-    x: (width - congratsWidth) / 2,
-    y: height - 322,
-    size: 12, font: helveticaOblique, color: gold,
-  })
-
-  // Module name
-  const moduleDisplayText = moduleName
-  const moduleWidth       = helveticaBold.widthOfTextAtSize(moduleDisplayText, 13)
-  page.drawText(moduleDisplayText, {
-    x: (width - moduleWidth) / 2,
-    y: height - 348,
-    size: 13, font: helveticaBold, color: lightGray,
-  })
-
-  // Description
+  // Description (immediately follows name)
   const descText  = 'has successfully completed all required training content and assessments'
   const descWidth = helvetica.widthOfTextAtSize(descText, 10)
   page.drawText(descText, {
     x: (width - descWidth) / 2,
-    y: height - 372,
+    y: height - 322,
     size: 10, font: helvetica, color: darkGray,
   })
 
@@ -150,8 +132,26 @@ export async function generateCertificatePDF({
   const desc2Width = helvetica.widthOfTextAtSize(desc2Text, 10)
   page.drawText(desc2Text, {
     x: (width - desc2Width) / 2,
-    y: height - 387,
+    y: height - 337,
     size: 10, font: helvetica, color: darkGray,
+  })
+
+  // Module name
+  const moduleDisplayText = moduleName
+  const moduleWidth       = helveticaBold.widthOfTextAtSize(moduleDisplayText, 13)
+  page.drawText(moduleDisplayText, {
+    x: (width - moduleWidth) / 2,
+    y: height - 362,
+    size: 13, font: helveticaBold, color: lightGray,
+  })
+
+  // Congratulations line (closing flourish)
+  const congratsText  = 'Congratulations on completing this module!'
+  const congratsWidth = helveticaOblique.widthOfTextAtSize(congratsText, 12)
+  page.drawText(congratsText, {
+    x: (width - congratsWidth) / 2,
+    y: height - 390,
+    size: 12, font: helveticaOblique, color: gold,
   })
 
   // ── Footer ────────────────────────────────────────────────────

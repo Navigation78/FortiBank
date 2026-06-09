@@ -12,7 +12,8 @@ export default function CampaignDetailAdminPage() {
   const [campaign, setCampaign] = useState(null)
   const [targets, setTargets]   = useState([])
   const [loading, setLoading]   = useState(true)
-  const [sending, setSending]   = useState(false)
+  const [sending, setSending]     = useState(false)
+  const [resending, setResending] = useState(false)
 
   useEffect(() => { if (campaignId) fetchCampaign() }, [campaignId])
 
@@ -32,16 +33,59 @@ export default function CampaignDetailAdminPage() {
 
   async function handleSend() {
     setSending(true)
-    const res = await fetch('/api/phishing/send', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ campaignId }),
-    })
-    const data = await res.json()
-    alert(data.message)
-    setSending(false)
-    fetchCampaign()
+    try {
+      const res  = await fetch('/api/phishing/send', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ campaignId }),
+      })
+      const data = await res.json()
+
+      if (!res.ok) {
+        alert(`Send failed: ${data.error || 'Unknown error'}`)
+      } else {
+        let msg = data.message || 'Done.'
+        if (data.devNote) msg += `\n\n${data.devNote}`
+        if (data.errors?.length) {
+          const firstError = data.errors[0]
+          msg += `\n\nFirst failure — ${firstError.employee} (${firstError.email}): ${firstError.error}`
+          if (data.errors.length > 1) msg += `\n…and ${data.errors.length - 1} more.`
+        }
+        alert(msg)
+      }
+    } catch (err) {
+      alert(`Send failed: ${err.message}`)
+    } finally {
+      setSending(false)
+      fetchCampaign()
+    }
   }
+
+  async function handleResend() {
+    setResending(true)
+    try {
+      const res  = await fetch(`/api/admin/campaigns/${campaignId}/resend`, { method: 'POST' })
+      const data = await res.json()
+      console.log('[Resend response]', data)
+      if (!res.ok) {
+        console.error('[Resend error]', data.error)
+        alert(`Resend failed: ${data.error || 'Unknown error'}`)
+      } else {
+        const failures = data.failed > 0
+          ? `\n\nNote: ${data.failed} failed — check browser console for details.`
+          : ''
+        alert((data.message || 'Resend complete.') + failures)
+      }
+    } catch (err) {
+      console.error('[Resend fetch error]', err)
+      alert(`Resend failed: ${err.message}`)
+    } finally {
+      setResending(false)
+      fetchCampaign()
+    }
+  }
+
+  const notSentCount = targets.filter(t => t.result === 'not_sent').length
 
   const stats = {
     total:    targets.length,
@@ -95,15 +139,26 @@ export default function CampaignDetailAdminPage() {
               <div><span className="text-th-muted">Sender: </span><span className="text-th-txt2">{campaign?.email_sender_name} &lt;{campaign?.email_sender_addr}&gt;</span></div>
               <div><span className="text-th-muted">Status: </span><span className="text-th-txt2 capitalize">{campaign?.status}</span></div>
             </div>
-            {campaign?.status === 'draft' && (
-              <button
-                onClick={handleSend}
-                disabled={sending}
-                className="flex-shrink-0 px-4 py-2 bg-green-600 hover:bg-green-500 disabled:bg-green-600/50 text-white rounded-lg text-sm font-medium transition-all duration-150"
-              >
-                {sending ? 'Sending...' : ' Send Now'}
-              </button>
-            )}
+            <div className="flex gap-2 flex-shrink-0">
+              {campaign?.status === 'draft' && (
+                <button
+                  onClick={handleSend}
+                  disabled={sending}
+                  className="px-4 py-2 bg-green-600 hover:bg-green-500 disabled:bg-green-600/50 text-white rounded-lg text-sm font-medium transition-all duration-150"
+                >
+                  {sending ? 'Sending...' : 'Send Now'}
+                </button>
+              )}
+              {campaign?.status !== 'draft' && notSentCount > 0 && (
+                <button
+                  onClick={handleResend}
+                  disabled={resending}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-lg text-sm font-medium transition-all duration-150"
+                >
+                  {resending ? 'Resending...' : `Resend (${notSentCount} pending)`}
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Targets table */}

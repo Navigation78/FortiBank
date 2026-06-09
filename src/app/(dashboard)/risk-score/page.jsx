@@ -40,12 +40,12 @@ export default function RiskScorePage() {
                   <div>
                     <div className="flex justify-between mb-1.5">
                       <span className="text-th-txt2 text-sm">Phishing Tests (60%)</span>
-                      <span className="text-th-txt font-semibold text-sm">{phishingScore}/100</span>
+                      <span className="text-th-txt font-semibold text-sm">{phishingScore ?? 0}/100</span>
                     </div>
                     <div className="h-2 bg-th-track rounded-full overflow-hidden">
                       <div
                         className="h-full bg-orange-500 rounded-full transition-all"
-                        style={{ width: `${phishingScore}%` }}
+                        style={{ width: `${phishingScore ?? 0}%` }}
                       />
                     </div>
                     <p className="text-th-muted text-xs mt-1">
@@ -57,12 +57,12 @@ export default function RiskScorePage() {
                   <div>
                     <div className="flex justify-between mb-1.5">
                       <span className="text-th-txt2 text-sm">Quiz Performance (40%)</span>
-                      <span className="text-th-txt font-semibold text-sm">{quizScore}/100</span>
+                      <span className="text-th-txt font-semibold text-sm">{quizScore ?? 0}/100</span>
                     </div>
                     <div className="h-2 bg-th-track rounded-full overflow-hidden">
                       <div
                         className="h-full bg-blue-500 rounded-full transition-all"
-                        style={{ width: `${quizScore}%` }}
+                        style={{ width: `${quizScore ?? 0}%` }}
                       />
                     </div>
                     <p className="text-th-muted text-xs mt-1">
@@ -74,7 +74,7 @@ export default function RiskScorePage() {
                   <div className="border-t border-th-brd pt-4">
                     <div className="flex justify-between">
                       <span className="text-th-txt2 font-medium text-sm">Composite Score</span>
-                      <span className={`font-bold text-sm ${riskLevel?.textColor}`}>{score}/100</span>
+                      <span className={`font-bold text-sm ${riskLevel?.textColor}`}>{score ?? 0}/100</span>
                     </div>
                     <p className="text-th-muted text-xs mt-1">
                       = (Phishing × 0.6) + (Quiz × 0.4)

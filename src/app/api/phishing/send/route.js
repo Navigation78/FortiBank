@@ -11,8 +11,6 @@ import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 import { withApiHandler } from '@/lib/apiHandler'
 import { ValidationError, ForbiddenError } from '@/lib/errors'
 
-const isDev = process.env.NODE_ENV === 'development'
-
 export const POST = withApiHandler(async (request) => {
   const { user, networkError } = await getRouteUser(request)
   if (!user) return unauthorizedResponse(networkError)
@@ -27,9 +25,9 @@ export const POST = withApiHandler(async (request) => {
     throw new ForbiddenError('Admin access required')
   }
 
-  if (isDev && !process.env.DEV_TEST_EMAIL) {
+  if (!process.env.DEV_TEST_EMAIL) {
     return NextResponse.json(
-      { error: 'DEV_TEST_EMAIL is not set in .env.local — add it to receive phishing test emails.' },
+      { error: 'DEV_TEST_EMAIL is not set — add it to .env.local (local) or Vercel environment variables (production) to receive phishing test emails.' },
       { status: 500 }
     )
   }
@@ -98,21 +96,18 @@ export const POST = withApiHandler(async (request) => {
     .update({ status: 'active', started_at: new Date().toISOString() })
     .eq('id', campaignId)
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://forti-bank.vercel.app'
-  const results = { sent: 0, failed: 0, errors: [] }
-  const devEmail = process.env.DEV_TEST_EMAIL
+  const appUrl       = process.env.NEXT_PUBLIC_APP_URL || 'https://forti-bank.vercel.app'
+  const results      = { sent: 0, failed: 0, errors: [] }
+  const testEmail    = process.env.DEV_TEST_EMAIL
 
   for (const target of insertedTargets) {
     const targetUser = targetUsers.find(u => u.id === target.user_id)
     if (!targetUser) continue
 
-    const deliveryEmail = isDev ? devEmail : targetUser.email
-    const subjectPrefix = isDev ? `[DEV → ${targetUser.full_name}] ` : ''
-
     const emailResult = await sendPhishingEmail({
-      to:            deliveryEmail,
+      to:            testEmail,
       recipientName: targetUser.full_name,
-      emailSubject:  subjectPrefix + campaign.email_subject,
+      emailSubject:  `[→ ${targetUser.full_name}] ` + campaign.email_subject,
       senderName:    campaign.email_sender_name,
       senderAddress: campaign.email_sender_addr,
       emailBodyHtml: campaign.email_body_html,
@@ -139,13 +134,8 @@ export const POST = withApiHandler(async (request) => {
     await new Promise(resolve => setTimeout(resolve, 50))
   }
 
-  const devNote = isDev
-    ? `DEV MODE — all ${results.sent} emails delivered to ${devEmail}. Subject line shows real recipient name. Tracking tokens are unique per target so clicks record correctly.`
-    : null
-
   return NextResponse.json({
-    message: `Campaign sent. ${results.sent} emails delivered, ${results.failed} failed.`,
-    ...(devNote && { devNote }),
+    message: `Campaign sent. ${results.sent} emails delivered to ${testEmail}, ${results.failed} failed.`,
     ...results,
   })
 })

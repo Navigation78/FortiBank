@@ -17,13 +17,11 @@ export const GET = withApiHandler(async (request) => {
       sent_at,
       opened_at,
       clicked_at,
-      reported_at,
       phishing_campaigns (
         id,
         name,
         email_subject,
         started_at,
-        completed_at,
         status
       )
     `)

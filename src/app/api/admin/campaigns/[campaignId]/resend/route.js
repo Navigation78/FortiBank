@@ -6,8 +6,7 @@ import supabaseAdmin from '@/lib/supabaseAdmin'
 import { sendPhishingEmail } from '@/lib/email'
 import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 import { withApiHandler } from '@/lib/apiHandler'
-
-const isDev = process.env.NODE_ENV === 'development'
+import { logger } from '@/lib/logger'
 
 async function verifyAdmin(request) {
   const { user, networkError } = await getRouteUser(request)
@@ -53,20 +52,24 @@ export const POST = withApiHandler(async (request, { params }) => {
     })
   }
 
-  const appUrl   = process.env.NEXT_PUBLIC_APP_URL || 'https://forti-bank.vercel.app'
-  const devEmail = process.env.DEV_TEST_EMAIL
-  const results  = { sent: 0, failed: 0 }
+  const appUrl    = process.env.NEXT_PUBLIC_APP_URL || 'https://forti-bank.vercel.app'
+  const testEmail = process.env.DEV_TEST_EMAIL
+  const results   = { sent: 0, failed: 0 }
+
+  if (!testEmail) {
+    return NextResponse.json(
+      { error: 'DEV_TEST_EMAIL is not set — add it to .env.local (local) or Vercel environment variables (production).' },
+      { status: 500 }
+    )
+  }
 
   for (const target of pendingTargets) {
     if (!target.users) continue
 
-    const deliveryEmail = isDev ? devEmail : target.users.email
-    const subjectPrefix = isDev ? `[DEV → ${target.users.full_name}] ` : ''
-
     const emailResult = await sendPhishingEmail({
-      to:            deliveryEmail,
+      to:            testEmail,
       recipientName: target.users.full_name,
-      emailSubject:  subjectPrefix + campaign.email_subject,
+      emailSubject:  `[→ ${target.users.full_name}] ` + campaign.email_subject,
       senderName:    campaign.email_sender_name,
       senderAddress: campaign.email_sender_addr,
       emailBodyHtml: campaign.email_body_html,
@@ -81,19 +84,15 @@ export const POST = withApiHandler(async (request, { params }) => {
         .eq('id', target.id)
       results.sent++
     } else {
+      logger.error(`Resend failed for ${target.users.full_name} → ${testEmail}: ${emailResult.error}`)
       results.failed++
     }
 
     await new Promise(resolve => setTimeout(resolve, 100))
   }
 
-  const devNote = isDev
-    ? `DEV MODE — all ${results.sent} emails delivered to ${devEmail}. Subject line shows real recipient name.`
-    : null
-
   return NextResponse.json({
-    message: `Resend complete. ${results.sent} delivered, ${results.failed} failed.`,
-    ...(devNote && { devNote }),
+    message: `Resend complete. ${results.sent} delivered to ${testEmail}, ${results.failed} failed.`,
     ...results,
   })
 })

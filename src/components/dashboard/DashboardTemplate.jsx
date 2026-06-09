@@ -24,6 +24,7 @@ export default function DashboardTemplate({
 
   const [riskScore, setRiskScore]         = useState(null)
   const [alert, setAlert]                 = useState(null)
+  const [phishingFail, setPhishingFail]   = useState(false)
   const [activities, setActivities]       = useState([])
   const [riskLoading, setRiskLoading]     = useState(true)
   const [lastActivityModule, setLastActivityModule] = useState(null)
@@ -53,6 +54,7 @@ export default function DashboardTemplate({
         if (score) {
           const value = Math.round(score.composite_score)
           setRiskScore(value)
+          if (score.phishing_clicks > 0) setPhishingFail(true)
           if (score.is_critical) {
             setAlert({ severity: 'critical', riskScore: value })
           } else if (score.is_warning) {
@@ -123,9 +125,12 @@ export default function DashboardTemplate({
     {
       title:    'Risk Score',
       value:    riskLoading ? '-' : (riskScore ?? 'N/A'),
-      subtitle: riskLoading ? '' : getRiskLabel(riskScore),
+      subtitle: riskLoading ? '' : getRiskLabel(riskScore, profile?.risk_warning_threshold, profile?.risk_critical_threshold),
       icon:     Shield,
-      color:    riskScore === null ? 'blue' : riskScore >= 63 ? 'red' : riskScore >= 45 ? 'yellow' : 'green',
+      color:    riskScore === null ? 'blue'
+                  : riskScore >= (profile?.risk_critical_threshold ?? 70) ? 'red'
+                  : riskScore >= (profile?.risk_warning_threshold  ?? 55) ? 'yellow'
+                  : 'green',
     },
     {
       title:    'Overall Progress',
@@ -139,7 +144,12 @@ export default function DashboardTemplate({
   return (
     <PageWrapper>
 
-        {/* Alert banner */}
+        {/* Phishing-fail banner — shown whenever the user has clicked at least one simulation */}
+        {phishingFail && (
+          <AlertBanner severity="phishing" />
+        )}
+
+        {/* Risk threshold alert banner */}
         {alert && (
           <AlertBanner
             severity={alert.severity}
@@ -222,10 +232,10 @@ function getTimeOfDay() {
   return 'evening'
 }
 
-function getRiskLabel(score) {
-  if (score === null) return 'No score yet'
-  if (score >= 63) return 'High risk. Take action.'
-  if (score >= 45) return 'Medium risk'
-  if (score > 0)   return 'Low risk. Well done.'
+function getRiskLabel(score, warningThreshold = 55, criticalThreshold = 70) {
+  if (score === null || score === undefined) return 'No score yet'
+  if (score >= criticalThreshold) return 'High risk. Take action.'
+  if (score >= warningThreshold)  return 'Elevated risk. Review training.'
+  if (score > 0)                  return 'Low risk. Well done.'
   return 'Score pending'
 }

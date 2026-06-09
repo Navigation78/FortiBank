@@ -5,6 +5,7 @@
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { createNotification, NOTIFICATION_TYPES } from '@/lib/notificationService'
+import { triggerRiskAlerts } from '@/lib/riskAlertService'
 import { withApiHandler } from '@/lib/apiHandler'
 import { ValidationError } from '@/lib/errors'
 import { logger } from '@/lib/logger'
@@ -47,7 +48,7 @@ export const POST = withApiHandler(async (request) => {
   // Only recalculate risk and notify on the first click — repeat clicks must not inflate scores
   // or spam the employee with duplicate notifications
   if (isFirstClick) {
-    await supabaseAdmin.rpc('calculate_user_risk_score', { p_user_id: target.user_id })
+    const { data: newScore } = await supabaseAdmin.rpc('calculate_user_risk_score', { p_user_id: target.user_id })
 
     await createNotification({
       userId:  target.user_id,
@@ -56,6 +57,9 @@ export const POST = withApiHandler(async (request) => {
       type:    NOTIFICATION_TYPES.PHISHING,
       link:    '/results',
     })
+
+    // Fire warning/critical alert + email if the click pushed the score over the threshold
+    if (newScore) await triggerRiskAlerts(newScore, target.user_id)
   }
 
   return NextResponse.json({ recorded: true })

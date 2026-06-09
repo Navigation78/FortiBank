@@ -127,12 +127,12 @@ export function useRiskScore() {
     recalculating,
     refetch: fetchRiskScore,
     recalculate,
-    score:        latest?.composite_score ?? 0,
-    phishingScore: latest?.phishing_score ?? 0,
-    quizScore:    latest?.quiz_score ?? 0,
+    score:        latest != null ? Math.round(latest.composite_score) : null,
+    phishingScore: latest != null ? Math.round(latest.phishing_score) : null,
+    quizScore:    latest != null ? Math.round(latest.quiz_score) : null,
     isWarning:    latest?.is_warning ?? false,
     isCritical:   latest?.is_critical ?? false,
-    riskLevel:    latest?.riskLevel ?? getRiskLevel(0, role),
+    riskLevel:    latest?.riskLevel ?? null,
   }
 }
 

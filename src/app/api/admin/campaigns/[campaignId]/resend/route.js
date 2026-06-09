@@ -53,7 +53,7 @@ export const POST = withApiHandler(async (request, { params }) => {
     })
   }
 
-  const appUrl   = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const appUrl   = process.env.NEXT_PUBLIC_APP_URL || 'https://forti-bank.vercel.app'
   const devEmail = process.env.DEV_TEST_EMAIL
   const results  = { sent: 0, failed: 0 }
 

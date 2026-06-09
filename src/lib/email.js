@@ -37,7 +37,7 @@ export async function sendPhishingEmail({
   trackingToken,
   appUrl,
 }) {
-  const baseUrl   = appUrl || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const baseUrl   = appUrl || process.env.NEXT_PUBLIC_APP_URL || 'https://forti-bank.vercel.app'
   const clickUrl  = `${baseUrl}/phishing-click/${trackingToken}`
   const openPixel = `${baseUrl}/api/phishing/track?token=${trackingToken}&type=opened`
 
@@ -74,7 +74,7 @@ export async function sendRiskAlertEmail({
   roleName,
   appUrl,
 }) {
-  const baseUrl      = appUrl || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const baseUrl      = appUrl || process.env.NEXT_PUBLIC_APP_URL || 'https://forti-bank.vercel.app'
   const dashboardUrl = `${baseUrl}/risk-score`
   const modulesUrl   = `${baseUrl}/modules`
 
@@ -149,7 +149,7 @@ export async function sendCertificateEmail({
   issuedAt,
   appUrl,
 }) {
-  const baseUrl = appUrl || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const baseUrl = appUrl || process.env.NEXT_PUBLIC_APP_URL || 'https://forti-bank.vercel.app'
   const certUrl = `${baseUrl}/certificates`
 
   const html = `

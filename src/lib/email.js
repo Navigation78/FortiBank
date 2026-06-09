@@ -144,7 +144,7 @@ export async function sendRiskAlertEmail({
 export async function sendCertificateEmail({
   to,
   recipientName,
-  roleName,
+  moduleName,
   certificateNo,
   issuedAt,
   appUrl,
@@ -164,8 +164,9 @@ export async function sendCertificateEmail({
         <div style="padding:24px;">
           <p style="color:#94a3b8;margin:0 0 16px;">Dear ${recipientName},</p>
           <p style="color:#94a3b8;margin:0 0 24px;">
-            You have successfully completed all cybersecurity training modules for your role as
-            <strong style="color:#f1f5f9;">${roleName}</strong>. Your certificate has been issued.
+            You have successfully completed the
+            <strong style="color:#f1f5f9;">${moduleName}</strong> module
+            and earned your certificate.
           </p>
           <div style="background:#0f172a;border:1px solid #16a34a40;border-radius:8px;padding:20px;margin-bottom:24px;">
             <p style="margin:0;color:#64748b;font-size:12px;">Certificate Number</p>
@@ -187,7 +188,7 @@ export async function sendCertificateEmail({
       {
         from:    FROM,
         to,
-        subject: `Certificate Awarded - ${roleName} Cybersecurity Training`,
+        subject: `Certificate Awarded — ${moduleName}`,
         html,
       },
       `certificate-email to ${to}`

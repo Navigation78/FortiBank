@@ -7,6 +7,7 @@ import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 import { createNotification, NOTIFICATION_TYPES } from '@/lib/notificationService'
 import { withApiHandler } from '@/lib/apiHandler'
 import { ValidationError, BusinessLogicError, ConflictError } from '@/lib/errors'
+import { awardModuleCertificate } from '@/lib/certificateService'
 
 export const POST = withApiHandler(async (request) => {
   const { user, networkError } = await getRouteUser(request)
@@ -147,6 +148,11 @@ export const POST = withApiHandler(async (request) => {
   }
 
   await supabaseAdmin.rpc('calculate_user_risk_score', { p_user_id: user.id })
+
+  // Auto-award module certificate when the final exam is passed
+  if (quiz.quiz_type === 'final_exam' && attempt.passed && quiz.module_id) {
+    awardModuleCertificate(user.id, quiz.module_id).catch(() => {})
+  }
 
   const passed = attempt.passed
   await createNotification({

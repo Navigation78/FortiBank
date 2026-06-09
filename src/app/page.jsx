@@ -302,7 +302,7 @@ export default function LandingPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
               </Link>
-              <div className="bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full">-60% click rate</div>
+              <div className="bg-red-500 text-white text-sm font-bold px-4 py-2 rounded-md">-60% click rate</div>
             </div>
           </div>
 
@@ -334,7 +334,7 @@ export default function LandingPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
               </Link>
-              <div className="bg-blue-400 text-white text-xs font-bold px-3 py-1.5 rounded-full">8 modules</div>
+              <div className="bg-blue-400 text-white text-sm font-bold px-4 py-2 rounded-md">8 modules</div>
             </div>
           </div>
         </div>
@@ -378,7 +378,7 @@ export default function LandingPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d={m.icon} />
                     </svg>
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: m.badgeColor }}>
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-md text-white" style={{ background: m.badgeColor }}>
                     {m.badge}
                   </span>
                 </div>

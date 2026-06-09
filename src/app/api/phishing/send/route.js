@@ -98,7 +98,7 @@ export const POST = withApiHandler(async (request) => {
     .update({ status: 'active', started_at: new Date().toISOString() })
     .eq('id', campaignId)
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://forti-bank.vercel.app'
   const results = { sent: 0, failed: 0, errors: [] }
   const devEmail = process.env.DEV_TEST_EMAIL
 

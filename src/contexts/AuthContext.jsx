@@ -33,15 +33,18 @@ export function AuthProvider({ children }) {
     const nativeFetch = window.fetch.bind(window)
 
     window.fetch = async (input, options = {}) => {
+      // _tokenRefreshRetry is an internal flag — strip it before passing to native fetch
+      const { _tokenRefreshRetry, ...fetchOptions } = options
+
       const requestUrl = typeof input === 'string' ? input : input?.url
       const url = requestUrl ? new URL(requestUrl, window.location.origin) : null
       const shouldTagRequest = url?.origin === window.location.origin && url.pathname.startsWith('/api/')
 
       if (!shouldTagRequest) {
-        return nativeFetch(input, options)
+        return nativeFetch(input, fetchOptions)
       }
 
-      const headers = applyTabHeaders(options.headers)
+      const headers = applyTabHeaders(fetchOptions.headers)
 
       if (!headers.has('Authorization')) {
         const {
@@ -53,10 +56,18 @@ export function AuthProvider({ children }) {
         }
       }
 
-      return nativeFetch(input, {
-        ...options,
-        headers,
-      })
+      const response = await nativeFetch(input, { ...fetchOptions, headers })
+
+      // On 401, refresh the token once and retry. The refreshed session is stored by
+      // Supabase in localStorage so all tabs pick it up via onAuthStateChange.
+      if (response.status === 401 && !_tokenRefreshRetry) {
+        const { data: { session: refreshed }, error: refreshErr } = await supabase.auth.refreshSession()
+        if (!refreshErr && refreshed?.access_token) {
+          return window.fetch(input, { ...fetchOptions, _tokenRefreshRetry: true })
+        }
+      }
+
+      return response
     }
 
     return () => {

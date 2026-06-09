@@ -29,6 +29,9 @@ export const POST = withApiHandler(async (request) => {
 
   const now = new Date().toISOString()
 
+  // Track whether this is a new click (transitioning from sent/opened → clicked)
+  const isFirstClick = target.result === 'sent' || target.result === 'opened'
+
   if (target.result !== 'reported') {
     await supabaseAdmin
       .from('phishing_targets')
@@ -36,19 +39,24 @@ export const POST = withApiHandler(async (request) => {
       .eq('id', target.id)
   }
 
+  // Always log the raw click event for audit purposes
   await supabaseAdmin
     .from('phishing_click_events')
     .insert({ target_id: target.id, event_type: 'clicked', occurred_at: now })
 
-  await supabaseAdmin.rpc('calculate_user_risk_score', { p_user_id: target.user_id })
+  // Only recalculate risk and notify on the first click — repeat clicks must not inflate scores
+  // or spam the employee with duplicate notifications
+  if (isFirstClick) {
+    await supabaseAdmin.rpc('calculate_user_risk_score', { p_user_id: target.user_id })
 
-  await createNotification({
-    userId:  target.user_id,
-    title:   'Phishing simulation alert',
-    message: 'You clicked a simulated phishing link. This was a security awareness test. Please review the phishing awareness module to learn how to spot suspicious emails.',
-    type:    NOTIFICATION_TYPES.PHISHING,
-    link:    '/results',
-  })
+    await createNotification({
+      userId:  target.user_id,
+      title:   'Phishing simulation alert',
+      message: 'You clicked a simulated phishing link. This was a security awareness test. Please review the phishing awareness module to learn how to spot suspicious emails.',
+      type:    NOTIFICATION_TYPES.PHISHING,
+      link:    '/results',
+    })
+  }
 
   return NextResponse.json({ recorded: true })
 })

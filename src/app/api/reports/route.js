@@ -16,10 +16,15 @@ async function verifyAdmin(request) {
   return user
 }
 
+// Characters that trigger formula execution when a spreadsheet opens the CSV
+const FORMULA_STARTERS = new Set(['=', '+', '-', '@', '\r', '\n', '\t'])
+
 function toCSV(headers, rows) {
   const escape = val => {
     if (val === null || val === undefined) return ''
-    const str = String(val)
+    let str = String(val)
+    // Prefix formula-starting characters to prevent CSV injection in Excel / Google Sheets
+    if (FORMULA_STARTERS.has(str[0])) str = `'${str}`
     return str.includes(',') || str.includes('"') || str.includes('\n')
       ? `"${str.replace(/"/g, '""')}"`
       : str

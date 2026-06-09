@@ -1,6 +1,9 @@
 // src/app/api/phishing/send/route.js
 // POST - sends phishing simulation emails to targeted employees. Admin only.
 
+// Extend the Vercel function timeout to 60 s to handle large campaigns without being cut off.
+export const maxDuration = 60
+
 import { NextResponse } from 'next/server'
 import supabaseAdmin from '@/lib/supabaseAdmin'
 import { sendPhishingEmail } from '@/lib/email'
@@ -133,7 +136,7 @@ export const POST = withApiHandler(async (request) => {
       })
     }
 
-    await new Promise(resolve => setTimeout(resolve, 150))
+    await new Promise(resolve => setTimeout(resolve, 50))
   }
 
   const devNote = isDev

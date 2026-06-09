@@ -22,6 +22,8 @@ DECLARE
   v_cp1  UUID := gen_random_uuid();
   v_cp2  UUID := gen_random_uuid();
   v_fe   UUID := gen_random_uuid();
+  v_cS0  UUID := gen_random_uuid();
+  v_cS1  UUID := gen_random_uuid();
   vq UUID; va UUID; vb UUID; vc UUID; vd UUID;
   r RECORD;
   qids UUID[];
@@ -68,7 +70,8 @@ INSERT INTO public.module_content (id,module_id,title,content_type,content_body,
   <li><strong>High (P2):</strong> Confirmed malware on a sensitive system, unauthorized access to customer data affecting a limited number of accounts, suspected insider theft. Requires urgent response within hours.</li>
   <li><strong>Medium (P3):</strong> Phishing email that collected credentials but no confirmed access, policy violations without confirmed data loss. Requires response within the business day.</li>
   <li><strong>Low (P4):</strong> Isolated policy breach with no data impact, suspected but unconfirmed incidents. Requires logging and review.</li>
-</ul>',
+</ul>
+<figure style="margin:1.5rem 0"><img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&auto=format&fit=crop&q=80" alt="Security operations center monitoring" style="width:100%;border-radius:8px;max-height:280px;object-fit:cover" /><figcaption style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;font-style:italic;text-align:center">Security teams classify incidents by severity to allocate response resources appropriately and ensure critical threats receive immediate attention.</figcaption></figure>',
   20,'1.1'
 );
 INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number) VALUES (
@@ -109,7 +112,8 @@ INSERT INTO public.module_content (id,module_id,title,content_type,content_body,
   <li><strong>Lessons Learned:</strong> A post-incident review, typically within two weeks of closure, to document what happened, what worked well, what did not, and what changes should be made. Lessons Learned is not a blame exercise; it is a continuous improvement mechanism. Organizations that skip this phase repeat the same mistakes.</li>
 </ol>
 <h3>The Incident Response Plan</h3>
-<p>An IRP is a documented, tested set of procedures that guides the organization through each phase. Key components include: roles and responsibilities (who does what), escalation paths (who to notify and when), communication procedures (internal and external), regulatory notification obligations (timing requirements), and contact lists for IR team members, legal, regulators, and external specialists. The IRP must be kept current and tested regularly; an untested plan is not a plan.</p>',
+<p>An IRP is a documented, tested set of procedures that guides the organization through each phase. Key components include: roles and responsibilities (who does what), escalation paths (who to notify and when), communication procedures (internal and external), regulatory notification obligations (timing requirements), and contact lists for IR team members, legal, regulators, and external specialists. The IRP must be kept current and tested regularly; an untested plan is not a plan.</p>
+<figure style="margin:1.5rem 0"><img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&auto=format&fit=crop&q=80" alt="Incident response team coordination" style="width:100%;border-radius:8px;max-height:280px;object-fit:cover" /><figcaption style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;font-style:italic;text-align:center">A practiced incident response team moves through the six phases with speed and coordination, minimizing the damage window of any attack.</figcaption></figure>',
   40,'1.2'
 );
 INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number) VALUES (
@@ -349,6 +353,22 @@ INSERT INTO public.quiz_questions (id,quiz_id,question_text,order_index) VALUES
     (gen_random_uuid(),r.id,'It may tip off the attacker, compromise the investigation, create regulatory issues, and damage customer trust before the bank can communicate officially',true,'Premature public disclosure of an active incident can: allow the attacker to adapt their tactics; compromise forensic investigation; trigger regulatory scrutiny for unauthorized disclosure; and create panic and reputational damage that authorized communications could have managed.',20),
     (gen_random_uuid(),r.id,'It is only a risk if the post goes viral',false,'Even a small-reach post can reach the wrong person, a journalist, the attacker, or a regulator, and cause disproportionate harm.',30),
     (gen_random_uuid(),r.id,'It is acceptable as long as no customer names are mentioned',false,'Operational details about an active incident are sensitive regardless of whether they include personal data. Disclosing that a bank is currently under a ransomware attack, without naming customers, is itself harmful.',40);
+
+-- ═══ TOPIC 3: Module Summary ═════════════════════════════════════════════════
+
+INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number,learning_objectives) VALUES (
+  v_cS0,v_mod,'Module Summary','text',
+  '<p>You have completed all core topics in this module. Watch the video below for a concise recap of the key concepts covered, then proceed to the final exam.</p>',
+  200,'3.0',
+  ARRAY['Review and consolidate the key concepts from this module before the final exam']
+);
+
+INSERT INTO public.module_content (id,module_id,title,content_type,content_body,content_url,image_caption,order_index,section_number) VALUES (
+  v_cS1,v_mod,'Incident Response Procedures: Summary Video','video',
+  NULL,'https://www.youtube.com/watch?v=MEhdxzHGsFo',
+  'This video summarizes the incident response lifecycle, severity classification, and employee reporting procedures covered in this module.',
+  210,'3.1'
+);
 
 -- ═══ FINAL EXAM ══════════════════════════════════════════════════════════════
 INSERT INTO public.quizzes (id,module_id,title,quiz_type,pass_score,max_attempts,time_limit_mins) VALUES (

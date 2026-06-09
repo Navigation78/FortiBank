@@ -23,6 +23,8 @@ DECLARE
   v_cp1  UUID := gen_random_uuid();
   v_cp2  UUID := gen_random_uuid();
   v_fe   UUID := gen_random_uuid();
+  v_cS0  UUID := gen_random_uuid();
+  v_cS1  UUID := gen_random_uuid();
   vq UUID; va UUID; vb UUID; vc UUID; vd UUID;
   r RECORD;
   qids UUID[];
@@ -63,7 +65,8 @@ INSERT INTO public.module_content (id,module_id,title,content_type,content_body,
   <li><strong>Heat Maps / Risk Registers:</strong> Qualitative tools that plot risks by likelihood and impact. More accessible for board-level reporting, though less precise than FAIR.</li>
 </ul>
 <h3>Communicating Risk to the Board</h3>
-<p>Effective board-level cyber risk reporting has three characteristics: it is expressed in business terms (not technical jargon), it compares risk against the organization''s defined risk appetite, and it links security investment to risk reduction outcomes. A CISO or executive saying "we blocked 10,000 threats last month" is not informative. Saying "our current exposure to a payment system breach is estimated at €4–12M; the proposed investment reduces this to €800K–2M" is actionable.</p>',
+<p>Effective board-level cyber risk reporting has three characteristics: it is expressed in business terms (not technical jargon), it compares risk against the organization''s defined risk appetite, and it links security investment to risk reduction outcomes. A CISO or executive saying "we blocked 10,000 threats last month" is not informative. Saying "our current exposure to a payment system breach is estimated at €4–12M; the proposed investment reduces this to €800K–2M" is actionable.</p>
+<figure style="margin:1.5rem 0"><img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&auto=format&fit=crop&q=80" alt="Executive cybersecurity risk management" style="width:100%;border-radius:8px;max-height:280px;object-fit:cover" /><figcaption style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;font-style:italic;text-align:center">Boards and regulators increasingly expect cyber risk to be quantified and reported in business terms alongside financial and operational risk.</figcaption></figure>',
   20,'1.1'
 );
 INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number) VALUES (
@@ -113,7 +116,8 @@ INSERT INTO public.module_content (id,module_id,title,content_type,content_body,
   <li><strong>Recover:</strong> Restore capabilities impaired by an incident</li>
 </ul>
 <h3>Risk Appetite and Risk Tolerance</h3>
-<p><strong>Risk appetite</strong> is the amount and type of risk an organization is willing to accept in pursuit of its objectives, set by the board. <strong>Risk tolerance</strong> is the acceptable variation around that appetite in practice. A bank''s risk appetite statement might say: "We accept no operational risk from a system failure that would halt payment processing for more than 4 hours." Any identified risk that could breach this threshold requires immediate treatment.</p>',
+<p><strong>Risk appetite</strong> is the amount and type of risk an organization is willing to accept in pursuit of its objectives, set by the board. <strong>Risk tolerance</strong> is the acceptable variation around that appetite in practice. A bank''s risk appetite statement might say: "We accept no operational risk from a system failure that would halt payment processing for more than 4 hours." Any identified risk that could breach this threshold requires immediate treatment.</p>
+<figure style="margin:1.5rem 0"><img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&auto=format&fit=crop&q=80" alt="Risk management framework and lifecycle" style="width:100%;border-radius:8px;max-height:280px;object-fit:cover" /><figcaption style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;font-style:italic;text-align:center">Frameworks like NIST CSF provide a structured, repeatable approach to cyber risk management that integrates with existing enterprise risk processes.</figcaption></figure>',
   40,'1.2'
 );
 INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number) VALUES (
@@ -347,6 +351,22 @@ INSERT INTO public.quiz_questions (id,quiz_id,question_text,order_index) VALUES
     (gen_random_uuid(),r.id,'Security training investment should be reduced since performance is improving',false,'Sustained improvement requires sustained investment. Cutting training because metrics improved is a common error that leads to regression.',20),
     (gen_random_uuid(),r.id,'The organization''s security culture is measurably improving; staff are more resistant to phishing and more willing to report',true,'Declining click rates indicate improved threat recognition. Tripling reporting rates indicates a culture where staff feel safe and empowered to report. Together, these are strong positive culture indicators.',30),
     (gen_random_uuid(),r.id,'The data is insufficient to draw conclusions without knowing the industry benchmark',false,'Internal trend data over 18 months is meaningful in its own right. Benchmarks add context but are not required to interpret directional improvement.',40);
+
+-- ═══ TOPIC 3: Module Summary ═════════════════════════════════════════════════
+
+INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number,learning_objectives) VALUES (
+  v_cS0,v_mod,'Module Summary','text',
+  '<p>You have completed all core topics in this module. Watch the video below for a concise recap of the key concepts covered, then proceed to the final exam.</p>',
+  200,'3.0',
+  ARRAY['Review and consolidate the key concepts from this module before the final exam']
+);
+
+INSERT INTO public.module_content (id,module_id,title,content_type,content_body,content_url,image_caption,order_index,section_number) VALUES (
+  v_cS1,v_mod,'Executive Cybersecurity Risk Management: Summary Video','video',
+  NULL,'https://www.youtube.com/watch?v=7BrKqjB1SQ4',
+  'This video summarizes cyber risk quantification, management frameworks, and executive governance responsibilities covered in this module.',
+  210,'3.1'
+);
 
 -- FINAL EXAM --
 INSERT INTO public.quizzes (id,module_id,title,quiz_type,pass_score,max_attempts,time_limit_mins) VALUES (

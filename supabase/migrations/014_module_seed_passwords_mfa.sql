@@ -14,6 +14,7 @@ DECLARE
   v_c20 UUID:=gen_random_uuid(); v_c21 UUID:=gen_random_uuid(); v_c21q UUID:=gen_random_uuid();
   v_c22 UUID:=gen_random_uuid(); v_c22q UUID:=gen_random_uuid();
   v_cp1 UUID:=gen_random_uuid(); v_cp2 UUID:=gen_random_uuid(); v_fe UUID:=gen_random_uuid();
+  v_cS0 UUID:=gen_random_uuid(); v_cS1 UUID:=gen_random_uuid();
   vq UUID; va UUID; vb UUID; vc UUID; vd UUID;
 BEGIN
 
@@ -48,7 +49,8 @@ INSERT INTO public.module_content (id,module_id,title,content_type,content_body,
 <h3>Shoulder Surfing</h3>
 <p>Physically observing someone enter their password. Relevant in open-plan offices, public spaces, and when using devices on public transport.</p>
 <h3>The Reuse Problem</h3>
-<p>Password reuse is the most dangerous habit. A breach of your personal email, which likely has weaker security than your work environment, gives attackers a credential they can try against every other service you use. One password compromised becomes all passwords compromised.</p>',
+<p>Password reuse is the most dangerous habit. A breach of your personal email, which likely has weaker security than your work environment, gives attackers a credential they can try against every other service you use. One password compromised becomes all passwords compromised.</p>
+<figure style="margin:1.5rem 0"><img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=800&auto=format&fit=crop&q=80" alt="Login screen and password security" style="width:100%;border-radius:8px;max-height:280px;object-fit:cover" /><figcaption style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;font-style:italic;text-align:center">Attackers have automated tools that can test billions of password combinations per second, making weak or reused passwords highly vulnerable.</figcaption></figure>',
   20,'1.1'
 );
 INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number) VALUES (
@@ -104,7 +106,8 @@ INSERT INTO public.module_content (id,module_id,title,content_type,content_body,
   <li>You suspect it may have been compromised</li>
   <li>You have shared it with someone (even IT i.e legitimate IT staff will never ask for your password)</li>
   <li>A service you use reports a data breach</li>
-</ul>',
+</ul>
+<figure style="margin:1.5rem 0"><img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&auto=format&fit=crop&q=80" alt="Password manager and strong credentials concept" style="width:100%;border-radius:8px;max-height:280px;object-fit:cover" /><figcaption style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;font-style:italic;text-align:center">A password manager enables you to use a unique, randomly generated password for every account without memorizing them all.</figcaption></figure>',
   40,'1.2'
 );
 INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number) VALUES (
@@ -187,7 +190,8 @@ INSERT INTO public.module_content (id,module_id,title,content_type,content_body,
   <li>Financial and payment systems</li>
   <li>Administrative and privileged accounts</li>
   <li>Any system accessible from outside the corporate network</li>
-</ul>',
+</ul>
+<figure style="margin:1.5rem 0"><img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=80" alt="Multi-factor authentication and secure access" style="width:100%;border-radius:8px;max-height:280px;object-fit:cover" /><figcaption style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;font-style:italic;text-align:center">MFA ensures that a stolen password alone is not enough to gain access, requiring attackers to also compromise a second independent factor.</figcaption></figure>',
   70,'2.1'
 );
 INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number) VALUES (
@@ -289,6 +293,22 @@ INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,order_ind
 vq:=gen_random_uuid();va:=gen_random_uuid();vb:=gen_random_uuid();vc:=gen_random_uuid();vd:=gen_random_uuid();
 INSERT INTO public.quiz_questions (id,quiz_id,question_text,question_type,order_index,points) VALUES (vq,v_cp2,'A fingerprint scan used to authenticate a user is an example of which authentication factor category?','multiple_choice',5,1);
 INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,order_index) VALUES (va,vq,'Something you know',false,1),(vb,vq,'Something you have',false,2),(vc,vq,'Something you are',true,3),(vd,vq,'Something you do',false,4);
+
+-- ═══ TOPIC 3: Module Summary ═════════════════════════════════════════════════
+
+INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number,learning_objectives) VALUES (
+  v_cS0,v_mod,'Module Summary','text',
+  '<p>You have completed all core topics in this module. Watch the video below for a concise recap of the key concepts covered, then proceed to the final exam.</p>',
+  200,'3.0',
+  ARRAY['Review and consolidate the key concepts from this module before the final exam']
+);
+
+INSERT INTO public.module_content (id,module_id,title,content_type,content_body,content_url,image_caption,order_index,section_number) VALUES (
+  v_cS1,v_mod,'Password Security and MFA: Summary Video','video',
+  NULL,'https://www.youtube.com/watch?v=hGRii5f_uSc',
+  'This video summarizes password attack methods, strong credential practices, and multi-factor authentication covered in this module.',
+  210,'3.1'
+);
 
 -- ═══ FINAL EXAM ══════════════════════════════════════════════════════════════
 INSERT INTO public.quizzes (id,module_id,title,description,pass_score,max_attempts,time_limit_mins,quiz_type) VALUES (

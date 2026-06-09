@@ -1,131 +1,47 @@
 'use client'
 
-// src/components/dashboard/RiskScoreGauge.jsx
-// Visual risk score display with color-coded gauge
-
-
 import Link from 'next/link'
-import { useRole } from '@/hooks/useRole'
+import { AlertTriangle, AlertOctagon } from 'lucide-react'
 
-export default function RiskScoreGauge({ score = 0, loading = false }) {
-  const { warningThreshold, criticalThreshold } = useRole()
+export default function AlertBanner({ severity, riskScore }) {
+  const isCritical = severity === 'critical'
 
-  // Determine risk level and colors
-  function getRiskLevel(score) {
-    if (score >= criticalThreshold) return {
-      label: 'Critical Risk',
-      color: 'text-red-400',
-      bg: 'bg-red-500',
-      ring: 'ring-red-500/30',
-      glow: 'shadow-red-500/20',
-    }
-    if (score >= warningThreshold) return {
-      label: 'High Risk',
-      color: 'text-orange-400',
-      bg: 'bg-orange-500',
-      ring: 'ring-orange-500/30',
-      glow: 'shadow-orange-500/20',
-    }
-    if (score >= 40) return {
-      label: 'Medium Risk',
-      color: 'text-yellow-400',
-      bg: 'bg-yellow-500',
-      ring: 'ring-yellow-500/30',
-      glow: 'shadow-yellow-500/20',
-    }
-    return {
-      label: 'Low Risk',
-      color: 'text-green-400',
-      bg: 'bg-green-500',
-      ring: 'ring-green-500/30',
-      glow: 'shadow-green-500/20',
-    }
-  }
+  const styles = isCritical
+    ? {
+        wrapper: 'bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30',
+        icon:    'text-red-500 dark:text-red-400',
+        title:   'text-red-700 dark:text-red-400',
+        body:    'text-red-600 dark:text-red-300',
+        link:    'text-red-700 dark:text-red-300 underline hover:text-red-900 dark:hover:text-red-100',
+        badge:   'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300',
+      }
+    : {
+        wrapper: 'bg-orange-50 dark:bg-orange-500/10 border border-orange-200 dark:border-orange-500/30',
+        icon:    'text-orange-500 dark:text-orange-400',
+        title:   'text-orange-700 dark:text-orange-400',
+        body:    'text-orange-600 dark:text-orange-300',
+        link:    'text-orange-700 dark:text-orange-300 underline hover:text-orange-900 dark:hover:text-orange-100',
+        badge:   'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300',
+      }
 
-  const risk = getRiskLevel(score)
-
-  // SVG gauge calculation
-  const radius = 54
-  const circumference = 2 * Math.PI * radius
-  const arc = circumference * 0.75 // 270 degree arc
-  const offset = arc - (score / 100) * arc
-
-  if (loading) {
-    return (
-      <div className="bg-th-srf border border-th-brd rounded-xl p-6 flex items-center justify-center h-48">
-        <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    )
-  }
+  const Icon = isCritical ? AlertOctagon : AlertTriangle
 
   return (
-    <div className="bg-th-srf border border-th-brd rounded-xl p-6 shadow-sm shadow-black/5 dark:shadow-black/30">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-th-txt font-semibold">Risk Score</h3>
-        <Link
-          href="/risk-score"
-          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-xs transition-all duration-150"
-        >
-          View details →
-        </Link>
-      </div>
+    <div className={`rounded-xl px-4 py-3 mb-6 flex items-center gap-3 ${styles.wrapper}`}>
+      <Icon className={`w-5 h-5 flex-shrink-0 ${styles.icon}`} />
 
-      <div className="flex items-center gap-6">
-        {/* SVG Gauge */}
-        <div className="relative flex-shrink-0">
-          <svg width="140" height="100" viewBox="0 0 140 100">
-            {/* Background arc */}
-            <circle
-              cx="70" cy="80" r={radius}
-              fill="none"
-              stroke="var(--th-track)"
-              strokeWidth="10"
-              strokeDasharray={`${arc} ${circumference}`}
-              strokeLinecap="round"
-              transform="rotate(135 70 80)"
-            />
-            {/* Score arc */}
-            <circle
-              cx="70" cy="80" r={radius}
-              fill="none"
-              stroke={
-                score >= criticalThreshold ? '#ef4444' :
-                score >= warningThreshold ? '#f97316' :
-                score >= 40 ? '#eab308' : '#22c55e'
-              }
-              strokeWidth="10"
-              strokeDasharray={`${arc - offset} ${circumference}`}
-              strokeLinecap="round"
-              transform="rotate(135 70 80)"
-              className="transition-all duration-700"
-            />
-          </svg>
-          {/* Score number overlay */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center pb-2">
-            <span className={`text-3xl font-bold ${risk.color}`}>{score}</span>
-            <span className="text-th-muted text-xs">/100</span>
-          </div>
-        </div>
-
-        {/* Info */}
-        <div className="flex-1">
-          <p className={`font-semibold text-lg ${risk.color}`}>{risk.label}</p>
-          <div className="mt-3 space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-th-txt2">Warning threshold</span>
-              <span className="text-yellow-600 dark:text-yellow-400 font-medium">{warningThreshold}</span>
-            </div>
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-th-txt2">Critical threshold</span>
-              <span className="text-red-500 dark:text-red-400 font-medium">{criticalThreshold}</span>
-            </div>
-          </div>
-          {score >= warningThreshold && (
-            <p className="text-xs text-th-muted mt-3">
-              Complete more modules and pass quizzes to lower your score.
-            </p>
-          )}
-        </div>
+      <div className="flex-1 min-w-0">
+        <span className={`font-semibold text-sm ${styles.title}`}>
+          {isCritical ? 'Critical Risk Alert' : 'High Risk Warning'}
+        </span>
+        <span className={`text-sm ml-2 ${styles.body}`}>
+          Your risk score of{' '}
+          <span className={`font-bold px-1.5 py-0.5 rounded ${styles.badge}`}>{riskScore}</span>
+          {' '}requires immediate attention.{' '}
+          <Link href="/risk-score" className={`text-sm font-medium ${styles.link}`}>
+            View details →
+          </Link>
+        </span>
       </div>
     </div>
   )

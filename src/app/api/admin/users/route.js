@@ -7,7 +7,7 @@ import supabaseAdmin from '@/lib/supabaseAdmin'
 import { ROLES } from '@/constants/roles'
 import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 import { withApiHandler } from '@/lib/apiHandler'
-import { ValidationError, ForbiddenError } from '@/lib/errors'
+import { ValidationError, ForbiddenError, ConflictError } from '@/lib/errors'
 
 export const GET = withApiHandler(async (request) => {
   const { user, supabase, networkError } = await getRouteUser(request)
@@ -63,6 +63,10 @@ export const POST = withApiHandler(async (request) => {
   })
 
   if (authCreateError) {
+    const msg = authCreateError.message?.toLowerCase() ?? ''
+    if (msg.includes('already registered') || msg.includes('already exists') || authCreateError.code === '23505') {
+      throw new ConflictError('A user with this email address already exists')
+    }
     return NextResponse.json({ error: authCreateError.message }, { status: 400 })
   }
 

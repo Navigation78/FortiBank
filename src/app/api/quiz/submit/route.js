@@ -6,7 +6,7 @@ import supabaseAdmin from '@/lib/supabaseAdmin'
 import { getRouteUser, unauthorizedResponse } from '@/lib/supabaseRoute'
 import { createNotification, NOTIFICATION_TYPES } from '@/lib/notificationService'
 import { withApiHandler } from '@/lib/apiHandler'
-import { ValidationError } from '@/lib/errors'
+import { ValidationError, BusinessLogicError, ConflictError } from '@/lib/errors'
 
 export const POST = withApiHandler(async (request) => {
   const { user, networkError } = await getRouteUser(request)
@@ -58,6 +58,10 @@ export const POST = withApiHandler(async (request) => {
     )
   }
 
+  if (quiz.quiz_questions.length === 0) {
+    throw new BusinessLogicError('This quiz has no questions and cannot be submitted')
+  }
+
   let totalPoints  = 0
   let earnedPoints = 0
   const questionResults = []
@@ -105,6 +109,10 @@ export const POST = withApiHandler(async (request) => {
     .single()
 
   if (attemptError) {
+    // 23505 = unique_violation: two concurrent submissions with the same attempt_number
+    if (attemptError.code === '23505') {
+      throw new ConflictError('Quiz attempt already submitted. Please check your results.')
+    }
     return NextResponse.json({ error: attemptError.message }, { status: 500 })
   }
 

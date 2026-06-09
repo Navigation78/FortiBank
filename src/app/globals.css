@@ -19,8 +19,8 @@
 
   /* Text */
   --th-txt:   #111827;          /* gray-900 – primary              */
-  --th-txt2:  #4b5563;          /* gray-600 – secondary            */
-  --th-muted: #9ca3af;          /* gray-400 – muted / placeholder  */
+  --th-txt2:  #374151;          /* gray-700 – secondary (was 600)  */
+  --th-muted: #6b7280;          /* gray-500 – tertiary (was 400)   */
 
   /* Interactive */
   --th-hov:   rgba(0,0,0,0.04);

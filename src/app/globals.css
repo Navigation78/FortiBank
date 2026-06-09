@@ -87,6 +87,12 @@ html {
   transition: background-color 150ms ease, color 150ms ease;
 }
 
+/* ─── Lucide icon global style ────────────────────────────────────────────── */
+svg.lucide {
+  stroke-width: 1.5;
+  transition: color 150ms ease, stroke 150ms ease;
+}
+
 /* ─── LMS Module Content Typography ──────────────────────────────────────── */
 .lms-content {
   font-size: 0.9375rem;

@@ -12,6 +12,7 @@ DECLARE
   v_c20 UUID:=gen_random_uuid(); v_c21 UUID:=gen_random_uuid(); v_c21q UUID:=gen_random_uuid();
   v_c22 UUID:=gen_random_uuid(); v_c22q UUID:=gen_random_uuid();
   v_cp1 UUID:=gen_random_uuid(); v_cp2 UUID:=gen_random_uuid(); v_fe UUID:=gen_random_uuid();
+  v_cS0 UUID:=gen_random_uuid(); v_cS1 UUID:=gen_random_uuid();
   vq UUID; va UUID; vb UUID; vc UUID; vd UUID;
 BEGIN
 
@@ -47,7 +48,8 @@ INSERT INTO public.module_content (id,module_id,title,content_type,content_body,
   <li><strong>Coercion:</strong> External attackers who pressure, blackmail, or pay insiders to act on their behalf</li>
 </ul>
 <h3>Why Insiders Are Difficult to Detect</h3>
-<p>Insiders use legitimate credentials and access, so their activity blends with normal behavior. Security controls designed to stop external attackers (firewalls, perimeter defenses) do not prevent insiders from acting. Detection requires behavioral monitoring, access logging, and attention to anomalous patterns, and even these can be difficult to distinguish from legitimate activity.</p>',
+<p>Insiders use legitimate credentials and access, so their activity blends with normal behavior. Security controls designed to stop external attackers (firewalls, perimeter defenses) do not prevent insiders from acting. Detection requires behavioral monitoring, access logging, and attention to anomalous patterns, and even these can be difficult to distinguish from legitimate activity.</p>
+<figure style="margin:1.5rem 0"><img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&auto=format&fit=crop&q=80" alt="Insider threat and workplace security" style="width:100%;border-radius:8px;max-height:280px;object-fit:cover" /><figcaption style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;font-style:italic;text-align:center">Insider threats are uniquely difficult to detect because the threat actor uses legitimate, authorized access that looks identical to normal work activity.</figcaption></figure>',
   20,'1.1'
 );
 INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number) VALUES (
@@ -104,7 +106,8 @@ INSERT INTO public.module_content (id,module_id,title,content_type,content_body,
   <li>Share your suspicions with other colleagues: this creates rumors and may compromise an investigation</li>
   <li>Ignore what you have observed: unexplained behavior warrants appropriate follow-up</li>
 </ul>
-<p><strong>Do:</strong> Report concerns confidentially to your line manager, HR, or the security team. Provide factual observations, not interpretations.</p>',
+<p><strong>Do:</strong> Report concerns confidentially to your line manager, HR, or the security team. Provide factual observations, not interpretations.</p>
+<figure style="margin:1.5rem 0"><img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800&auto=format&fit=crop&q=80" alt="Security monitoring and behavioral analysis" style="width:100%;border-radius:8px;max-height:280px;object-fit:cover" /><figcaption style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;font-style:italic;text-align:center">Behavioral and technical warning signs rarely occur in isolation. A pattern of anomalous activity is more significant than any single indicator.</figcaption></figure>',
   40,'1.2'
 );
 INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number) VALUES (
@@ -301,6 +304,22 @@ INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,order_ind
 vq:=gen_random_uuid();va:=gen_random_uuid();vb:=gen_random_uuid();vc:=gen_random_uuid();vd:=gen_random_uuid();
 INSERT INTO public.quiz_questions (id,quiz_id,question_text,question_type,order_index,points) VALUES (vq,v_cp2,'A well-liked, long-serving employee who is leaving voluntarily asks if their access could remain active for two weeks after departure "to help with the handover". What is the correct response?','multiple_choice',5,1);
 INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,order_index) VALUES (va,vq,'Allow it: they are trusted and leaving voluntarily',false,1),(vb,vq,'Decline: access must be revoked on the last working day; handover documentation should be completed before departure',true,2),(vc,vq,'Allow limited read-only access for two weeks',false,3),(vd,vq,'Escalate to the CEO for a decision given the employee''s service',false,4);
+
+-- ═══ TOPIC 3: Module Summary ═════════════════════════════════════════════════
+
+INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number,learning_objectives) VALUES (
+  v_cS0,v_mod,'Module Summary','text',
+  '<p>You have completed all core topics in this module. Watch the video below for a concise recap of the key concepts covered, then proceed to the final exam.</p>',
+  200,'3.0',
+  ARRAY['Review and consolidate the key concepts from this module before the final exam']
+);
+
+INSERT INTO public.module_content (id,module_id,title,content_type,content_body,content_url,image_caption,order_index,section_number) VALUES (
+  v_cS1,v_mod,'Insider Threats and Access Control: Summary Video','video',
+  NULL,'https://www.youtube.com/watch?v=3mK0OJoNOWM',
+  'This video summarizes insider threat categories, behavioral warning signs, and access control principles covered in this module.',
+  210,'3.1'
+);
 
 -- ═══ FINAL EXAM ══════════════════════════════════════════════════════════════
 INSERT INTO public.quizzes (id,module_id,title,description,pass_score,max_attempts,time_limit_mins,quiz_type) VALUES (

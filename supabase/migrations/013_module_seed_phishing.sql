@@ -17,6 +17,7 @@ DECLARE
   v_c22 UUID := gen_random_uuid(); v_c22q UUID := gen_random_uuid();
 
   v_cp1 UUID := gen_random_uuid(); v_cp2 UUID := gen_random_uuid(); v_fe UUID := gen_random_uuid();
+  v_cS0 UUID := gen_random_uuid(); v_cS1 UUID := gen_random_uuid();
   vq UUID; va UUID; vb UUID; vc UUID; vd UUID;
 BEGIN
 
@@ -57,7 +58,8 @@ INSERT INTO public.module_content (id, module_id, title, content_type, content_b
   <li><strong>Fear:</strong> threats of consequences ("Your account has been compromised") trigger reactive behavior.</li>
 </ul>
 <h3>Scale of the Problem</h3>
-<p>Over 90% of cyberattacks that result in a data breach begin with a phishing email. No amount of technical security can fully compensate for an employee who clicks a malicious link. Your recognition of phishing is the most critical control at this stage.</p>',
+<p>Over 90% of cyberattacks that result in a data breach begin with a phishing email. No amount of technical security can fully compensate for an employee who clicks a malicious link. Your recognition of phishing is the most critical control at this stage.</p>
+<figure style="margin:1.5rem 0"><img src="https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=800&auto=format&fit=crop&q=80" alt="Email phishing concept" style="width:100%;border-radius:8px;max-height:280px;object-fit:cover" /><figcaption style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;font-style:italic;text-align:center">Phishing emails arrive through normal channels and are designed to look indistinguishable from legitimate communications.</figcaption></figure>',
   20, '1.1'
 );
 INSERT INTO public.module_content (id, module_id, title, content_type, content_body, order_index, section_number) VALUES (
@@ -109,7 +111,8 @@ INSERT INTO public.module_content (id, module_id, title, content_type, content_b
 <h3>Attachments</h3>
 <p>Malicious attachments commonly appear as invoices, statements, delivery notifications, or shared documents. Dangerous formats include: .exe, .zip containing executables, macro-enabled Office files (.docm, .xlsm), and password-protected archives (the password is provided in the email to bypass email scanning).</p>
 <h3>Grammar and Tone</h3>
-<p>While sophisticated attacks are grammatically correct, many phishing emails contain unusual phrasing, incorrect salutations (e.g., "Dear Valued Customer" instead of your name), or slightly off-brand language. Compare the email tone against how the purported sender normally communicates.</p>',
+<p>While sophisticated attacks are grammatically correct, many phishing emails contain unusual phrasing, incorrect salutations (e.g., "Dear Valued Customer" instead of your name), or slightly off-brand language. Compare the email tone against how the purported sender normally communicates.</p>
+<figure style="margin:1.5rem 0"><img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&auto=format&fit=crop&q=80" alt="Cybersecurity threat analysis" style="width:100%;border-radius:8px;max-height:280px;object-fit:cover" /><figcaption style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;font-style:italic;text-align:center">Training yourself to examine sender addresses, URLs, and language patterns converts a deceptive message into an obvious threat.</figcaption></figure>',
   40, '1.2'
 );
 INSERT INTO public.module_content (id, module_id, title, content_type, content_body, order_index, section_number) VALUES (
@@ -155,7 +158,8 @@ INSERT INTO public.module_content (id, module_id, title, content_type, content_b
   <li>Supplier email account compromised; attacker changes bank details for the upcoming payment</li>
 </ul>
 <h3>Defending Against Targeted Phishing</h3>
-<p>Because these attacks are personalized, generic suspicion is not enough. The key defense is process: verify any unusual financial request or credential request through a second, independent communication channel, regardless of how legitimate the email appears.</p>',
+<p>Because these attacks are personalized, generic suspicion is not enough. The key defense is process: verify any unusual financial request or credential request through a second, independent communication channel, regardless of how legitimate the email appears.</p>
+<figure style="margin:1.5rem 0"><img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&auto=format&fit=crop&q=80" alt="Business communication security" style="width:100%;border-radius:8px;max-height:280px;object-fit:cover" /><figcaption style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;font-style:italic;text-align:center">Spear phishing and BEC attacks succeed because they blend into normal business communication. Process, not instinct, is the reliable defense.</figcaption></figure>',
   60, '1.3'
 );
 INSERT INTO public.module_content (id, module_id, title, content_type, content_body, order_index, section_number) VALUES (
@@ -240,7 +244,8 @@ INSERT INTO public.module_content (id, module_id, title, content_type, content_b
 <h3>Out-of-Band Verification</h3>
 <p>Contact the purported sender through a channel you know is legitimate: call their known phone number (do not use a number provided in the suspicious email), contact them in person, or message them through an internal system. Never rely on replying to the email itself.</p>
 <h3>If You Are Unsure</h3>
-<p>Uncertainty is reason enough to report. The cost of an unnecessary report to the security team is zero. The cost of not reporting a real attack can be catastrophic. When in doubt, report.</p>',
+<p>Uncertainty is reason enough to report. The cost of an unnecessary report to the security team is zero. The cost of not reporting a real attack can be catastrophic. When in doubt, report.</p>
+<figure style="margin:1.5rem 0"><img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800&auto=format&fit=crop&q=80" alt="Person evaluating email security" style="width:100%;border-radius:8px;max-height:280px;object-fit:cover" /><figcaption style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;font-style:italic;text-align:center">Applying SLAM before acting on any unexpected email takes seconds and can prevent a serious security incident.</figcaption></figure>',
   90, '2.1'
 );
 INSERT INTO public.module_content (id, module_id, title, content_type, content_body, order_index, section_number) VALUES (
@@ -346,6 +351,22 @@ INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,order_ind
 vq:=gen_random_uuid();va:=gen_random_uuid();vb:=gen_random_uuid();vc:=gen_random_uuid();vd:=gen_random_uuid();
 INSERT INTO public.quiz_questions (id,quiz_id,question_text,question_type,order_index,points) VALUES (vq,v_cp2,'Why is reporting a suspicious email that turns out to be legitimate still the correct action?','multiple_choice',5,1);
 INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,order_index) VALUES (va,vq,'It is not correct: unnecessary reports waste the security team''s time',false,1),(vb,vq,'The cost of a false positive report is near-zero, while the cost of not reporting a real phishing email can be catastrophic',true,2),(vc,vq,'It helps the security team understand how many emails employees receive',false,3),(vd,vq,'It fulfills a regulatory requirement to log all emails',false,4);
+
+-- ═══ TOPIC 3: Module Summary ═════════════════════════════════════════════════
+
+INSERT INTO public.module_content (id, module_id, title, content_type, content_body, order_index, section_number, learning_objectives) VALUES (
+  v_cS0, v_mod, 'Module Summary', 'text',
+  '<p>You have completed all core topics in this module. Watch the video below for a concise recap of the key concepts covered, then proceed to the final exam.</p>',
+  200, '3.0',
+  ARRAY['Review and consolidate the key concepts from this module before the final exam']
+);
+
+INSERT INTO public.module_content (id, module_id, title, content_type, content_body, content_url, image_caption, order_index, section_number) VALUES (
+  v_cS1, v_mod, 'Phishing Awareness and Email Safety: Summary Video', 'video',
+  NULL, 'https://www.youtube.com/watch?v=XBkzBrXlle0',
+  'This video summarizes the key phishing tactics, email indicators, and safe handling practices covered in this module.',
+  210, '3.1'
+);
 
 -- ═══ FINAL EXAM ════════════════════════════════════════════════════════════════
 INSERT INTO public.quizzes (id, module_id, title, description, pass_score, max_attempts, time_limit_mins, quiz_type) VALUES (

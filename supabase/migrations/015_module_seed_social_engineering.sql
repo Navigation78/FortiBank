@@ -13,6 +13,7 @@ DECLARE
   v_c22 UUID:=gen_random_uuid(); v_c22q UUID:=gen_random_uuid();
   v_c23 UUID:=gen_random_uuid(); v_c23q UUID:=gen_random_uuid();
   v_cp1 UUID:=gen_random_uuid(); v_cp2 UUID:=gen_random_uuid(); v_fe UUID:=gen_random_uuid();
+  v_cS0 UUID:=gen_random_uuid(); v_cS1 UUID:=gen_random_uuid();
   vq UUID; va UUID; vb UUID; vc UUID; vd UUID;
 BEGIN
 
@@ -47,7 +48,8 @@ INSERT INTO public.module_content (id,module_id,title,content_type,content_body,
   <li><strong>Scarcity:</strong> People value things that appear rare or time-limited. "This is the only opportunity to resolve this before your access is permanently revoked."</li>
 </ul>
 <h3>Cognitive Load and Decision Quality</h3>
-<p>When we are busy, stressed, or multitasking, we make faster, less careful decisions. Attackers time their contacts deliberately, end of day, before a deadline, during a system incident, to exploit reduced cognitive capacity. Slow down. Verify. The urgency is almost always false.</p>',
+<p>When we are busy, stressed, or multitasking, we make faster, less careful decisions. Attackers time their contacts deliberately, end of day, before a deadline, during a system incident, to exploit reduced cognitive capacity. Slow down. Verify. The urgency is almost always false.</p>
+<figure style="margin:1.5rem 0"><img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&auto=format&fit=crop&q=80" alt="Social influence and human manipulation concept" style="width:100%;border-radius:8px;max-height:280px;object-fit:cover" /><figcaption style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;font-style:italic;text-align:center">Social engineers study human behavior to identify and exploit the predictable ways people respond to authority, urgency, and trust.</figcaption></figure>',
   20,'1.1'
 );
 INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number) VALUES (
@@ -101,7 +103,8 @@ INSERT INTO public.module_content (id,module_id,title,content_type,content_body,
   <li>Any request for credentials, access, or sensitive data → Verify through a separate, known channel</li>
   <li>Any request that bypasses normal approval process → Escalate for authorization</li>
   <li>Any caller you cannot independently verify → Do not comply until verified</li>
-</ul>',
+</ul>
+<figure style="margin:1.5rem 0"><img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&auto=format&fit=crop&q=80" alt="Phone call social engineering" style="width:100%;border-radius:8px;max-height:280px;object-fit:cover" /><figcaption style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;font-style:italic;text-align:center">Pretexts are researched and realistic. Knowing the correct vendor name or your manager''s title is not proof of legitimacy.</figcaption></figure>',
   40,'1.2'
 );
 INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number) VALUES (
@@ -181,7 +184,8 @@ INSERT INTO public.module_content (id,module_id,title,content_type,content_body,
   <li>Tell the caller you need to verify their identity before assisting. Legitimate callers will not object.</li>
   <li>Hang up and call back on a number you find independently, from the company website or internal directory. Do not use a callback number provided by the caller.</li>
   <li>Report the call to the security team regardless of how the call ended.</li>
-</ol>',
+</ol>
+<figure style="margin:1.5rem 0"><img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=800&auto=format&fit=crop&q=80" alt="Verifying caller identity through independent channel" style="width:100%;border-radius:8px;max-height:280px;object-fit:cover" /><figcaption style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;font-style:italic;text-align:center">Always call back on a number you independently look up. A number provided by the caller cannot verify who the caller is.</figcaption></figure>',
   70,'2.1'
 );
 INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number) VALUES (
@@ -229,7 +233,8 @@ INSERT INTO public.module_content (id,module_id,title,content_type,content_body,
 </ul>
 <p>Every employee is responsible for controlled access. Challenge anyone in a secure area who does not display a valid ID badge. It is not rude; it is expected security behavior. Politely ask: "Can I see your badge?" This is a professional and normal security practice.</p>
 <h3>Baiting</h3>
-<p>Leaving infected USB drives, QR codes, or physical media in locations where curious employees will find them. The bait may be labeled "Salary Review 2024" or "Redundancy List" to exploit curiosity. Never plug in unknown USB devices. Never scan QR codes from unknown physical sources in a work context.</p>',
+<p>Leaving infected USB drives, QR codes, or physical media in locations where curious employees will find them. The bait may be labeled "Salary Review 2024" or "Redundancy List" to exploit curiosity. Never plug in unknown USB devices. Never scan QR codes from unknown physical sources in a work context.</p>
+<figure style="margin:1.5rem 0"><img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&auto=format&fit=crop&q=80" alt="Physical security and access control" style="width:100%;border-radius:8px;max-height:280px;object-fit:cover" /><figcaption style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;font-style:italic;text-align:center">Social engineering extends beyond screens. Physical tailgating, baiting, and smishing attacks exploit the same human tendencies as email-based attacks.</figcaption></figure>',
   90,'2.2'
 );
 INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number) VALUES (
@@ -333,7 +338,23 @@ vq:=gen_random_uuid();va:=gen_random_uuid();vb:=gen_random_uuid();vc:=gen_random
 INSERT INTO public.quiz_questions (id,quiz_id,question_text,question_type,order_index,points) VALUES (vq,v_cp2,'An SMS claims to be from the bank''s security team, saying your work credentials will expire in one hour and provides a link to renew them. What is the correct action?','multiple_choice',5,1);
 INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,order_index) VALUES (va,vq,'Click the link immediately to avoid losing access',false,1),(vb,vq,'Do not click the link. Contact IT through a known internal channel to verify whether any credential action is actually required',true,2),(vc,vq,'Forward the SMS to your manager for a decision',false,3),(vd,vq,'Reply to the SMS asking for more information',false,4);
 
--- ═══ FINAL EXAM 
+-- ═══ TOPIC 3: Module Summary ═════════════════════════════════════════════════
+
+INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number,learning_objectives) VALUES (
+  v_cS0,v_mod,'Module Summary','text',
+  '<p>You have completed all core topics in this module. Watch the video below for a concise recap of the key concepts covered, then proceed to the final exam.</p>',
+  200,'3.0',
+  ARRAY['Review and consolidate the key concepts from this module before the final exam']
+);
+
+INSERT INTO public.module_content (id,module_id,title,content_type,content_body,content_url,image_caption,order_index,section_number) VALUES (
+  v_cS1,v_mod,'Social Engineering Tactics: Summary Video','video',
+  NULL,'https://www.youtube.com/watch?v=lc7scxvKQOo',
+  'This video summarizes the psychological principles, pretexting techniques, and attack scenarios covered in this module.',
+  210,'3.1'
+);
+
+-- ═══ FINAL EXAM
 INSERT INTO public.quizzes (id,module_id,title,description,pass_score,max_attempts,time_limit_mins,quiz_type) VALUES (
   v_fe,v_mod,'Social Engineering Tactics: Final Exam',
   'Covers all topics. 70% required to pass. 25-minute time limit.',70,2,25,'final_exam'

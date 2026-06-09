@@ -12,6 +12,7 @@ DECLARE
   v_c20 UUID:=gen_random_uuid(); v_c21 UUID:=gen_random_uuid(); v_c21q UUID:=gen_random_uuid();
   v_c22 UUID:=gen_random_uuid(); v_c22q UUID:=gen_random_uuid();
   v_cp1 UUID:=gen_random_uuid(); v_cp2 UUID:=gen_random_uuid(); v_fe UUID:=gen_random_uuid();
+  v_cS0 UUID:=gen_random_uuid(); v_cS1 UUID:=gen_random_uuid();
   vq UUID; va UUID; vb UUID; vc UUID; vd UUID;
 BEGIN
 
@@ -50,7 +51,8 @@ INSERT INTO public.module_content (id,module_id,title,content_type,content_body,
   <li>Internal system architecture diagram → Restricted. Access on need-to-know only. Do not email externally.</li>
   <li>Bank''s publicly listed branch addresses → Public. No special handling required.</li>
   <li>HR salary information → Confidential to Restricted depending on scope.</li>
-</ul>',
+</ul>
+<figure style="margin:1.5rem 0"><img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=80" alt="Data classification and secure storage" style="width:100%;border-radius:8px;max-height:280px;object-fit:cover" /><figcaption style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;font-style:italic;text-align:center">Data classification is the foundation of information security. Every piece of data your team handles should carry an appropriate classification label.</figcaption></figure>',
   20,'1.1'
 );
 INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number) VALUES (
@@ -94,7 +96,8 @@ INSERT INTO public.module_content (id,module_id,title,content_type,content_body,
 <h3>The Principle of Minimum Necessary Access</h3>
 <p>Access only the data you need to perform your specific task. Do not access customer records out of curiosity or for reasons unrelated to your role. Unnecessary data access is a compliance violation even when it does not result in disclosure; audit logs record all access.</p>
 <h3>Data Retention and Deletion</h3>
-<p>Data should only be retained for as long as required for the business purpose and regulatory requirement. Storing data beyond its required retention period increases risk without benefit. Follow your organization''s data retention schedule and dispose of data securely when the retention period ends.</p>',
+<p>Data should only be retained for as long as required for the business purpose and regulatory requirement. Storing data beyond its required retention period increases risk without benefit. Follow your organization''s data retention schedule and dispose of data securely when the retention period ends.</p>
+<figure style="margin:1.5rem 0"><img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&auto=format&fit=crop&q=80" alt="Secure data handling practices" style="width:100%;border-radius:8px;max-height:280px;object-fit:cover" /><figcaption style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;font-style:italic;text-align:center">Most data breaches in financial institutions result from process failures rather than technical exploits. Correct handling at every stage is essential.</figcaption></figure>',
   40,'1.2'
 );
 INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number) VALUES (
@@ -177,7 +180,8 @@ INSERT INTO public.module_content (id,module_id,title,content_type,content_body,
   <li><strong>Right to Erasure:</strong> In certain circumstances, customers can request deletion of their data.</li>
   <li><strong>Right to Object:</strong> Customers can object to processing for certain purposes.</li>
 </ul>
-<p>These requests must be handled within defined timeframes. Ignoring or delaying them is a regulatory violation.</p>',
+<p>These requests must be handled within defined timeframes. Ignoring or delaying them is a regulatory violation.</p>
+<figure style="margin:1.5rem 0"><img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&auto=format&fit=crop&q=80" alt="Data protection law and regulatory compliance" style="width:100%;border-radius:8px;max-height:280px;object-fit:cover" /><figcaption style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;font-style:italic;text-align:center">Banks are data controllers under GDPR and equivalent frameworks, carrying direct legal accountability for how customer data is collected, used, and protected.</figcaption></figure>',
   70,'2.1'
 );
 INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number) VALUES (
@@ -282,6 +286,22 @@ INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,order_ind
 vq:=gen_random_uuid();va:=gen_random_uuid();vb:=gen_random_uuid();vc:=gen_random_uuid();vd:=gen_random_uuid();
 INSERT INTO public.quiz_questions (id,quiz_id,question_text,question_type,order_index,points) VALUES (vq,v_cp2,'A breach is discovered on a Tuesday evening. The 72-hour reporting window for the regulator expires at what time?','multiple_choice',5,1);
 INSERT INTO public.quiz_options (id,question_id,option_text,is_correct,order_index) VALUES (va,vq,'The following Monday morning',false,1),(vb,vq,'Friday evening of the same week',true,2),(vc,vq,'30 days later',false,3),(vd,vq,'After the internal investigation is complete',false,4);
+
+-- ═══ TOPIC 3: Module Summary ═════════════════════════════════════════════════
+
+INSERT INTO public.module_content (id,module_id,title,content_type,content_body,order_index,section_number,learning_objectives) VALUES (
+  v_cS0,v_mod,'Module Summary','text',
+  '<p>You have completed all core topics in this module. Watch the video below for a concise recap of the key concepts covered, then proceed to the final exam.</p>',
+  200,'3.0',
+  ARRAY['Review and consolidate the key concepts from this module before the final exam']
+);
+
+INSERT INTO public.module_content (id,module_id,title,content_type,content_body,content_url,image_caption,order_index,section_number) VALUES (
+  v_cS1,v_mod,'Data Handling and Privacy: Summary Video','video',
+  NULL,'https://www.youtube.com/watch?v=6jL1EcKxEZs',
+  'This video summarizes data classification, secure handling practices, and privacy regulation obligations covered in this module.',
+  210,'3.1'
+);
 
 -- FINAL EXAM --
 INSERT INTO public.quizzes (id,module_id,title,description,pass_score,max_attempts,time_limit_mins,quiz_type) VALUES (

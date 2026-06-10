@@ -23,6 +23,17 @@ export function AuthProvider({ children }) {
   const profileRequestId = useRef(0)
   const fetchedUserId = useRef(null)
 
+  // Track current user ID in a ref so the onAuthStateChange closure can read
+  // the latest value without stale-closure issues.
+  const currentUserIdRef = useRef(null)
+  // Set when this tab is actively signing in/out, so we never filter our own events.
+  const signingInRef = useRef(false)
+  const signingOutRef = useRef(false)
+
+  useEffect(() => {
+    currentUserIdRef.current = user?.id ?? null
+  }, [user])
+
   useEffect(() => {
     getTabId()
   }, [])
@@ -103,6 +114,12 @@ export function AuthProvider({ children }) {
       }
 
       if (event === 'SIGNED_OUT') {
+        // Ignore SIGNED_OUT broadcasts originating from a different tab's user.
+        // Each tab manages its own logout; cross-tab logout would disrupt a
+        // different user who happens to be logged in simultaneously.
+        if (!signingOutRef.current && currentUserIdRef.current) {
+          return
+        }
         setSession(null)
         setUser(null)
         resetProfileState()
@@ -119,6 +136,20 @@ export function AuthProvider({ children }) {
         event === 'USER_UPDATED'
       ) {
         const nextUser = nextSession?.user ?? null
+
+        // Drop BroadcastChannel messages that carry a session belonging to a
+        // different user.  This fires when a duplicate tab logs in as someone
+        // else and the underlying Supabase BroadcastChannel (shared by tabs
+        // that have the same tab ID) delivers the event here.
+        if (
+          !signingInRef.current &&
+          currentUserIdRef.current &&
+          nextUser &&
+          nextUser.id !== currentUserIdRef.current
+        ) {
+          return
+        }
+
         setSession(nextSession)
         setUser(nextUser)
 
@@ -224,22 +255,23 @@ export function AuthProvider({ children }) {
 
   async function signIn({ email, password }) {
     setLoading(true)
+    signingInRef.current = true
     resetProfileState()
 
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: applyTabHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ email, password }),
-    })
-
-    const data = await res.json()
-
-    if (!res.ok) {
-      setLoading(false)
-      return { error: { message: data.error } }
-    }
-
     try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: applyTabHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ email, password }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setLoading(false)
+        return { error: { message: data.error } }
+      }
+
       if (!data.session?.access_token || !data.session?.refresh_token) {
         setLoading(false)
         return { error: { message: 'No session was returned by the server' } }
@@ -269,17 +301,24 @@ export function AuthProvider({ children }) {
       setLoading(false)
       console.error('[signIn] Unexpected error:', err)
       return { error: { message: 'An unexpected error occurred during sign in' } }
+    } finally {
+      signingInRef.current = false
     }
   }
 
   async function signOut() {
+    signingOutRef.current = true
     setUser(null)
     setSession(null)
     resetProfileState()
     setLoading(false)
 
-    await fetch('/api/auth/logout', { method: 'POST', headers: applyTabHeaders() })
-    await supabase.auth.signOut()
+    try {
+      await fetch('/api/auth/logout', { method: 'POST', headers: applyTabHeaders() })
+      await supabase.auth.signOut()
+    } finally {
+      signingOutRef.current = false
+    }
   }
 
   async function sendPasswordResetEmail(email) {

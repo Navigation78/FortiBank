@@ -40,11 +40,17 @@ export function createClient() {
 
   clearLegacySupabaseCookies()
 
+  // Per-tab storageKey gives each tab its own BroadcastChannel name so auth
+  // events (SIGNED_IN, TOKEN_REFRESHED, SIGNED_OUT) from one tab are not
+  // broadcast to other tabs that may be logged in as a different user.
+  const tabId = getTabId() || 'default'
+
   browserClient = createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       auth: {
+        storageKey: `sb-fortibank-${tabId}`,
         storage: {
           getItem: () => {
             try {

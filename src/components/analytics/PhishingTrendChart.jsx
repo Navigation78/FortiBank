@@ -6,8 +6,17 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend,
 } from 'recharts'
+import { downloadCSV, csvFilename } from '@/lib/csvDownload'
 
-export default function PhishingTrendChart({ data = [], loading = false }) {
+export default function PhishingTrendChart({ data = [], loading = false, fetchedAt = null }) {
+  function handleDownload() {
+    const date = fetchedAt || new Date()
+    downloadCSV(
+      csvFilename('phishing-trend', date),
+      ['Campaign', 'Click Rate %', 'Report Rate %'],
+      data.map(d => [d.campaign, d.clickRate, d.reportRate])
+    )
+  }
   if (loading) {
     return (
       <div className="bg-th-srf border border-th-brd rounded-xl p-6">
@@ -19,7 +28,17 @@ export default function PhishingTrendChart({ data = [], loading = false }) {
 
   return (
     <div className="bg-th-srf border border-th-brd rounded-xl p-6">
-      <h3 className="text-th-txt font-semibold mb-4">Phishing Click Rate Trend</h3>
+      <div className="flex items-center justify-between gap-3 mb-4">
+        <h3 className="text-th-txt font-semibold">Phishing Click Rate Trend</h3>
+        {data.length > 0 && (
+          <button
+            onClick={handleDownload}
+            className="text-th-txt2 hover:text-th-txt text-xs px-2 py-1.5 bg-th-hov hover:bg-th-act border border-th-brd rounded-lg transition-all duration-150"
+          >
+            ↓ CSV
+          </button>
+        )}
+      </div>
       {data.length > 0 ? (
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>

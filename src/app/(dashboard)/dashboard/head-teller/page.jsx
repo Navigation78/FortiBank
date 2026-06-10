@@ -1,5 +1,5 @@
 'use client'
-import { Building2, Fish, Theater, Users } from 'lucide-react'
+import { Building2, MailWarning, Theater, Users } from 'lucide-react'
 import DashboardTemplate from '@/components/dashboard/DashboardTemplate'
 
 export default function HeadTellerDashboard() {
@@ -27,7 +27,7 @@ export default function HeadTellerDashboard() {
           description: 'Monitor your team for unusual transactions or suspicious behaviour.',
         },
         {
-          icon: Fish,
+          icon: MailWarning,
           iconBg: 'bg-yellow-500/15',
           title: 'Phishing Awareness',
           description: 'Targeted emails may attempt to compromise teller system credentials.',

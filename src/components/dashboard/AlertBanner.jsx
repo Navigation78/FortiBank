@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { AlertTriangle, AlertOctagon, Fish } from 'lucide-react'
+import { AlertTriangle, AlertOctagon, MailWarning } from 'lucide-react'
 
 const STYLES = {
   critical: {
@@ -33,7 +33,7 @@ const STYLES = {
 const ICONS = {
   critical: AlertOctagon,
   warning:  AlertTriangle,
-  phishing: Fish,
+  phishing: MailWarning,
 }
 
 export default function AlertBanner({ severity, riskScore }) {

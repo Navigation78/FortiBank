@@ -1,5 +1,5 @@
 'use client'
-import { FileText, Fish, IdCard, Lock } from 'lucide-react'
+import { FileText, MailWarning, IdCard, Lock } from 'lucide-react'
 import DashboardTemplate from '@/components/dashboard/DashboardTemplate'
 
 export default function CreditOfficerDashboard() {
@@ -21,7 +21,7 @@ export default function CreditOfficerDashboard() {
           description: 'Verify KYC documents thoroughly - stolen identities are used for loans.',
         },
         {
-          icon: Fish,
+          icon: MailWarning,
           iconBg: 'bg-blue-500/15',
           title: 'Phishing',
           description: 'Watch for fake emails from supposed credit bureaus or partner institutions.',

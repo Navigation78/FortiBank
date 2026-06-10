@@ -1,5 +1,5 @@
 'use client'
-import { Fish, Key, Megaphone, Phone, Theater } from 'lucide-react'
+import { MailWarning, Key, Megaphone, Phone, Theater } from 'lucide-react'
 import DashboardTemplate from '@/components/dashboard/DashboardTemplate'
 
 export default function CustomerServiceManagerDashboard() {

@@ -1,5 +1,5 @@
 'use client'
-import { FileText, Fish, IdCard, Lock } from 'lucide-react'
+import { FileText, MailWarning, IdCard, Lock } from 'lucide-react'
 import DashboardTemplate from '@/components/dashboard/DashboardTemplate'
 
 export default function CreditManagerDashboard() {
@@ -21,7 +21,7 @@ export default function CreditManagerDashboard() {
           description: 'Verify customer identities thoroughly to prevent fraudulent credit applications.',
         },
         {
-          icon: Fish,
+          icon: MailWarning,
           iconBg: 'bg-blue-500/15',
           title: 'Phishing Emails',
           description: 'Attackers may target you with fake correspondence from regulators or auditors.',

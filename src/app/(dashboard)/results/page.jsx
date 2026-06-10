@@ -375,7 +375,7 @@ export default function ResultsPage() {
 
       supabase
         .from('risk_scores')
-        .select('composite_score, phishing_score, quiz_score, phishing_attempts, phishing_clicks, quizzes_taken, quizzes_passed, is_warning, is_critical, calculated_at')
+        .select('composite_score, phishing_score, quiz_score, phishing_attempts, phishing_clicks, quizzes_taken, quizzes_passed, quizzes_assigned, is_warning, is_critical, calculated_at')
         .eq('user_id', user.id)
         .order('calculated_at', { ascending: false })
         .limit(1)
@@ -427,10 +427,16 @@ export default function ResultsPage() {
   const quizScore      = riskScore ? Math.round(riskScore.quiz_score)      : null
   const riskLevel      = compositeScore !== null ? getRiskLevel(compositeScore, role) : null
 
-  const phishClickRate = riskScore && riskScore.phishing_attempts > 0
-    ? Math.round((riskScore.phishing_clicks / riskScore.phishing_attempts) * 100) : 0
-  const quizPassRate = riskScore && riskScore.quizzes_taken > 0
-    ? Math.round((riskScore.quizzes_passed / riskScore.quizzes_taken) * 100) : null
+  // Phishing: 3-strike system — max risk at 3 clicks
+  const phishingStrikes    = riskScore ? Math.min(riskScore.phishing_clicks, 3) : 0
+  const phishingStrikeRate = Math.round((phishingStrikes / 3) * 100)
+
+  // Quiz: denominator is total quizzes assigned to the user's role
+  const quizDenominator = riskScore
+    ? (riskScore.quizzes_assigned > 0 ? riskScore.quizzes_assigned : riskScore.quizzes_taken)
+    : 0
+  const quizPassRate = riskScore && quizDenominator > 0
+    ? Math.round((riskScore.quizzes_passed / quizDenominator) * 100) : null
 
   return (
     <PageWrapper>
@@ -451,43 +457,70 @@ export default function ResultsPage() {
               <span className="text-th-muted text-sm">/100</span>
             </div>
             <p className={`text-xs mt-1.5 font-medium ${riskLevel?.textColor || 'text-th-txt2'}`}>{riskLevel?.label || 'No data'}</p>
-            <p className="text-th-muted text-xs mt-0.5">= (Phishing x 60%) + (Quiz x 40%)</p>
+            <p className="text-th-muted text-xs mt-0.5">= (Quiz x 60%) + (Phishing x 40%)</p>
           </div>
 
           <div className="rounded-xl border border-th-brd bg-th-srf p-5">
-            <p className="text-th-muted text-xs mb-2 font-medium uppercase tracking-wide">Quiz Performance <span className="normal-case">(40% of risk)</span></p>
+            <p className="text-th-muted text-xs mb-2 font-medium uppercase tracking-wide">Quiz Performance <span className="normal-case">(60% of risk)</span></p>
             <div className="flex items-baseline gap-1">
-              <span className="text-4xl font-bold text-th-txt">{riskScore.quizzes_passed}</span>
-              <span className="text-th-muted text-sm">/ {riskScore.quizzes_taken} passed</span>
+              <span className={`text-4xl font-bold ${quizPassRate !== null && quizPassRate < 70 ? 'text-red-600 dark:text-red-400' : 'text-th-txt'}`}>
+                {riskScore.quizzes_passed}
+              </span>
+              <span className="text-th-muted text-sm">/ {quizDenominator} passed</span>
             </div>
-            {riskScore.quizzes_taken > 0 && (
+            {quizDenominator > 0 && (
               <>
                 <div className="mt-3 h-1.5 bg-th-track rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-500 rounded-full transition-all" style={{ width: `${quizPassRate}%` }} />
+                  <div
+                    className={`h-full rounded-full transition-all ${quizPassRate !== null && quizPassRate >= 70 ? 'bg-green-500' : 'bg-blue-500'}`}
+                    style={{ width: `${quizPassRate ?? 0}%` }}
+                  />
                 </div>
-                <p className="text-th-muted text-xs mt-1">{quizPassRate}% pass rate · quiz risk: <span className="text-th-txt2">{quizScore}/100</span></p>
+                <p className="text-th-muted text-xs mt-1">
+                  {quizPassRate ?? 0}% pass rate
+                  {quizPassRate !== null && quizPassRate < 70 && (
+                    <span className="text-red-500 dark:text-red-400 ml-1">· below 70% target</span>
+                  )}
+                  {' · '}quiz risk: <span className="text-th-txt2">{quizScore}/100</span>
+                </p>
               </>
             )}
-            {riskScore.quizzes_taken === 0 && <p className="text-th-muted text-xs mt-1">No quizzes taken yet</p>}
+            {quizDenominator === 0 && <p className="text-th-muted text-xs mt-1">No quizzes assigned yet</p>}
           </div>
 
           <div className="rounded-xl border border-th-brd bg-th-srf p-5">
-            <p className="text-th-muted text-xs mb-2 font-medium uppercase tracking-wide">Phishing Tests <span className="normal-case">(60% of risk)</span></p>
+            <p className="text-th-muted text-xs mb-2 font-medium uppercase tracking-wide">Phishing Tests <span className="normal-case">(40% of risk)</span></p>
             <div className="flex items-baseline gap-1">
-              <span className={`text-4xl font-bold ${riskScore.phishing_clicks > 0 ? 'text-red-600 dark:text-red-400' : 'text-th-txt'}`}>
+              <span className={`text-4xl font-bold ${riskScore.phishing_clicks >= 3 ? 'text-red-600 dark:text-red-400' : riskScore.phishing_clicks > 0 ? 'text-orange-500 dark:text-orange-400' : 'text-th-txt'}`}>
                 {riskScore.phishing_clicks}
               </span>
-              <span className="text-th-muted text-sm">/ {riskScore.phishing_attempts} clicked</span>
+              <span className="text-th-muted text-sm">/ 3 strikes</span>
             </div>
-            {riskScore.phishing_attempts > 0 && (
+            {riskScore.phishing_attempts > 0 ? (
               <>
-                <div className="mt-3 h-1.5 bg-th-track rounded-full overflow-hidden">
-                  <div className="h-full bg-orange-500 rounded-full transition-all" style={{ width: `${phishClickRate}%` }} />
+                <div className="mt-3 flex gap-1.5">
+                  {[1, 2, 3].map(n => (
+                    <div
+                      key={n}
+                      className={`flex-1 h-1.5 rounded-full transition-all ${
+                        riskScore.phishing_clicks >= n
+                          ? riskScore.phishing_clicks >= 3 ? 'bg-red-500' : 'bg-orange-400'
+                          : 'bg-th-track'
+                      }`}
+                    />
+                  ))}
                 </div>
-                <p className="text-th-muted text-xs mt-1">{phishClickRate}% click rate · phishing risk: <span className="text-th-txt2">{phishingScore}/100</span></p>
+                <p className="text-th-muted text-xs mt-1">
+                  {riskScore.phishing_clicks === 0 && 'No clicks — well done'}
+                  {riskScore.phishing_clicks === 1 && '1 strike · Phishing module reset'}
+                  {riskScore.phishing_clicks === 2 && '2 strikes · Phishing module reset'}
+                  {riskScore.phishing_clicks >= 3 && 'Critical — 3 strikes reached'}
+                  {' · '}phishing risk: <span className="text-th-txt2">{phishingScore}/100</span>
+                </p>
               </>
+            ) : (
+              <p className="text-th-muted text-xs mt-1">No phishing tests sent yet</p>
             )}
-            {riskScore.phishing_attempts === 0 && <p className="text-th-muted text-xs mt-1">No phishing tests sent yet</p>}
           </div>
         </div>
       ) : null}
@@ -631,7 +664,7 @@ export default function ResultsPage() {
                       </td>
                       <td className="px-5 py-3 hidden md:table-cell">
                         <span className={`text-xs ${target.result === 'clicked' ? 'text-red-600 dark:text-red-400' : target.result === 'reported' ? 'text-green-600 dark:text-green-400' : 'text-th-muted'}`}>
-                          {target.result === 'clicked' ? '+risk (counted as click)'
+                          {target.result === 'clicked' ? '+risk · strike counted · module reset'
                           : target.result === 'reported' ? 'No impact (reported)'
                           : 'No impact'}
                         </span>

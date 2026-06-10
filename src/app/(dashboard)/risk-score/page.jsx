@@ -36,27 +36,10 @@ export default function RiskScorePage() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {/* Phishing component */}
+                  {/* Quiz component — 60% weight */}
                   <div>
                     <div className="flex justify-between mb-1.5">
-                      <span className="text-th-txt2 text-sm">Phishing Tests (60%)</span>
-                      <span className="text-th-txt font-semibold text-sm">{phishingScore ?? 0}/100</span>
-                    </div>
-                    <div className="h-2 bg-th-track rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-orange-500 rounded-full transition-all"
-                        style={{ width: `${phishingScore ?? 0}%` }}
-                      />
-                    </div>
-                    <p className="text-th-muted text-xs mt-1">
-                      Based on % of phishing emails you clicked
-                    </p>
-                  </div>
-
-                  {/* Quiz component */}
-                  <div>
-                    <div className="flex justify-between mb-1.5">
-                      <span className="text-th-txt2 text-sm">Quiz Performance (40%)</span>
+                      <span className="text-th-txt2 text-sm">Quiz Performance (60%)</span>
                       <span className="text-th-txt font-semibold text-sm">{quizScore ?? 0}/100</span>
                     </div>
                     <div className="h-2 bg-th-track rounded-full overflow-hidden">
@@ -66,18 +49,38 @@ export default function RiskScorePage() {
                       />
                     </div>
                     <p className="text-th-muted text-xs mt-1">
-                      Based on % of quizzes you failed
+                      100 − avg first-attempt score across all assigned quizzes
+                      {latest?.quizzes_assigned > 0 && (
+                        <span> · avg: <span className="text-th-txt2">{Math.round(100 - (quizScore ?? 0))}%</span></span>
+                      )}
                     </p>
                   </div>
 
-                  {/* Divider */}
+                  {/* Phishing component — 40% weight */}
+                  <div>
+                    <div className="flex justify-between mb-1.5">
+                      <span className="text-th-txt2 text-sm">Phishing Tests (40%)</span>
+                      <span className="text-th-txt font-semibold text-sm">{phishingScore ?? 0}/100</span>
+                    </div>
+                    <div className="h-2 bg-th-track rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-orange-500 rounded-full transition-all"
+                        style={{ width: `${phishingScore ?? 0}%` }}
+                      />
+                    </div>
+                    <p className="text-th-muted text-xs mt-1">
+                      3-strike system — 0 clicks: safe · 1: 33 · 2: 67 · 3+: 100
+                    </p>
+                  </div>
+
+                  {/* Divider + composite */}
                   <div className="border-t border-th-brd pt-4">
                     <div className="flex justify-between">
                       <span className="text-th-txt2 font-medium text-sm">Composite Score</span>
                       <span className={`font-bold text-sm ${riskLevel?.textColor}`}>{score ?? 0}/100</span>
                     </div>
                     <p className="text-th-muted text-xs mt-1">
-                      = (Phishing × 0.6) + (Quiz × 0.4)
+                      = (Quiz × 0.6) + (Phishing × 0.4)
                     </p>
                   </div>
 
@@ -85,12 +88,16 @@ export default function RiskScorePage() {
                   {latest && (
                     <div className="grid grid-cols-2 gap-3 pt-2">
                       <div className="bg-th-hov rounded-lg p-3 text-center">
-                        <p className="text-th-txt font-bold">{latest.phishing_clicks}/{latest.phishing_attempts}</p>
-                        <p className="text-th-muted text-xs">Phishing clicks</p>
+                        <p className="text-th-txt font-bold">
+                          {latest.phishing_clicks ?? 0}/3
+                        </p>
+                        <p className="text-th-muted text-xs">Phishing strikes</p>
                       </div>
                       <div className="bg-th-hov rounded-lg p-3 text-center">
-                        <p className="text-th-txt font-bold">{latest.quizzes_passed}/{latest.quizzes_taken}</p>
-                        <p className="text-th-muted text-xs">Quizzes passed</p>
+                        <p className="text-th-txt font-bold">
+                          {latest.quizzes_passed ?? 0}/{latest.quizzes_assigned ?? latest.quizzes_taken ?? 0}
+                        </p>
+                        <p className="text-th-muted text-xs">Quizzes passed (1st attempt)</p>
                       </div>
                     </div>
                   )}

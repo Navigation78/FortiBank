@@ -375,7 +375,7 @@ export default function ResultsPage() {
 
       supabase
         .from('risk_scores')
-        .select('composite_score, phishing_score, quiz_score, phishing_attempts, phishing_clicks, quizzes_taken, quizzes_passed, quizzes_assigned, is_warning, is_critical, calculated_at')
+        .select('composite_score, phishing_score, quiz_score, phishing_attempts, phishing_clicks, quizzes_taken, quizzes_passed, quizzes_assigned, avg_assessment_score, knowledge_checks_assigned, is_warning, is_critical, calculated_at')
         .eq('user_id', user.id)
         .order('calculated_at', { ascending: false })
         .limit(1)
@@ -431,12 +431,12 @@ export default function ResultsPage() {
   const phishingStrikes    = riskScore ? Math.min(riskScore.phishing_clicks, 3) : 0
   const phishingStrikeRate = Math.round((phishingStrikes / 3) * 100)
 
-  // Quiz: denominator is total quizzes assigned to the user's role
-  const quizDenominator = riskScore
-    ? (riskScore.quizzes_assigned > 0 ? riskScore.quizzes_assigned : riskScore.quizzes_taken)
-    : 0
-  const quizPassRate = riskScore && quizDenominator > 0
-    ? Math.round((riskScore.quizzes_passed / quizDenominator) * 100) : null
+  // Quiz: average score across all assigned assessments (quizzes + KCs)
+  const avgAssessmentScore = riskScore ? Math.round(riskScore.avg_assessment_score ?? 0) : 0
+  const totalAssessments   = riskScore
+    ? (riskScore.quizzes_assigned ?? 0) + (riskScore.knowledge_checks_assigned ?? 0) : 0
+  const quizDenominator    = riskScore
+    ? (riskScore.quizzes_assigned > 0 ? riskScore.quizzes_assigned : riskScore.quizzes_taken) : 0
 
   return (
     <PageWrapper>
@@ -457,35 +457,39 @@ export default function ResultsPage() {
               <span className="text-th-muted text-sm">/100</span>
             </div>
             <p className={`text-xs mt-1.5 font-medium ${riskLevel?.textColor || 'text-th-txt2'}`}>{riskLevel?.label || 'No data'}</p>
-            <p className="text-th-muted text-xs mt-0.5">= (Quiz x 60%) + (Phishing x 40%)</p>
+            <p className="text-th-muted text-xs mt-0.5">= (Avg score x 60%) + (Phishing x 40%)</p>
           </div>
 
           <div className="rounded-xl border border-th-brd bg-th-srf p-5">
             <p className="text-th-muted text-xs mb-2 font-medium uppercase tracking-wide">Quiz Performance <span className="normal-case">(60% of risk)</span></p>
             <div className="flex items-baseline gap-1">
-              <span className={`text-4xl font-bold ${quizPassRate !== null && quizPassRate < 70 ? 'text-red-600 dark:text-red-400' : 'text-th-txt'}`}>
-                {riskScore.quizzes_passed}
+              <span className={`text-4xl font-bold ${avgAssessmentScore < 70 && totalAssessments > 0 ? 'text-red-600 dark:text-red-400' : 'text-th-txt'}`}>
+                {avgAssessmentScore}%
               </span>
-              <span className="text-th-muted text-sm">/ {quizDenominator} passed</span>
+              <span className="text-th-muted text-sm">avg score</span>
             </div>
-            {quizDenominator > 0 && (
+            {totalAssessments > 0 ? (
               <>
                 <div className="mt-3 h-1.5 bg-th-track rounded-full overflow-hidden">
                   <div
-                    className={`h-full rounded-full transition-all ${quizPassRate !== null && quizPassRate >= 70 ? 'bg-green-500' : 'bg-blue-500'}`}
-                    style={{ width: `${quizPassRate ?? 0}%` }}
+                    className={`h-full rounded-full transition-all ${avgAssessmentScore >= 70 ? 'bg-green-500' : 'bg-blue-500'}`}
+                    style={{ width: `${avgAssessmentScore}%` }}
                   />
                 </div>
                 <p className="text-th-muted text-xs mt-1">
-                  {quizPassRate ?? 0}% pass rate
-                  {quizPassRate !== null && quizPassRate < 70 && (
-                    <span className="text-red-500 dark:text-red-400 ml-1">· below 70% target</span>
+                  {avgAssessmentScore < 70 && (
+                    <span className="text-red-500 dark:text-red-400">below 70% target · </span>
                   )}
-                  {' · '}quiz risk: <span className="text-th-txt2">{quizScore}/100</span>
+                  {riskScore.quizzes_passed}/{quizDenominator} quizzes passed
+                  {(riskScore.knowledge_checks_assigned ?? 0) > 0 && (
+                    <span className="text-th-muted"> · {riskScore.knowledge_checks_assigned} KCs</span>
+                  )}
+                  {' · '}risk: <span className="text-th-txt2">{quizScore}/100</span>
                 </p>
               </>
+            ) : (
+              <p className="text-th-muted text-xs mt-1">No assessments assigned yet</p>
             )}
-            {quizDenominator === 0 && <p className="text-th-muted text-xs mt-1">No quizzes assigned yet</p>}
           </div>
 
           <div className="rounded-xl border border-th-brd bg-th-srf p-5">

@@ -1,5 +1,5 @@
 'use client'
-import { Fish, IdCard, Lock, Theater } from 'lucide-react'
+import { MailWarning, IdCard, Lock, Theater } from 'lucide-react'
 import DashboardTemplate from '@/components/dashboard/DashboardTemplate'
 
 export default function CustomerServiceAssistantDashboard() {
@@ -21,7 +21,7 @@ export default function CustomerServiceAssistantDashboard() {
           description: 'Always verify customer identity before sharing any account information.',
         },
         {
-          icon: Fish,
+          icon: MailWarning,
           iconBg: 'bg-blue-500/15',
           title: 'Phishing Awareness',
           description: 'Suspicious emails asking for customer data should be reported immediately.',

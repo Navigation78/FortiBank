@@ -1,5 +1,5 @@
 'use client'
-import { AlertTriangle, BarChart3, Fish, IdCard } from 'lucide-react'
+import { AlertTriangle, BarChart3, MailWarning, IdCard } from 'lucide-react'
 import DashboardTemplate from '@/components/dashboard/DashboardTemplate'
 
 export default function RelationshipOfficerDashboard() {
@@ -9,7 +9,7 @@ export default function RelationshipOfficerDashboard() {
       
       focusAreas={[
         {
-          icon: Fish,
+          icon: MailWarning,
           iconBg: 'bg-red-500/15',
           title: 'Phishing Emails',
           description: 'Be cautious of emails requesting client data or account changes.',

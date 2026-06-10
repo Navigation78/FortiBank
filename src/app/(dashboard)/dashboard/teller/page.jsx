@@ -1,5 +1,5 @@
 'use client'
-import { Banknote, Fish, Lock, Theater } from 'lucide-react'
+import { Banknote, MailWarning, Lock, Theater } from 'lucide-react'
 import DashboardTemplate from '@/components/dashboard/DashboardTemplate'
 
 export default function TellerDashboard() {
@@ -21,7 +21,7 @@ export default function TellerDashboard() {
           description: 'Know the procedures for detecting and handling suspicious currency.',
         },
         {
-          icon: Fish,
+          icon: MailWarning,
           iconBg: 'bg-blue-500/15',
           title: 'Phishing Emails',
           description: 'Never click links in emails asking for your system login credentials.',

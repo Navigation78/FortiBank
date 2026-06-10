@@ -4,7 +4,7 @@
 // Admin home - overview stats, quick actions
 
 import { useState, useEffect } from 'react'
-import { AlertOctagon, BarChart3, BookOpen, ChevronRight, Fish, Users, UserPlus } from 'lucide-react'
+import { AlertOctagon, BarChart3, BookOpen, ChevronRight, MailWarning, Users, UserPlus } from 'lucide-react'
 import Link from 'next/link'
 import PageWrapper from '@/components/layout/PageWrapper'
 import StatsCard from '@/components/dashboard/StatsCard'
@@ -48,7 +48,7 @@ export default function AdminHomePage() {
   const quickActions = [
     { label: 'Add Employee',      href: '/admin/users/create',    icon: UserPlus, color: 'blue'   },
     { label: 'Create Module',     href: '/admin/modules/create',  icon: BookOpen, color: 'green'  },
-    { label: 'Launch Phishing',   href: '/admin/phishing/create', icon: Fish,     color: 'orange' },
+    { label: 'Launch Phishing',   href: '/admin/phishing/create', icon: MailWarning,     color: 'orange' },
     { label: 'View Analytics',    href: '/admin/analytics',       icon: BarChart3, color: 'purple' },
   ]
 
@@ -73,7 +73,7 @@ export default function AdminHomePage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatsCard title="Active Employees" value={loading ? '-' : stats?.totalUsers}        icon={Users}      color="blue"   />
           <StatsCard title="Published Modules" value={loading ? '-' : stats?.publishedModules} icon={BookOpen}  color="green"  />
-          <StatsCard title="Active Phishing Campaigns"  value={loading ? '-' : stats?.activeCampaigns}  icon={Fish}      color="yellow" />
+          <StatsCard title="Active Phishing Campaigns"  value={loading ? '-' : stats?.activeCampaigns}  icon={MailWarning}      color="yellow" />
           <StatsCard title="Critical Risk Users" value={loading ? '-' : stats?.criticalUsers}  icon={AlertOctagon} color="red"  />
         </div>
 

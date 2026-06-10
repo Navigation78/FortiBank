@@ -51,17 +51,14 @@ export function useModules() {
   }
 
   // Stats for dashboard widgets
+  const completedCount = modules.filter(m => m.progress?.status === 'completed').length
   const stats = {
     total:      modules.length,
-    completed:  modules.filter(m => m.progress?.status === 'completed').length,
+    completed:  completedCount,
     inProgress: modules.filter(m => m.progress?.status === 'in_progress').length,
     notStarted: modules.filter(m => m.progress?.status === 'not_started' || !m.progress).length,
-    overallPct: modules.length > 0
-      ? Math.round(
-          modules.reduce((sum, m) => sum + (m.progress?.progress_pct || 0), 0)
-          / modules.length
-        )
-      : 0,
+    // Percentage of modules fully completed — matches the ProgressChart calculation
+    overallPct: modules.length > 0 ? Math.round((completedCount / modules.length) * 100) : 0,
   }
 
   return {

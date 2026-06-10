@@ -149,8 +149,25 @@ export const POST = withApiHandler(async (request) => {
 
   await supabaseAdmin.rpc('calculate_user_risk_score', { p_user_id: user.id })
 
-  // Auto-award module certificate when the final exam is passed
+  // When the final exam is passed, mark the module as completed server-side.
+  // The LMS viewer also calls completeModule() from the client, but doing it
+  // here guarantees progress is recorded even if the client navigates away first.
   if (quiz.quiz_type === 'final_exam' && attempt.passed && quiz.module_id) {
+    const completedAt = new Date().toISOString()
+    await supabaseAdmin
+      .from('user_module_progress')
+      .upsert(
+        {
+          user_id:      user.id,
+          module_id:    quiz.module_id,
+          status:       'completed',
+          progress_pct: 100,
+          completed_at: completedAt,
+          updated_at:   completedAt,
+        },
+        { onConflict: 'user_id,module_id', ignoreDuplicates: false }
+      )
+
     awardModuleCertificate(user.id, quiz.module_id).catch(() => {})
   }
 

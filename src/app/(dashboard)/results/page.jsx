@@ -480,10 +480,7 @@ export default function ResultsPage() {
                   {avgAssessmentScore < 70 && (
                     <span className="text-red-500 dark:text-red-400">below 70% target · </span>
                   )}
-                  {riskScore.quizzes_passed}/{quizDenominator} quizzes passed
-                  {(riskScore.knowledge_checks_assigned ?? 0) > 0 && (
-                    <span className="text-th-muted"> · {riskScore.knowledge_checks_assigned} KCs</span>
-                  )}
+                  {riskScore.quizzes_passed}/{quizDenominator} quizzes passed · first attempt
                   {' · '}risk: <span className="text-th-txt2">{quizScore}/100</span>
                 </p>
               </>

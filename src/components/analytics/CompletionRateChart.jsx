@@ -6,10 +6,19 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Cell,
 } from 'recharts'
+import { downloadCSV, csvFilename } from '@/lib/csvDownload'
 
 const COLORS = ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6']
 
-export default function CompletionRateChart({ data = [], loading = false }) {
+export default function CompletionRateChart({ data = [], loading = false, fetchedAt = null }) {
+  function handleDownload() {
+    const date = fetchedAt || new Date()
+    downloadCSV(
+      csvFilename('completion-rate-by-role', date),
+      ['Role', 'Completion Rate %'],
+      data.map(d => [d.role, d.completionRate])
+    )
+  }
   if (loading) {
     return (
       <div className="bg-th-srf border border-th-brd rounded-xl p-6">
@@ -21,7 +30,17 @@ export default function CompletionRateChart({ data = [], loading = false }) {
 
   return (
     <div className="bg-th-srf border border-th-brd rounded-xl p-6">
-      <h3 className="text-th-txt font-semibold mb-4">Module Completion Rate by Role</h3>
+      <div className="flex items-center justify-between gap-3 mb-4">
+        <h3 className="text-th-txt font-semibold">Module Completion Rate by Role</h3>
+        {data.length > 0 && (
+          <button
+            onClick={handleDownload}
+            className="text-th-txt2 hover:text-th-txt text-xs px-2 py-1.5 bg-th-hov hover:bg-th-act border border-th-brd rounded-lg transition-all duration-150"
+          >
+            ↓ CSV
+          </button>
+        )}
+      </div>
       {data.length > 0 ? (
         <ResponsiveContainer width="100%" height={220}>
           <BarChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>

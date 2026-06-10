@@ -4,10 +4,30 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { downloadCSV, csvFilename } from '@/lib/csvDownload'
 
-export default function UserRiskTable({ users = [], loading = false }) {
+export default function UserRiskTable({ users = [], loading = false, fetchedAt = null }) {
   const [sortDir, setSortDir] = useState('desc')
   const [search, setSearch]   = useState('')
+
+  function handleDownload() {
+    const date = fetchedAt || new Date()
+    downloadCSV(
+      csvFilename('employee-risk-scores', date),
+      ['Name', 'Email', 'Role', 'Risk Score', 'Status', 'Phishing Clicks', 'Phishing Attempts', 'Quizzes Passed', 'Quizzes Assigned'],
+      users.map(u => [
+        u.full_name,
+        u.email,
+        u.role_display_name || '',
+        Math.round(u.latest_score || 0),
+        u.is_critical ? 'Critical' : u.is_warning ? 'Warning' : 'Low',
+        u.phishing_clicks || 0,
+        u.phishing_attempts || 0,
+        u.quizzes_passed || 0,
+        u.quizzes_assigned || 0,
+      ])
+    )
+  }
 
   const filtered = users
     .filter(u =>
@@ -51,6 +71,12 @@ export default function UserRiskTable({ users = [], loading = false }) {
             className="text-th-txt2 hover:text-th-txt text-xs px-2 py-1.5 bg-th-hov hover:bg-th-act border border-th-brd rounded-lg transition-all duration-150"
           >
             Score {sortDir === 'desc' ? '↓' : '↑'}
+          </button>
+          <button
+            onClick={handleDownload}
+            className="text-th-txt2 hover:text-th-txt text-xs px-2 py-1.5 bg-th-hov hover:bg-th-act border border-th-brd rounded-lg transition-all duration-150"
+          >
+            ↓ CSV
           </button>
         </div>
       </div>

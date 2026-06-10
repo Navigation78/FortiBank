@@ -31,7 +31,7 @@ export default function AnalyticsPage() {
         .select('status, users!inner(user_roles!inner(roles(name, display_name, category)))'),
 
       supabase.from('risk_scores')
-        .select('user_id, composite_score, phishing_score, quiz_score, phishing_clicks, phishing_attempts, quizzes_taken, quizzes_passed, is_warning, is_critical, calculated_at')
+        .select('user_id, composite_score, phishing_score, quiz_score, phishing_clicks, phishing_attempts, quizzes_passed, quizzes_assigned, is_warning, is_critical, calculated_at')
         .order('calculated_at', { ascending: false }),
 
       supabase.from('campaign_stats').select('*'),
@@ -79,22 +79,20 @@ export default function AnalyticsPage() {
     }))
 
     const phishingTrend = campaigns.map(c => ({
-      campaign:   c.campaign_name?.substring(0, 15) + '...',
-      clickRate:  Number(c.click_rate_pct) || 0,
-      reportRate: c.total_targets > 0
-        ? Math.round((c.reported_count / c.total_targets) * 100)
-        : 0,
+      campaign:   c.name?.length > 15 ? c.name.substring(0, 15) + '…' : (c.name || 'Campaign'),
+      clickRate:  c.sent_count > 0 ? Math.round((c.clicked_count / c.sent_count) * 100) : 0,
+      reportRate: c.sent_count > 0 ? Math.round((c.reported_count / c.sent_count) * 100) : 0,
     }))
 
     const usersWithScores = users.map(u => ({
       ...u,
-      latest_score:      latestScores[u.id]?.composite_score || 0,
-      phishing_clicks:   latestScores[u.id]?.phishing_clicks || 0,
-      phishing_attempts: latestScores[u.id]?.phishing_attempts || 0,
-      quizzes_taken:     latestScores[u.id]?.quizzes_taken || 0,
-      quizzes_passed:    latestScores[u.id]?.quizzes_passed || 0,
-      is_warning:        latestScores[u.id]?.is_warning || false,
-      is_critical:       latestScores[u.id]?.is_critical || false,
+      latest_score:       latestScores[u.id]?.composite_score || 0,
+      phishing_clicks:    latestScores[u.id]?.phishing_clicks || 0,
+      phishing_attempts:  latestScores[u.id]?.phishing_attempts || 0,
+      quizzes_passed:     latestScores[u.id]?.quizzes_passed || 0,
+      quizzes_assigned:   latestScores[u.id]?.quizzes_assigned || 0,
+      is_warning:         latestScores[u.id]?.is_warning || false,
+      is_critical:        latestScores[u.id]?.is_critical || false,
     }))
 
     const activeUsers    = users.filter(u => u.is_active).length

@@ -106,7 +106,7 @@ export default function UserRiskTable({ users = [], loading = false }) {
                   </td>
                   <td className="px-5 py-3 hidden md:table-cell">
                     <span className="text-th-muted text-xs">
-                      {user.quizzes_passed || 0}/{user.quizzes_taken || 0} passed
+                      {user.quizzes_passed || 0}/{user.quizzes_assigned || 0} passed
                     </span>
                   </td>
                   <td className="px-5 py-3">

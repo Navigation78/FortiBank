@@ -4,7 +4,7 @@
 
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, ReferenceLine,
+  Tooltip, ResponsiveContainer, ReferenceLine, Cell,
 } from 'recharts'
 
 export default function DepartmentRiskChart({ data = [], loading = false }) {
@@ -55,12 +55,11 @@ export default function DepartmentRiskChart({ data = [], loading = false }) {
               }}
               formatter={v => [v.toFixed(1), 'Avg Risk Score']}
             />
-            <Bar
-              dataKey="avgScore"
-              radius={[4, 4, 0, 0]}
-              fill="#3b82f6"
-              label={false}
-            />
+            <Bar dataKey="avgScore" radius={[4, 4, 0, 0]} label={false}>
+              {data.map((entry, i) => (
+                <Cell key={i} fill={getBarColor(entry.avgScore)} />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       ) : (

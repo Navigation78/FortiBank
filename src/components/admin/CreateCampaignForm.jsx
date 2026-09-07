@@ -7,6 +7,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
+import { logger } from '@/lib/logger'
 
 export default function CreateCampaignForm() {
   const router   = useRouter()
@@ -33,12 +34,18 @@ export default function CreateCampaignForm() {
   useEffect(() => { fetchRoles() }, [])
 
   async function fetchRoles() {
-    const { data } = await supabase
-      .from('roles')
-      .select('id, name, display_name, category')
-      .eq('has_modules', true)
-      .order('id')
-    setRoles(data || [])
+    try {
+      const { data, error } = await supabase
+        .from('roles')
+        .select('id, name, display_name, category')
+        .eq('has_modules', true)
+        .order('id')
+      if (error) throw error
+      setRoles(data || [])
+    } catch (err) {
+      logger.error(err, { component: 'CreateCampaignForm', action: 'fetchRoles' })
+      setError('Failed to load roles')
+    }
   }
 
   function handleChange(e) {
@@ -56,35 +63,49 @@ export default function CreateCampaignForm() {
     setError('')
     setLoading(true)
 
-    const res = await fetch('/api/admin/campaigns', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ ...form, role_ids: selectedRoles }),
-    })
+    try {
+      const res = await fetch('/api/admin/campaigns', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ ...form, role_ids: selectedRoles }),
+      })
 
-    const data = await res.json()
-    if (!res.ok) {
-      setError(data.error || 'Failed to create campaign')
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error || 'Failed to create campaign')
+        return
+      }
+
+      setCreatedId(data.campaign.id)
+      setSuccess(true)
+    } catch (err) {
+      logger.error(err, { component: 'CreateCampaignForm', action: 'handleSubmit' })
+      setError('Network error creating campaign')
+    } finally {
       setLoading(false)
-      return
     }
-
-    setCreatedId(data.campaign.id)
-    setSuccess(true)
-    setLoading(false)
   }
 
   async function handleSendNow() {
     if (!createdId) return
     setSending(true)
-    const res = await fetch('/api/phishing/send', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ campaignId: createdId }),
-    })
-    const data = await res.json()
-    setSending(false)
-    router.push(`/admin/phishing/${createdId}`)
+    try {
+      const res = await fetch('/api/phishing/send', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ campaignId: createdId }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        alert(`Send failed: ${data.error || 'Unknown error'}`)
+      }
+    } catch (err) {
+      logger.error(err, { component: 'CreateCampaignForm', action: 'handleSendNow', createdId })
+      alert('Network error sending campaign')
+    } finally {
+      setSending(false)
+      router.push(`/admin/phishing/${createdId}`)
+    }
   }
 
   const rolesByCategory = roles.reduce((acc, role) => {

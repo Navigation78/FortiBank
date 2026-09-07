@@ -4,6 +4,7 @@
 // Polls /api/notifications and exposes helpers used by the bell and inbox page.
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { logger } from '@/lib/logger'
 
 const POLL_INTERVAL_MS = 30_000  // 30 s
 
@@ -35,14 +36,19 @@ export function useNotifications({ filter = 'all', type = null, page = 1, enable
 
       // Always refresh badge count with an unread-only query for accuracy
       if (filter !== 'unread') {
-        const ubRes  = await fetch('/api/notifications?filter=unread&page=1')
-        const ubJson = await ubRes.json()
-        setUnreadCount(ubJson.total || 0)
+        try {
+          const ubRes  = await fetch('/api/notifications?filter=unread&page=1')
+          const ubJson = await ubRes.json()
+          if (ubRes.ok) setUnreadCount(ubJson.total || 0)
+        } catch (err) {
+          logger.error(err, { hook: 'useNotifications', action: 'unreadBadge' })
+        }
       } else {
         setUnreadCount(json.total || 0)
       }
     } catch (err) {
-      setError(err.message)
+      logger.error(err, { hook: 'useNotifications', action: 'fetch' })
+      setError(err.message || 'Network error loading notifications')
     } finally {
       setLoading(false)
     }
@@ -72,27 +78,65 @@ export function useNotifications({ filter = 'all', type = null, page = 1, enable
     )
     setUnreadCount(prev => isRead ? Math.max(0, prev - 1) : prev + 1)
 
-    await fetch(`/api/notifications/${id}`, {
-      method:  'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ is_read: isRead }),
-    })
+    try {
+      const res = await fetch(`/api/notifications/${id}`, {
+        method:  'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ is_read: isRead }),
+      })
+      if (!res.ok) throw new Error('Failed to update notification')
+    } catch (err) {
+      logger.error(err, { hook: 'useNotifications', action: 'markAsRead', id })
+      // Roll back optimistic update
+      setNotifications(prev =>
+        prev.map(n => n.id === id ? { ...n, is_read: !isRead } : n)
+      )
+      setUnreadCount(prev => isRead ? prev + 1 : Math.max(0, prev - 1))
+      setError('Failed to update notification')
+    }
   }, [])
 
   const markAllRead = useCallback(async () => {
+    const previous = notifications
+    const previousUnread = unreadCount
     setNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
     setUnreadCount(0)
-    await fetch('/api/notifications/read-all', { method: 'PATCH' })
-    window.dispatchEvent(new CustomEvent('notifications:all-read'))
-  }, [])
+
+    try {
+      const res = await fetch('/api/notifications/read-all', { method: 'PATCH' })
+      if (!res.ok) throw new Error('Failed to mark all as read')
+      window.dispatchEvent(new CustomEvent('notifications:all-read'))
+    } catch (err) {
+      logger.error(err, { hook: 'useNotifications', action: 'markAllRead' })
+      setNotifications(previous)
+      setUnreadCount(previousUnread)
+      setError('Failed to mark all as read')
+    }
+  }, [notifications, unreadCount])
 
   const deleteNotification = useCallback(async (id) => {
     const removed = notifications.find(n => n.id === id)
+    const removedIndex = notifications.findIndex(n => n.id === id)
     setNotifications(prev => prev.filter(n => n.id !== id))
     setTotal(prev => Math.max(0, prev - 1))
     if (removed && !removed.is_read) setUnreadCount(prev => Math.max(0, prev - 1))
 
-    await fetch(`/api/notifications/${id}`, { method: 'DELETE' })
+    try {
+      const res = await fetch(`/api/notifications/${id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete notification')
+    } catch (err) {
+      logger.error(err, { hook: 'useNotifications', action: 'delete', id })
+      if (removed) {
+        setNotifications(prev => {
+          const next = [...prev]
+          next.splice(removedIndex, 0, removed)
+          return next
+        })
+        setTotal(prev => prev + 1)
+        if (!removed.is_read) setUnreadCount(prev => prev + 1)
+      }
+      setError('Failed to delete notification')
+    }
   }, [notifications])
 
   const refresh = useCallback(() => fetchNotifications(), [fetchNotifications])

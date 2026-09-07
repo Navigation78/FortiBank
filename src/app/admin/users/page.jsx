@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import PageWrapper from '@/components/layout/PageWrapper'
 import UserTable from '@/components/admin/UserTable'
+import { logger } from '@/lib/logger'
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState([])
@@ -16,18 +17,24 @@ export default function AdminUsersPage() {
     setLoading(true)
     setError('')
 
-    const res = await fetch('/api/admin/users')
-    const data = await res.json()
+    try {
+      const res = await fetch('/api/admin/users')
+      const data = await res.json()
 
-    if (!res.ok) {
-      setError(data.error || 'Failed to load employees')
+      if (!res.ok) {
+        setError(data.error || 'Failed to load employees')
+        setUsers([])
+        return
+      }
+
+      setUsers(data.users || [])
+    } catch (err) {
+      logger.error(err, { page: 'admin/users', action: 'fetchUsers' })
+      setError('Network error loading employees')
       setUsers([])
+    } finally {
       setLoading(false)
-      return
     }
-
-    setUsers(data.users || [])
-    setLoading(false)
   }
 
   return (

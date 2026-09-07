@@ -4,6 +4,7 @@
 // Reassigns a role to an existing employee
 
 import { useState, useEffect } from 'react'
+import { logger } from '@/lib/logger'
 
 export default function AssignRoleForm({ userId, currentRole, onSuccess }) {
   const [roles, setRoles] = useState([])
@@ -17,23 +18,28 @@ export default function AssignRoleForm({ userId, currentRole, onSuccess }) {
   async function fetchRoles() {
     setRolesLoading(true)
 
-    const res = await fetch('/api/admin/roles')
-    const data = await res.json()
+    try {
+      const res = await fetch('/api/admin/roles')
+      const data = await res.json()
 
-    if (!res.ok) {
-      setError(data.error || 'Failed to load roles')
+      if (!res.ok) {
+        setError(data.error || 'Failed to load roles')
+        setRoles([])
+        return
+      }
+
+      setRoles(data.roles || [])
+
+      // Pre-select current role
+      const current = data.roles?.find(r => r.name === currentRole)
+      if (current) setRoleId(String(current.id))
+    } catch (err) {
+      logger.error(err, { component: 'AssignRoleForm', action: 'fetchRoles' })
+      setError('Network error loading roles')
       setRoles([])
+    } finally {
       setRolesLoading(false)
-      return
     }
-
-    setRoles(data.roles || [])
-
-    // Pre-select current role
-    const current = data.roles?.find(r => r.name === currentRole)
-    if (current) setRoleId(String(current.id))
-
-    setRolesLoading(false)
   }
 
   async function handleSubmit(e) {
@@ -41,19 +47,25 @@ export default function AssignRoleForm({ userId, currentRole, onSuccess }) {
     setError('')
     setLoading(true)
 
-    const res = await fetch(`/api/admin/users/${userId}/role`, {
-      method:  'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ role_id: parseInt(roleId) }),
-    })
+    try {
+      const res = await fetch(`/api/admin/users/${userId}/role`, {
+        method:  'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ role_id: parseInt(roleId) }),
+      })
 
-    const data = await res.json()
-    if (!res.ok) {
-      setError(data.error || 'Failed to update role')
-    } else {
-      onSuccess?.()
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error || 'Failed to update role')
+      } else {
+        onSuccess?.()
+      }
+    } catch (err) {
+      logger.error(err, { component: 'AssignRoleForm', action: 'handleSubmit', userId })
+      setError('Network error updating role')
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   const rolesByCategory = roles.reduce((acc, role) => {

@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { applyTabHeaders, getTabId } from '@/lib/tabSession'
 import { canAccessPath, getDashboardUrl } from '@/utils/roleRedirect'
+import { logger } from '@/lib/logger'
 
 const AuthContext = createContext(null)
 
@@ -58,12 +59,16 @@ export function AuthProvider({ children }) {
       const headers = applyTabHeaders(fetchOptions.headers)
 
       if (!headers.has('Authorization')) {
-        const {
-          data: { session: currentSession },
-        } = await supabase.auth.getSession()
+        try {
+          const {
+            data: { session: currentSession },
+          } = await supabase.auth.getSession()
 
-        if (currentSession?.access_token) {
-          headers.set('Authorization', `Bearer ${currentSession.access_token}`)
+          if (currentSession?.access_token) {
+            headers.set('Authorization', `Bearer ${currentSession.access_token}`)
+          }
+        } catch (err) {
+          logger.error(err, { context: 'authFetch', step: 'getSession' })
         }
       }
 
@@ -72,9 +77,13 @@ export function AuthProvider({ children }) {
       // On 401, refresh the token once and retry. The refreshed session is stored by
       // Supabase in localStorage so all tabs pick it up via onAuthStateChange.
       if (response.status === 401 && !_tokenRefreshRetry) {
-        const { data: { session: refreshed }, error: refreshErr } = await supabase.auth.refreshSession()
-        if (!refreshErr && refreshed?.access_token) {
-          return window.fetch(input, { ...fetchOptions, _tokenRefreshRetry: true })
+        try {
+          const { data: { session: refreshed }, error: refreshErr } = await supabase.auth.refreshSession()
+          if (!refreshErr && refreshed?.access_token) {
+            return window.fetch(input, { ...fetchOptions, _tokenRefreshRetry: true })
+          }
+        } catch (err) {
+          logger.error(err, { context: 'authFetch', step: 'refreshSession' })
         }
       }
 
@@ -315,49 +324,75 @@ export function AuthProvider({ children }) {
 
     try {
       await fetch('/api/auth/logout', { method: 'POST', headers: applyTabHeaders() })
+    } catch (err) {
+      logger.error(err, { context: 'signOut', step: 'apiLogout' })
+    }
+
+    try {
       await supabase.auth.signOut()
+    } catch (err) {
+      logger.error(err, { context: 'signOut', step: 'supabaseSignOut' })
     } finally {
       signingOutRef.current = false
     }
   }
 
   async function sendPasswordResetEmail(email) {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/reset-password`,
-    })
-    return { error }
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/reset-password`,
+      })
+      return { error }
+    } catch (err) {
+      logger.error(err, { context: 'sendPasswordResetEmail' })
+      return { error: { message: 'An unexpected error occurred sending the reset email' } }
+    }
   }
 
   async function updateAvatarUrl(url) {
-    const { data, error } = await supabase.auth.updateUser({ data: { avatar_url: url } })
-    if (!error && data?.user) {
-      setUser(data.user)
-      setProfile(prev => prev ? { ...prev, avatar_url: url } : prev)
+    try {
+      const { data, error } = await supabase.auth.updateUser({ data: { avatar_url: url } })
+      if (!error && data?.user) {
+        setUser(data.user)
+        setProfile(prev => prev ? { ...prev, avatar_url: url } : prev)
+      }
+      return { error }
+    } catch (err) {
+      logger.error(err, { context: 'updateAvatarUrl' })
+      return { error: { message: 'An unexpected error occurred updating the avatar' } }
     }
-    return { error }
   }
 
   async function updatePassword(newPassword) {
-    const { data, error } = await supabase.auth.updateUser({
-      password: newPassword,
-      data: { must_change_password: false },
-    })
+    try {
+      const { data, error } = await supabase.auth.updateUser({
+        password: newPassword,
+        data: { must_change_password: false },
+      })
 
-    if (!error && data?.user) {
-      setUser(data.user)
-      const {
-        data: { session: currentSession },
-      } = await supabase.auth.getSession()
-      if (currentSession) setSession(currentSession)
+      if (!error && data?.user) {
+        setUser(data.user)
+        const {
+          data: { session: currentSession },
+        } = await supabase.auth.getSession()
+        if (currentSession) setSession(currentSession)
+      }
+
+      return { data, error }
+    } catch (err) {
+      logger.error(err, { context: 'updatePassword' })
+      return { data: null, error: { message: 'An unexpected error occurred updating the password' } }
     }
-
-    return { data, error }
   }
 
   async function authenticatedFetch(url, options = {}) {
-    const {
-      data: { session: currentSession },
-    } = await supabase.auth.getSession()
+    let currentSession = null
+    try {
+      const { data } = await supabase.auth.getSession()
+      currentSession = data?.session ?? null
+    } catch (err) {
+      logger.error(err, { context: 'authenticatedFetch', step: 'getSession' })
+    }
 
     const headers = applyTabHeaders(options.headers)
 

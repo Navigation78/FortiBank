@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import Button from '@/components/ui/Button'
 import Input  from '@/components/ui/Input'
 import Alert  from '@/components/ui/Alert'
+import { logger } from '@/lib/logger'
 
 export default function CreateUserForm() {
   const router = useRouter()
@@ -33,18 +34,24 @@ export default function CreateUserForm() {
   async function fetchRoles() {
     setRolesLoading(true)
 
-    const res  = await fetch('/api/admin/roles')
-    const data = await res.json()
+    try {
+      const res  = await fetch('/api/admin/roles')
+      const data = await res.json()
 
-    if (!res.ok) {
-      setError(data.error || 'Failed to load roles')
+      if (!res.ok) {
+        setError(data.error || 'Failed to load roles')
+        setRoles([])
+        return
+      }
+
+      setRoles(data.roles || [])
+    } catch (err) {
+      logger.error(err, { component: 'CreateUserForm', action: 'fetchRoles' })
+      setError('Network error loading roles')
       setRoles([])
+    } finally {
       setRolesLoading(false)
-      return
     }
-
-    setRoles(data.roles || [])
-    setRolesLoading(false)
   }
 
   function handleChange(e) {
@@ -56,22 +63,27 @@ export default function CreateUserForm() {
     setError('')
     setLoading(true)
 
-    const res  = await fetch('/api/admin/users', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(form),
-    })
-    const data = await res.json()
+    try {
+      const res  = await fetch('/api/admin/users', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(form),
+      })
+      const data = await res.json()
 
-    if (!res.ok) {
-      setError(data.error || 'Failed to create user')
+      if (!res.ok) {
+        setError(data.error || 'Failed to create user')
+        return
+      }
+
+      setSuccess(true)
+      setTimeout(() => router.push('/admin/users'), 1500)
+    } catch (err) {
+      logger.error(err, { component: 'CreateUserForm', action: 'handleSubmit' })
+      setError('Network error creating employee')
+    } finally {
       setLoading(false)
-      return
     }
-
-    setSuccess(true)
-    setLoading(false)
-    setTimeout(() => router.push('/admin/users'), 1500)
   }
 
   const rolesByCategory = roles.reduce((acc, role) => {

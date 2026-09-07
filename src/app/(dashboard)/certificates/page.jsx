@@ -1,41 +1,77 @@
 'use client'
 // src/app/(dashboard)/certificates/page.jsx
-// Shows the authenticated user's earned certificates — one per completed module.
+// Shows the authenticated user's earned certificates. one per completed module.
 
 import { useState, useEffect } from 'react'
 import { Award, BookOpen, Download, Loader2, Medal, RefreshCw } from 'lucide-react'
 import PageWrapper from '@/components/layout/PageWrapper'
+import { logger } from '@/lib/logger'
 
 export default function CertificatesPage() {
+  //variables
   const [certificates, setCertificates] = useState([])
   const [loading, setLoading]           = useState(true)
   const [checking, setChecking]         = useState(false)
   const [message, setMessage]           = useState(null)
+  const [fetchError, setFetchError]     = useState(null)
 
   useEffect(() => { fetchCertificates() }, [])
 
   async function fetchCertificates() {
-    setLoading(true)
-    const res  = await fetch('/api/certificates')
+  setLoading(true)
+  setFetchError(null)
+  try {
+    const res = await fetch('/api/certificates')
+
+    if (!res.ok) {
+      throw new Error(`Server error: ${res.status}`)
+    }
+
     const data = await res.json()
-    setCertificates(data.certificates || [])
+    setCertificates(data.certificates ?? [])
+  } catch (error) {
+    logger.error(error, { page: 'certificates', action: 'fetchCertificates' })
+    setFetchError('Failed to load certificates. Please refresh the page.')
+  } finally {
     setLoading(false)
   }
+}
 
   async function checkEligibility() {
-    setChecking(true)
-    setMessage(null)
-    const res  = await fetch('/api/certificates', { method: 'POST' })
+  setChecking(true)
+  setMessage(null)
+
+  try {
+    const res = await fetch('/api/certificates', { method: 'POST' })
     const data = await res.json()
 
+    if (!res.ok) {
+      throw new Error(data.message || `Server responded with status ${res.status}`)
+    }
+
+    const hasAwarded = (data.awarded?.length ?? 0) > 0
+
     setMessage({
-      type: data.awarded?.length > 0 ? 'success' : 'info',
-      text: data.message,
+      type: hasAwarded ? 'success' : 'info',
+      text: data.message || (hasAwarded ? 'Certificate awarded!' : 'No new certificates awarded.'),
     })
 
-    if (data.awarded?.length > 0) fetchCertificates()
+    if (hasAwarded) {
+      // Don't block loading completion if re-fetching fails
+      fetchCertificates().catch((err) =>
+        logger.error(err, { page: 'certificates', action: 'refetchAfterAward' })
+      )
+    }
+  } catch (error) {
+    logger.error(error, { page: 'certificates', action: 'checkEligibility' })
+    setMessage({
+      type: 'error',
+      text: error.message || 'Something went wrong while checking eligibility. Please try again.',
+    })
+  } finally {
     setChecking(false)
   }
+}
 
   return (
     <PageWrapper>
@@ -51,7 +87,8 @@ export default function CertificatesPage() {
         <button
           onClick={checkEligibility}
           disabled={checking}
-          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-lg text-sm font-medium transition-all duration-150"
+          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 
+          disabled:bg-blue-600/50 text-white rounded-lg text-sm font-medium transition-all duration-150"
         >
           {checking ? (
             <>
@@ -66,6 +103,13 @@ export default function CertificatesPage() {
           )}
         </button>
       </div>
+
+      {/* Fetch error banner */}
+      {fetchError && (
+        <div className="rounded-xl border p-4 mb-6 bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400">
+          <p className="text-sm font-medium">{fetchError}</p>
+        </div>
+      )}
 
       {/* Message banner */}
       {message && (
@@ -133,7 +177,8 @@ export default function CertificatesPage() {
                     href={cert.pdf_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 text-green-400 rounded-lg text-sm font-medium transition-all duration-150 flex-shrink-0"
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600/20 hover:bg-green-600/30 border 
+                    border-green-500/30 text-green-400 rounded-lg text-sm font-medium transition-all duration-150 flex-shrink-0"
                   >
                     <Download className="w-4 h-4" />
                     Download PDF

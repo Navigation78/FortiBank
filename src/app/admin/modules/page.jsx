@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import PageWrapper from '@/components/layout/PageWrapper'
+import { logger } from '@/lib/logger'
 
 const STATUS_COLORS = {
   published: 'bg-green-500/15 text-green-400',
@@ -13,15 +14,30 @@ const STATUS_COLORS = {
 export default function AdminModulesPage() {
   const [modules, setModules] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError]     = useState(null)
 
   useEffect(() => { fetchModules() }, [])
 
   async function fetchModules() {
     setLoading(true)
-    const response = await fetch('/api/admin/modules')
-    const { modules: data } = await response.json()
-    setModules(data || [])
-    setLoading(false)
+    setError(null)
+    try {
+      const response = await fetch('/api/admin/modules')
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}))
+        setError(data.error || 'Failed to load modules')
+        setModules([])
+        return
+      }
+      const { modules: data } = await response.json()
+      setModules(data || [])
+    } catch (err) {
+      logger.error(err, { page: 'admin/modules', action: 'fetchModules' })
+      setError('Network error loading modules')
+      setModules([])
+    } finally {
+      setLoading(false)
+    }
   }
 
   function formatModuleCode(orderIndex) {
@@ -48,6 +64,12 @@ export default function AdminModulesPage() {
             </Link>
           </div>
         </div>
+
+        {error && (
+          <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+            <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+          </div>
+        )}
 
         {loading ? (
           <div className="space-y-3">

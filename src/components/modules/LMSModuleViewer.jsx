@@ -15,6 +15,7 @@ import SafeExamBrowser from '@/components/quiz/SafeExamBrowser'
 import QuizResultsCard from '@/components/quiz/QuizResultsCard'
 import { useProgress } from '@/hooks/useProgress'
 import { useAuth } from '@/hooks/useAuth'
+import { logger } from '@/lib/logger'
 
 // ─── Data helpers ─────────────────────────────────────────────────────────────
 
@@ -387,7 +388,7 @@ function SubtopicQuizPanel({ questions, onComplete, moduleId, contentId, section
           correct_count:  correctCount,
           total_count:    questions.length,
         }),
-      }).catch(() => {})
+      }).catch(err => logger.error(err, { component: 'LMSModuleViewer', action: 'submit-kc', moduleId }))
     }
 
     onComplete()
@@ -478,31 +479,43 @@ function CheckpointQuizPanel({ quiz, onPass, onExhausted }) {
   const [submitting, setSubmitting]   = useState(false)
   const [result, setResult]           = useState(null)
   const [attemptCount, setAttemptCount] = useState(0)
+  const [submitError, setSubmitError] = useState(null)
 
   useEffect(() => {
     fetch(`/api/quiz?quizId=${quiz.id}`)
-      .then(r => r.json())
+      .then(r => r.ok ? r.json() : Promise.reject(new Error(`Request failed: ${r.status}`)))
       .then(d => {
         setQuizMeta(d.quiz)
         setQuestions(d.questions || [])
         setState((d.attemptCount || 0) >= (d.quiz?.max_attempts || 3) ? 'exhausted' : 'ready')
       })
-      .catch(() => setState('error'))
+      .catch(err => {
+        logger.error(err, { component: 'CheckpointQuizPanel', action: 'loadQuiz', quizId: quiz.id })
+        setState('error')
+      })
   }, [quiz.id])
 
   async function submit() {
     setSubmitting(true)
-    const res  = await fetch('/api/quiz/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ quiz_id: quiz.id, answers }),
-    })
-    const data = await res.json()
-    setResult(data)
-    setSubmitting(false)
-    setState('submitted')
-    if (data.passed) onPass()
-    else if (!data.can_retake) onExhausted()
+    setSubmitError(null)
+    try {
+      const res  = await fetch('/api/quiz/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quiz_id: quiz.id, answers }),
+      })
+      if (!res.ok) throw new Error(`Request failed: ${res.status}`)
+      const data = await res.json()
+      setResult(data)
+      setState('submitted')
+      if (data.passed) onPass()
+      else if (!data.can_retake) onExhausted()
+    } catch (err) {
+      logger.error(err, { component: 'CheckpointQuizPanel', action: 'submit', quizId: quiz.id })
+      setSubmitError('Failed to submit checkpoint. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   function retake() {
@@ -581,6 +594,12 @@ function CheckpointQuizPanel({ quiz, onPass, onExhausted }) {
         <span className="text-th-muted text-xs ml-auto tabular-nums">{Object.keys(answers).length}/{questions.length} answered</span>
       </div>
 
+      {submitError && (
+        <div className="px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-600 dark:text-red-400 text-sm flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 flex-shrink-0" /> {submitError}
+        </div>
+      )}
+
       {questions[currentQ] && (() => {
         const q = questions[currentQ]
         return (
@@ -651,12 +670,14 @@ function FinalExamPanel({ quiz, moduleId, onComplete, nextModule }) {
   const [result, setResult]         = useState(null)
   const [timeLeft, setTimeLeft]     = useState(null)
   const [resetting, setResetting]   = useState(false)
+  const [submitError, setSubmitError] = useState(null)
+  const [resetError, setResetError] = useState(null)
   const timerRef   = useRef(null)
   const submittingRef = useRef(false)
 
   useEffect(() => {
     fetch(`/api/quiz?quizId=${quiz.id}`)
-      .then(r => r.json())
+      .then(r => r.ok ? r.json() : Promise.reject(new Error(`Request failed: ${r.status}`)))
       .then(d => {
         setMeta(d.quiz)
         setQuestions(d.questions || [])
@@ -664,7 +685,10 @@ function FinalExamPanel({ quiz, moduleId, onComplete, nextModule }) {
         if (d.quiz?.time_limit_mins) setTimeLeft(d.quiz.time_limit_mins * 60)
         setState((d.attemptCount || 0) >= (d.quiz?.max_attempts || 3) ? 'exhausted' : 'ready')
       })
-      .catch(() => setState('error'))
+      .catch(err => {
+        logger.error(err, { component: 'FinalExamPanel', action: 'loadQuiz', quizId: quiz.id })
+        setState('error')
+      })
   }, [quiz.id])
 
   useEffect(() => {
@@ -682,19 +706,27 @@ function FinalExamPanel({ quiz, moduleId, onComplete, nextModule }) {
     if (submittingRef.current) return
     submittingRef.current = true
     setSubmitting(true)
+    setSubmitError(null)
     clearInterval(timerRef.current)
     const timeTaken = meta?.time_limit_mins ? (meta.time_limit_mins * 60) - (timeLeft || 0) : null
-    const res = await fetch('/api/quiz/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ quiz_id: quiz.id, answers, time_taken_secs: timeTaken }),
-    })
-    const data = await res.json()
-    submittingRef.current = false
-    setResult(data)
-    setSubmitting(false)
-    setState('submitted')
-    if (data.passed) onComplete()
+    try {
+      const res = await fetch('/api/quiz/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quiz_id: quiz.id, answers, time_taken_secs: timeTaken }),
+      })
+      if (!res.ok) throw new Error(`Request failed: ${res.status}`)
+      const data = await res.json()
+      setResult(data)
+      setState('submitted')
+      if (data.passed) onComplete()
+    } catch (err) {
+      logger.error(err, { component: 'FinalExamPanel', action: 'submit', quizId: quiz.id })
+      setSubmitError('Failed to submit exam. Please try again.')
+    } finally {
+      submittingRef.current = false
+      setSubmitting(false)
+    }
   }, [quiz.id, answers, meta, timeLeft, onComplete])
 
   function retake() {
@@ -708,12 +740,20 @@ function FinalExamPanel({ quiz, moduleId, onComplete, nextModule }) {
 
   async function handleRedoModule() {
     setResetting(true)
-    await fetch('/api/progress/reset-module', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ module_id: moduleId, quiz_id: quiz.id }),
-    })
-    window.location.reload()
+    setResetError(null)
+    try {
+      const res = await fetch('/api/progress/reset-module', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ module_id: moduleId, quiz_id: quiz.id }),
+      })
+      if (!res.ok) throw new Error(`Request failed: ${res.status}`)
+      window.location.reload()
+    } catch (err) {
+      logger.error(err, { component: 'FinalExamPanel', action: 'resetModule', moduleId })
+      setResetError('Failed to reset module. Please try again.')
+      setResetting(false)
+    }
   }
 
   function select(qId, optId) {
@@ -741,6 +781,11 @@ function FinalExamPanel({ quiz, moduleId, onComplete, nextModule }) {
       <p className="text-th-muted text-sm">
         You need to redo the module content to unlock 3 fresh attempts.
       </p>
+      {resetError && (
+        <div className="px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-600 dark:text-red-400 text-sm flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 flex-shrink-0" /> {resetError}
+        </div>
+      )}
       <button
         onClick={handleRedoModule}
         disabled={resetting}
@@ -778,6 +823,12 @@ function FinalExamPanel({ quiz, moduleId, onComplete, nextModule }) {
           </div>
           <QuizTimer timeLeft={timeLeft} />
         </div>
+
+        {submitError && (
+          <div className="px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-600 dark:text-red-400 text-sm flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 flex-shrink-0" /> {submitError}
+          </div>
+        )}
 
         {/* Question dots */}
         <div className="flex items-center gap-1.5">

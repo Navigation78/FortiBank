@@ -1,5 +1,5 @@
 'use client'
-
+//the alert you get once you click on any link in the simulation email
 import Link from 'next/link'
 import { AlertTriangle, AlertOctagon, MailWarning } from 'lucide-react'
 

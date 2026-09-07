@@ -13,6 +13,7 @@ import ProgressChart from '@/components/dashboard/ProgressChart'
 import RecentActivity from '@/components/dashboard/RecentActivity'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { useModules } from '@/hooks/useModules'
+import { logger } from '@/lib/logger'
 import { BookOpen, CheckCircle2, Shield, BarChart3 } from 'lucide-react'
 
 export default function DashboardTemplate({
@@ -61,48 +62,60 @@ export default function DashboardTemplate({
             setAlert({ severity: 'warning', riskScore: value })
           }
         }
+      } else {
+        logger.warn('Risk score request failed', { component: 'DashboardTemplate', status: res.status })
       }
-    } catch {
+    } catch (err) {
       // network error — leave riskScore as null
+      logger.error(err, { component: 'DashboardTemplate', action: 'fetchRiskData' })
     }
     setRiskLoading(false)
   }
 
   async function fetchRecentActivity() {
-    const { data: attempts } = await supabase
-      .from('quiz_attempts')
-      .select(`
-        id,
-        score_pct,
-        passed,
-        submitted_at,
-        quizzes (
-          title,
-          modules ( id, title )
-        )
-      `)
-      .eq('user_id', user.id)
-      .order('submitted_at', { ascending: false })
-      .limit(5)
+    try {
+      const { data: attempts, error } = await supabase
+        .from('quiz_attempts')
+        .select(`
+          id,
+          score_pct,
+          passed,
+          submitted_at,
+          quizzes (
+            title,
+            modules ( id, title )
+          )
+        `)
+        .eq('user_id', user.id)
+        .order('submitted_at', { ascending: false })
+        .limit(5)
 
-    if (attempts) {
-      const mapped = attempts.map(a => ({
-        type:  a.passed ? 'quiz_passed' : 'quiz_failed',
-        title: `Quiz: ${a.quizzes?.title || 'Unknown'}`,
-        score: a.score_pct,
-        date:  a.submitted_at,
-      }))
-      setActivities(mapped)
-
-      // Use the most recent quiz's module as the fallback "continue" target
-      const first = attempts.find(a => a.quizzes?.modules?.id)
-      if (first) {
-        setLastActivityModule({
-          id:       first.quizzes.modules.id,
-          title:    first.quizzes.modules.title,
-          progress: null, // no progress_pct available from this path
-        })
+      if (error) {
+        logger.error(error, { component: 'DashboardTemplate', action: 'fetchRecentActivity' })
+        return
       }
+
+      if (attempts) {
+        const mapped = attempts.map(a => ({
+          type:  a.passed ? 'quiz_passed' : 'quiz_failed',
+          title: `Quiz: ${a.quizzes?.title || 'Unknown'}`,
+          score: a.score_pct,
+          date:  a.submitted_at,
+        }))
+        setActivities(mapped)
+
+        // Use the most recent quiz's module as the fallback "continue" target
+        const first = attempts.find(a => a.quizzes?.modules?.id)
+        if (first) {
+          setLastActivityModule({
+            id:       first.quizzes.modules.id,
+            title:    first.quizzes.modules.title,
+            progress: null, // no progress_pct available from this path
+          })
+        }
+      }
+    } catch (err) {
+      logger.error(err, { component: 'DashboardTemplate', action: 'fetchRecentActivity' })
     }
   }
 

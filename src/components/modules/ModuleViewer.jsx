@@ -13,6 +13,7 @@ import QuizCard from '@/components/quiz/QuizCard'
 import QuizTimer from '@/components/quiz/QuizTimer'
 import { useProgress } from '@/hooks/useProgress'
 import { useAuth } from '@/hooks/useAuth'
+import { logger } from '@/lib/logger'
 import Link from 'next/link'
 
 // ── Phases ───────────────────────────────────────────────────
@@ -49,6 +50,7 @@ export default function ModuleViewer({ module, nextModule }) {
   const [result, setResult]             = useState(null)
   const [timeLeft, setTimeLeft]         = useState(null)
   const [attemptCount, setAttemptCount] = useState(0)
+  const [quizError, setQuizError]       = useState(null)
   const timerRef                        = useRef(null)
 
   // ── Touch swipe ───────────────────────────────────────────
@@ -127,23 +129,33 @@ export default function ModuleViewer({ module, nextModule }) {
 
   async function loadQuiz() {
     setQuizLoading(true)
-    const res = await fetch(`/api/quiz?quizId=${quiz.id}`)
-    if (!res.ok) { setQuizLoading(false); return }
-    const data = await res.json()
-    setQuizMeta(data.quiz)
-    setQuestions(data.questions)
-    setAttemptCount(data.attemptCount || 0)
-    if (data.quiz?.time_limit_mins) {
-      setTimeLeft(data.quiz.time_limit_mins * 60)
-    }
-    setQuizLoading(false)
+    setQuizError(null)
+    try {
+      const res = await fetch(`/api/quiz?quizId=${quiz.id}`)
+      if (!res.ok) {
+        setQuizError('Failed to load quiz. Please try again.')
+        return
+      }
+      const data = await res.json()
+      setQuizMeta(data.quiz)
+      setQuestions(data.questions)
+      setAttemptCount(data.attemptCount || 0)
+      if (data.quiz?.time_limit_mins) {
+        setTimeLeft(data.quiz.time_limit_mins * 60)
+      }
 
-    // Slide in quiz panel
-    setSliding(true)
-    setTimeout(() => {
-      setPhase(PHASE.QUIZ)
-      setSliding(false)
-    }, 300)
+      // Slide in quiz panel
+      setSliding(true)
+      setTimeout(() => {
+        setPhase(PHASE.QUIZ)
+        setSliding(false)
+      }, 300)
+    } catch (err) {
+      logger.error(err, { component: 'ModuleViewer', action: 'loadQuiz', quizId: quiz.id })
+      setQuizError('Network error loading quiz. Please try again.')
+    } finally {
+      setQuizLoading(false)
+    }
   }
 
   // ── Quiz navigation ───────────────────────────────────────
@@ -166,30 +178,42 @@ export default function ModuleViewer({ module, nextModule }) {
   const submitQuiz = useCallback(async () => {
     if (submitting) return
     setSubmitting(true)
+    setQuizError(null)
     clearInterval(timerRef.current)
 
-    const res = await fetch('/api/quiz/submit', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        quiz_id:         quiz.id,
-        answers,
-        time_taken_secs: quizMeta?.time_limit_mins
-          ? (quizMeta.time_limit_mins * 60) - (timeLeft || 0)
-          : null,
-      }),
-    })
+    try {
+      const res = await fetch('/api/quiz/submit', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          quiz_id:         quiz.id,
+          answers,
+          time_taken_secs: quizMeta?.time_limit_mins
+            ? (quizMeta.time_limit_mins * 60) - (timeLeft || 0)
+            : null,
+        }),
+      })
 
-    const data = await res.json()
-    setResult(data)
-    setSubmitting(false)
+      if (!res.ok) {
+        setQuizError('Failed to submit quiz. Please try again.')
+        return
+      }
 
-    // Slide to results
-    setSliding(true)
-    setTimeout(() => {
-      setPhase(PHASE.RESULTS)
-      setSliding(false)
-    }, 300)
+      const data = await res.json()
+      setResult(data)
+
+      // Slide to results
+      setSliding(true)
+      setTimeout(() => {
+        setPhase(PHASE.RESULTS)
+        setSliding(false)
+      }, 300)
+    } catch (err) {
+      logger.error(err, { component: 'ModuleViewer', action: 'submitQuiz', quizId: quiz.id })
+      setQuizError('Network error submitting quiz. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
   }, [quiz, answers, quizMeta, timeLeft, submitting])
 
   function retakeQuiz() {
@@ -219,6 +243,12 @@ export default function ModuleViewer({ module, nextModule }) {
 
   return (
     <div className={`transition-all duration-300 ${sliding ? 'opacity-0 translate-x-4' : 'opacity-100 translate-x-0'}`}>
+
+      {quizError && (
+        <div className="mb-4 px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-600 dark:text-red-400 text-sm">
+          {quizError}
+        </div>
+      )}
 
       {/* ── CONTENT PHASE ─────────────────────────────────── */}
       {phase === PHASE.CONTENT && (

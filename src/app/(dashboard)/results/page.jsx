@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { useRole } from '@/hooks/useRole'
 import { getRiskLevel } from '@/lib/riskCalculator'
+import { logger } from '@/lib/logger'
 import Link from 'next/link'
 import {
   ChevronDown, Check, X, Minus,
@@ -364,39 +365,52 @@ export default function ResultsPage() {
 
   async function fetchAll() {
     setLoading(true)
+    setAttemptsError(null)
 
-    // Fetch phishing, risk score, AND raw quiz attempts in parallel
-    const [phishRes, riskRes, attemptsRes] = await Promise.all([
-      supabase
-        .from('phishing_targets')
-        .select(`id, result, sent_at, phishing_campaigns ( name, email_subject )`)
-        .eq('user_id', user.id)
-        .order('sent_at', { ascending: false }),
+    try {
+      // Fetch phishing, risk score, AND raw quiz attempts in parallel
+      const [phishRes, riskRes, attemptsRes] = await Promise.all([
+        supabase
+          .from('phishing_targets')
+          .select(`id, result, sent_at, phishing_campaigns ( name, email_subject )`)
+          .eq('user_id', user.id)
+          .order('sent_at', { ascending: false }),
 
-      supabase
-        .from('risk_scores')
-        .select('composite_score, phishing_score, quiz_score, phishing_attempts, phishing_clicks, quizzes_taken, quizzes_passed, quizzes_assigned, avg_assessment_score, knowledge_checks_assigned, is_warning, is_critical, calculated_at')
-        .eq('user_id', user.id)
-        .order('calculated_at', { ascending: false })
-        .limit(1)
-        .maybeSingle(),
+        supabase
+          .from('risk_scores')
+          .select('composite_score, phishing_score, quiz_score, phishing_attempts, phishing_clicks, quizzes_taken, quizzes_passed, quizzes_assigned, avg_assessment_score, knowledge_checks_assigned, is_warning, is_critical, calculated_at')
+          .eq('user_id', user.id)
+          .order('calculated_at', { ascending: false })
+          .limit(1)
+          .maybeSingle(),
 
-      supabase
-        .from('quiz_attempts')
-        .select(`
-          id, score_pct, passed, attempt_number, submitted_at, time_taken_secs,
-          quizzes ( title, pass_score, quiz_type, modules ( title ) ),
-          quiz_attempt_answers ( is_correct )
-        `)
-        .eq('user_id', user.id)
-        .order('submitted_at', { ascending: false }),
-    ])
+        supabase
+          .from('quiz_attempts')
+          .select(`
+            id, score_pct, passed, attempt_number, submitted_at, time_taken_secs,
+            quizzes ( title, pass_score, quiz_type, modules ( title ) ),
+            quiz_attempt_answers ( is_correct )
+          `)
+          .eq('user_id', user.id)
+          .order('submitted_at', { ascending: false }),
+      ])
 
-    setPhishingTargets(phishRes.data || [])
-    setRiskScore(riskRes.data || null)
-    setQuizAttempts(attemptsRes.data || [])
-    if (attemptsRes.error) setAttemptsError(attemptsRes.error.message)
-    setLoading(false)
+      if (phishRes.error)  logger.error(phishRes.error,  { page: 'results', action: 'fetchPhishing' })
+      if (riskRes.error)   logger.error(riskRes.error,   { page: 'results', action: 'fetchRiskScore' })
+
+      setPhishingTargets(phishRes.data || [])
+      setRiskScore(riskRes.data || null)
+      setQuizAttempts(attemptsRes.data || [])
+      if (attemptsRes.error) {
+        logger.error(attemptsRes.error, { page: 'results', action: 'fetchAttempts' })
+        setAttemptsError(attemptsRes.error.message)
+      }
+    } catch (err) {
+      logger.error(err, { page: 'results', action: 'fetchAll' })
+      setAttemptsError('Network error loading results')
+    } finally {
+      setLoading(false)
+    }
 
     // Fetch structured module results (server-side API, uses admin client)
     setLoadingModules(true)
@@ -411,6 +425,7 @@ export default function ResultsPage() {
         setModulesError(errBody.error || `HTTP ${modRes.status}`)
       }
     } catch (err) {
+      logger.error(err, { page: 'results', action: 'fetchModuleResults' })
       setModulesError(err.message || 'Network error')
     } finally {
       setLoadingModules(false)

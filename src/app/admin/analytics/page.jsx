@@ -11,10 +11,12 @@ import UserRiskTable from '@/components/analytics/UserRiskTable'
 import ModulePerformanceTable from '@/components/analytics/ModulePerformanceTable'
 import { createClient } from '@/lib/supabase'
 import { formatTimestamp } from '@/lib/csvDownload'
+import { logger } from '@/lib/logger'
 
 export default function AnalyticsPage() {
   const supabase          = createClient()
   const [loading, setLoading]     = useState(true)
+  const [error, setError]         = useState(null)
   const [fetchedAt, setFetchedAt] = useState(null)
   const [data, setData]           = useState({
     completionData:    [],
@@ -29,18 +31,27 @@ export default function AnalyticsPage() {
 
   async function fetchAnalytics() {
     setLoading(true)
+    setError(null)
 
-    const [progressRes, scoresRes, campaignsJson, usersRes, userRolesRes, modulesRes, mraRes] = await Promise.all([
-      supabase.from('user_module_progress').select('user_id, module_id, status'),
-      supabase.from('risk_scores')
-        .select('user_id, composite_score, phishing_clicks, phishing_attempts, quizzes_passed, quizzes_assigned, is_warning, is_critical, calculated_at')
-        .order('calculated_at', { ascending: false }),
-      fetch('/api/admin/campaigns').then(r => r.json()),
-      supabase.from('users_with_roles').select('id, full_name, email, role, role_display_name, role_category, is_active'),
-      supabase.from('user_roles').select('user_id, role_id'),
-      supabase.from('modules').select('id, title').eq('status', 'published').order('order_index', { ascending: true }),
-      supabase.from('module_role_access').select('module_id, role_id'),
-    ])
+    let progressRes, scoresRes, campaignsJson, usersRes, userRolesRes, modulesRes, mraRes
+    try {
+      [progressRes, scoresRes, campaignsJson, usersRes, userRolesRes, modulesRes, mraRes] = await Promise.all([
+        supabase.from('user_module_progress').select('user_id, module_id, status'),
+        supabase.from('risk_scores')
+          .select('user_id, composite_score, phishing_clicks, phishing_attempts, quizzes_passed, quizzes_assigned, is_warning, is_critical, calculated_at')
+          .order('calculated_at', { ascending: false }),
+        fetch('/api/admin/campaigns').then(r => r.ok ? r.json() : Promise.reject(new Error(`Campaigns request failed: ${r.status}`))),
+        supabase.from('users_with_roles').select('id, full_name, email, role, role_display_name, role_category, is_active'),
+        supabase.from('user_roles').select('user_id, role_id'),
+        supabase.from('modules').select('id, title').eq('status', 'published').order('order_index', { ascending: true }),
+        supabase.from('module_role_access').select('module_id, role_id'),
+      ])
+    } catch (err) {
+      logger.error(err, { page: 'admin/analytics', action: 'fetchAnalytics' })
+      setError('Failed to load analytics data. Please refresh the page.')
+      setLoading(false)
+      return
+    }
 
     const progress  = progressRes.data        || []
     const scores    = scoresRes.data          || []
@@ -183,6 +194,12 @@ export default function AnalyticsPage() {
             </span>
           )}
         </div>
+
+        {error && (
+          <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+            <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+          </div>
+        )}
 
         {/* Summary stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

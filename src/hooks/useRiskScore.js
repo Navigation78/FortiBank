@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { useRole } from '@/hooks/useRole'
 import { getRiskLevel, formatScoreHistory } from '@/lib/riskCalculator'
+import { logger } from '@/lib/logger'
 
 export function useRiskScore() {
   const supabase        = createClient()
@@ -25,19 +26,60 @@ export function useRiskScore() {
   }, [user])
 
   async function fetchFromDB() {
-    const { data: latestData, error: latestError } = await supabase
-      .from('risk_scores')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('calculated_at', { ascending: false })
-      .limit(1)
-      .maybeSingle()
+    try {
+      const { data: latestData, error: latestError } = await supabase
+        .from('risk_scores')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('calculated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
 
-    if (latestError && latestError.code !== 'PGRST116') {
-      setError(latestError.message)
+      if (latestError && latestError.code !== 'PGRST116') {
+        logger.error(latestError, { hook: 'useRiskScore', action: 'fetchFromDB' })
+        setError(latestError.message)
+      }
+
+      return latestData || null
+    } catch (err) {
+      logger.error(err, { hook: 'useRiskScore', action: 'fetchFromDB' })
+      setError('Network error loading risk score')
+      return null
     }
+  }
 
-    return latestData || null
+  async function fetchHistory() {
+    try {
+      const { data: historyData, error: historyError } = await supabase
+        .from('risk_scores')
+        .select('composite_score, phishing_score, quiz_score, calculated_at')
+        .eq('user_id', user.id)
+        .order('calculated_at', { ascending: false })
+        .limit(10)
+
+      if (historyError) {
+        logger.error(historyError, { hook: 'useRiskScore', action: 'fetchHistory' })
+        return
+      }
+
+      if (historyData) {
+        setHistory(formatScoreHistory(historyData.reverse()))
+      }
+    } catch (err) {
+      logger.error(err, { hook: 'useRiskScore', action: 'fetchHistory' })
+    }
+  }
+
+  function applyLatest(latestData) {
+    if (latestData) {
+      setLatest({
+        ...latestData,
+        composite_score: Math.round(latestData.composite_score),
+        phishing_score:  Math.round(latestData.phishing_score),
+        quiz_score:      Math.round(latestData.quiz_score),
+        riskLevel:       getRiskLevel(Math.round(latestData.composite_score), role),
+      })
+    }
   }
 
   async function loadRiskScore() {
@@ -48,33 +90,19 @@ export function useRiskScore() {
 
     // No score yet — calculate from real data now
     if (!latestData) {
-      const res = await fetch('/api/risk-score', { method: 'POST' })
-      if (res.ok) {
-        latestData = await fetchFromDB()
+      try {
+        const res = await fetch('/api/risk-score', { method: 'POST' })
+        if (res.ok) {
+          latestData = await fetchFromDB()
+        }
+      } catch (err) {
+        logger.error(err, { hook: 'useRiskScore', action: 'calculate' })
+        setError('Network error calculating risk score')
       }
     }
 
-    if (latestData) {
-      setLatest({
-        ...latestData,
-        composite_score: Math.round(latestData.composite_score),
-        phishing_score:  Math.round(latestData.phishing_score),
-        quiz_score:      Math.round(latestData.quiz_score),
-        riskLevel:       getRiskLevel(Math.round(latestData.composite_score), role),
-      })
-    }
-
-    // Score history (last 10)
-    const { data: historyData } = await supabase
-      .from('risk_scores')
-      .select('composite_score, phishing_score, quiz_score, calculated_at')
-      .eq('user_id', user.id)
-      .order('calculated_at', { ascending: false })
-      .limit(10)
-
-    if (historyData) {
-      setHistory(formatScoreHistory(historyData.reverse()))
-    }
+    applyLatest(latestData)
+    await fetchHistory()
 
     setLoading(false)
   }
@@ -84,27 +112,8 @@ export function useRiskScore() {
     setError(null)
 
     const latestData = await fetchFromDB()
-
-    if (latestData) {
-      setLatest({
-        ...latestData,
-        composite_score: Math.round(latestData.composite_score),
-        phishing_score:  Math.round(latestData.phishing_score),
-        quiz_score:      Math.round(latestData.quiz_score),
-        riskLevel:       getRiskLevel(Math.round(latestData.composite_score), role),
-      })
-    }
-
-    const { data: historyData } = await supabase
-      .from('risk_scores')
-      .select('composite_score, phishing_score, quiz_score, calculated_at')
-      .eq('user_id', user.id)
-      .order('calculated_at', { ascending: false })
-      .limit(10)
-
-    if (historyData) {
-      setHistory(formatScoreHistory(historyData.reverse()))
-    }
+    applyLatest(latestData)
+    await fetchHistory()
 
     setLoading(false)
   }
@@ -112,11 +121,19 @@ export function useRiskScore() {
   // Trigger a fresh risk score calculation
   async function recalculate() {
     setRecalculating(true)
-    const res = await fetch('/api/risk-score', { method: 'POST' })
-    if (res.ok) {
-      await fetchRiskScore()
+    try {
+      const res = await fetch('/api/risk-score', { method: 'POST' })
+      if (res.ok) {
+        await fetchRiskScore()
+      } else {
+        setError('Failed to recalculate risk score')
+      }
+    } catch (err) {
+      logger.error(err, { hook: 'useRiskScore', action: 'recalculate' })
+      setError('Network error recalculating risk score')
+    } finally {
+      setRecalculating(false)
     }
-    setRecalculating(false)
   }
 
   return {

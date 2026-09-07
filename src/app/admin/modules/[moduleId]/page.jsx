@@ -6,6 +6,7 @@ import Link from 'next/link'
 import PageWrapper from '@/components/layout/PageWrapper'
 import CreateModuleForm from '@/components/admin/CreateModuleForm'
 import { createClient } from '@/lib/supabase'
+import { logger } from '@/lib/logger'
 
 const STATUS_COLORS = {
   published: 'bg-green-500/15 text-green-400',
@@ -37,6 +38,7 @@ export default function EditModulePage() {
   const [progressData,    setProgressData]    = useState([])
   const [progressLoading, setProgressLoading] = useState(true)
   const [actionLoading,   setActionLoading]   = useState(false)
+  const [actionError,     setActionError]     = useState(null)
 
   useEffect(() => {
     if (moduleId) {
@@ -46,49 +48,87 @@ export default function EditModulePage() {
   }, [moduleId])
 
   async function fetchModule() {
-    const { data } = await supabase
-      .from('modules')
-      .select(`*, module_content(*), module_role_access(role_id)`)
-      .eq('id', moduleId)
-      .single()
-    setModule(data)
-    setLoading(false)
+    try {
+      const { data, error } = await supabase
+        .from('modules')
+        .select(`*, module_content(*), module_role_access(role_id)`)
+        .eq('id', moduleId)
+        .single()
+      if (error) throw error
+      setModule(data)
+    } catch (err) {
+      logger.error(err, { page: 'admin/modules/[moduleId]', action: 'fetchModule', moduleId })
+      setActionError('Failed to load module.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function fetchProgress() {
     setProgressLoading(true)
-    const res = await fetch(`/api/admin/modules/${moduleId}/progress`)
-    if (res.ok) {
-      const { users } = await res.json()
-      setProgressData(users || [])
+    try {
+      const res = await fetch(`/api/admin/modules/${moduleId}/progress`)
+      if (res.ok) {
+        const { users } = await res.json()
+        setProgressData(users || [])
+      } else {
+        logger.warn('Failed to load module progress', { moduleId, status: res.status })
+      }
+    } catch (err) {
+      logger.error(err, { page: 'admin/modules/[moduleId]', action: 'fetchProgress', moduleId })
+    } finally {
+      setProgressLoading(false)
     }
-    setProgressLoading(false)
   }
 
   async function togglePublish() {
     setActionLoading(true)
+    setActionError(null)
     const newStatus = module.status === 'published' ? 'draft' : 'published'
-    await supabase.from('modules').update({ status: newStatus }).eq('id', moduleId)
-    await fetchModule()
-    setActionLoading(false)
+    try {
+      const { error } = await supabase.from('modules').update({ status: newStatus }).eq('id', moduleId)
+      if (error) throw error
+      await fetchModule()
+    } catch (err) {
+      logger.error(err, { page: 'admin/modules/[moduleId]', action: 'togglePublish', moduleId })
+      setActionError('Failed to update module status.')
+    } finally {
+      setActionLoading(false)
+    }
   }
 
   async function toggleArchive() {
     setActionLoading(true)
+    setActionError(null)
     const newStatus = module.status === 'archived' ? 'draft' : 'archived'
-    await supabase.from('modules').update({ status: newStatus }).eq('id', moduleId)
-    await fetchModule()
-    setActionLoading(false)
+    try {
+      const { error } = await supabase.from('modules').update({ status: newStatus }).eq('id', moduleId)
+      if (error) throw error
+      await fetchModule()
+    } catch (err) {
+      logger.error(err, { page: 'admin/modules/[moduleId]', action: 'toggleArchive', moduleId })
+      setActionError('Failed to update module status.')
+    } finally {
+      setActionLoading(false)
+    }
   }
 
   async function deleteModule() {
     if (!confirm(`Delete "${module.title}"? This cannot be undone.`)) return
     setActionLoading(true)
-    const res = await fetch(`/api/admin/modules/${moduleId}`, { method: 'DELETE' })
-    if (res.ok) {
-      router.push('/admin/modules')
-    } else {
-      alert('Failed to delete module')
+    setActionError(null)
+    try {
+      const res = await fetch(`/api/admin/modules/${moduleId}`, { method: 'DELETE' })
+      if (res.ok) {
+        router.push('/admin/modules')
+        return
+      }
+      const data = await res.json().catch(() => ({}))
+      alert(data.error || 'Failed to delete module')
+    } catch (err) {
+      logger.error(err, { page: 'admin/modules/[moduleId]', action: 'deleteModule', moduleId })
+      alert('Network error deleting module')
+    } finally {
       setActionLoading(false)
     }
   }
@@ -150,6 +190,12 @@ export default function EditModulePage() {
           </button>
         </div>
       </div>
+
+      {actionError && (
+        <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+          <p className="text-red-600 dark:text-red-400 text-sm">{actionError}</p>
+        </div>
+      )}
 
       {/* Module metadata panel */}
       <div className="bg-th-srf border border-th-brd rounded-xl px-5 py-4 mb-6 flex flex-wrap gap-6">

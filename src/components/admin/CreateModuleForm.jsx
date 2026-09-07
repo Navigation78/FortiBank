@@ -11,6 +11,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
+import { logger } from '@/lib/logger'
 
 const CONTENT_TYPES = [
   { value: 'text',            label: 'Text / HTML' },
@@ -134,12 +135,18 @@ export default function CreateModuleForm({ existingModule }) {
   useEffect(() => { fetchRoles() }, [])
 
   async function fetchRoles() {
-    const { data } = await supabase
-      .from('roles')
-      .select('id, name, display_name, category')
-      .eq('has_modules', true)
-      .order('id')
-    setRoles(data || [])
+    try {
+      const { data, error } = await supabase
+        .from('roles')
+        .select('id, name, display_name, category')
+        .eq('has_modules', true)
+        .order('id')
+      if (error) throw error
+      setRoles(data || [])
+    } catch (err) {
+      logger.error(err, { component: 'CreateModuleForm', action: 'fetchRoles' })
+      setError('Failed to load roles')
+    }
   }
 
   function handleFormChange(e) {
@@ -213,27 +220,32 @@ export default function CreateModuleForm({ existingModule }) {
       ? `/api/admin/modules/${existingModule.id}`
       : '/api/admin/modules'
 
-    const res = await fetch(endpoint, {
-      method:  existingModule?.id ? 'PUT' : 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({
-        ...form,
-        duration_mins:  form.duration_mins ? parseInt(form.duration_mins) : null,
-        content_blocks: contentBlocks.map((b, i) => ({ ...b, order_index: i })),
-        role_ids:       selectedRoles,
-      }),
-    })
+    try {
+      const res = await fetch(endpoint, {
+        method:  existingModule?.id ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          ...form,
+          duration_mins:  form.duration_mins ? parseInt(form.duration_mins) : null,
+          content_blocks: contentBlocks.map((b, i) => ({ ...b, order_index: i })),
+          role_ids:       selectedRoles,
+        }),
+      })
 
-    const data = await res.json()
-    if (!res.ok) {
-      setError(data.error || `Failed to ${existingModule ? 'update' : 'create'} module`)
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error || `Failed to ${existingModule ? 'update' : 'create'} module`)
+        return
+      }
+
+      setSuccess(true)
+      setTimeout(() => router.push('/admin/modules'), 1500)
+    } catch (err) {
+      logger.error(err, { component: 'CreateModuleForm', action: 'handleSubmit', moduleId: existingModule?.id })
+      setError(`Network error ${existingModule ? 'updating' : 'creating'} module`)
+    } finally {
       setLoading(false)
-      return
     }
-
-    setSuccess(true)
-    setLoading(false)
-    setTimeout(() => router.push('/admin/modules'), 1500)
   }
 
   const rolesByCategory = roles.reduce((acc, role) => {

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { ArrowRight, Plus } from 'lucide-react'
 import Link from 'next/link'
 import PageWrapper from '@/components/layout/PageWrapper'
+import { logger } from '@/lib/logger'
 
 const STATUS_COLORS = {
   draft:     'bg-th-hov text-th-txt2',
@@ -15,25 +16,46 @@ const STATUS_COLORS = {
 export default function AdminPhishingPage() {
   const [campaigns, setCampaigns]   = useState([])
   const [loading, setLoading]       = useState(true)
+  const [error, setError]           = useState(null)
   const [resending, setResending]   = useState({})
 
   useEffect(() => { fetchCampaigns() }, [])
 
   async function fetchCampaigns() {
     setLoading(true)
-    const res  = await fetch('/api/admin/campaigns')
-    const data = await res.json()
-    setCampaigns(data.campaigns || [])
-    setLoading(false)
+    setError(null)
+    try {
+      const res  = await fetch('/api/admin/campaigns')
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setError(data.error || 'Failed to load campaigns')
+        setCampaigns([])
+        return
+      }
+      const data = await res.json()
+      setCampaigns(data.campaigns || [])
+    } catch (err) {
+      logger.error(err, { page: 'admin/phishing', action: 'fetchCampaigns' })
+      setError('Network error loading campaigns')
+      setCampaigns([])
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function handleResend(campaignId) {
     setResending(prev => ({ ...prev, [campaignId]: true }))
-    const res  = await fetch(`/api/admin/campaigns/${campaignId}/resend`, { method: 'POST' })
-    const data = await res.json()
-    setResending(prev => ({ ...prev, [campaignId]: false }))
-    alert(data.message || (res.ok ? 'Resend complete.' : 'Resend failed.'))
-    if (res.ok) fetchCampaigns()
+    try {
+      const res  = await fetch(`/api/admin/campaigns/${campaignId}/resend`, { method: 'POST' })
+      const data = await res.json().catch(() => ({}))
+      alert(data.message || (res.ok ? 'Resend complete.' : 'Resend failed.'))
+      if (res.ok) await fetchCampaigns()
+    } catch (err) {
+      logger.error(err, { page: 'admin/phishing', action: 'handleResend', campaignId })
+      alert('Network error while resending campaign.')
+    } finally {
+      setResending(prev => ({ ...prev, [campaignId]: false }))
+    }
   }
 
   return (
@@ -52,6 +74,12 @@ export default function AdminPhishingPage() {
             New Campaign
           </Link>
         </div>
+
+        {error && (
+          <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+            <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+          </div>
+        )}
 
         {loading ? (
           <div className="space-y-3">

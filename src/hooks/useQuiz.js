@@ -6,6 +6,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+import { logger } from '@/lib/logger'
 
 export function useQuiz(quizId) {
   const { user } = useAuth()
@@ -49,24 +50,28 @@ export function useQuiz(quizId) {
     setLoading(true)
     setError(null)
 
-    const res = await fetch(`/api/quiz?quizId=${quizId}`)
-    if (!res.ok) {
-      setError('Failed to load quiz')
+    try {
+      const res = await fetch(`/api/quiz?quizId=${quizId}`)
+      if (!res.ok) {
+        setError('Failed to load quiz')
+        return
+      }
+
+      const data = await res.json()
+      setQuiz(data.quiz)
+      setQuestions(data.questions)
+      setAttemptCount(data.attemptCount || 0)
+
+      // Set timer if quiz has a time limit
+      if (data.quiz?.time_limit_mins) {
+        setTimeLeft(data.quiz.time_limit_mins * 60)
+      }
+    } catch (err) {
+      logger.error(err, { hook: 'useQuiz', quizId })
+      setError('Network error loading quiz')
+    } finally {
       setLoading(false)
-      return
     }
-
-    const data = await res.json()
-    setQuiz(data.quiz)
-    setQuestions(data.questions)
-    setAttemptCount(data.attemptCount || 0)
-
-    // Set timer if quiz has a time limit
-    if (data.quiz?.time_limit_mins) {
-      setTimeLeft(data.quiz.time_limit_mins * 60)
-    }
-
-    setLoading(false)
   }
 
   function startTimer() {
@@ -118,27 +123,32 @@ export function useQuiz(quizId) {
     clearInterval(timerRef.current)
     setTimerActive(false)
 
-    const res = await fetch('/api/quiz/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        quiz_id:       quizId,
-        answers,
-        time_taken_secs: quiz?.time_limit_mins
-          ? (quiz.time_limit_mins * 60) - (timeLeft || 0)
-          : null,
-      }),
-    })
+    try {
+      const res = await fetch('/api/quiz/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          quiz_id:       quizId,
+          answers,
+          time_taken_secs: quiz?.time_limit_mins
+            ? (quiz.time_limit_mins * 60) - (timeLeft || 0)
+            : null,
+        }),
+      })
 
-    if (!res.ok) {
-      setError('Failed to submit quiz')
+      if (!res.ok) {
+        setError('Failed to submit quiz')
+        return
+      }
+
+      const data = await res.json()
+      setResult(data)
+    } catch (err) {
+      logger.error(err, { hook: 'useQuiz', action: 'submit', quizId })
+      setError('Network error submitting quiz')
+    } finally {
       setSubmitting(false)
-      return
     }
-
-    const data = await res.json()
-    setResult(data)
-    setSubmitting(false)
   }, [quizId, answers, quiz, timeLeft, user, submitting])
 
   function resetQuiz() {

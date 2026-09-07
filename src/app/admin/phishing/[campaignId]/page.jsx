@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import PageWrapper from '@/components/layout/PageWrapper'
 import { createClient } from '@/lib/supabase'
+import { logger } from '@/lib/logger'
 
 export default function CampaignDetailAdminPage() {
   const { campaignId }        = useParams()
@@ -12,6 +13,7 @@ export default function CampaignDetailAdminPage() {
   const [campaign, setCampaign] = useState(null)
   const [targets, setTargets]   = useState([])
   const [loading, setLoading]   = useState(true)
+  const [loadError, setLoadError] = useState(null)
   const [sending, setSending]     = useState(false)
   const [resending, setResending] = useState(false)
 
@@ -19,16 +21,25 @@ export default function CampaignDetailAdminPage() {
 
   async function fetchCampaign() {
     setLoading(true)
-    const [campaignRes, targetsRes] = await Promise.all([
-      supabase.from('phishing_campaigns').select('*').eq('id', campaignId).single(),
-      supabase.from('phishing_targets')
-        .select('*, users(full_name, email)')
-        .eq('campaign_id', campaignId)
-        .order('sent_at', { ascending: false }),
-    ])
-    setCampaign(campaignRes.data)
-    setTargets(targetsRes.data || [])
-    setLoading(false)
+    setLoadError(null)
+    try {
+      const [campaignRes, targetsRes] = await Promise.all([
+        supabase.from('phishing_campaigns').select('*').eq('id', campaignId).single(),
+        supabase.from('phishing_targets')
+          .select('*, users(full_name, email)')
+          .eq('campaign_id', campaignId)
+          .order('sent_at', { ascending: false }),
+      ])
+      if (campaignRes.error) throw campaignRes.error
+      if (targetsRes.error) logger.error(targetsRes.error, { page: 'admin/phishing/[campaignId]', action: 'fetchTargets', campaignId })
+      setCampaign(campaignRes.data)
+      setTargets(targetsRes.data || [])
+    } catch (err) {
+      logger.error(err, { page: 'admin/phishing/[campaignId]', action: 'fetchCampaign', campaignId })
+      setLoadError('Failed to load campaign.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function handleSend() {
@@ -54,6 +65,7 @@ export default function CampaignDetailAdminPage() {
         alert(msg)
       }
     } catch (err) {
+      logger.error(err, { page: 'admin/phishing/[campaignId]', action: 'handleSend', campaignId })
       alert(`Send failed: ${err.message}`)
     } finally {
       setSending(false)
@@ -66,18 +78,20 @@ export default function CampaignDetailAdminPage() {
     try {
       const res  = await fetch(`/api/admin/campaigns/${campaignId}/resend`, { method: 'POST' })
       const data = await res.json()
-      console.log('[Resend response]', data)
       if (!res.ok) {
-        console.error('[Resend error]', data.error)
+        logger.error(new Error(data.error || 'Resend failed'), { page: 'admin/phishing/[campaignId]', action: 'handleResend', campaignId })
         alert(`Resend failed: ${data.error || 'Unknown error'}`)
       } else {
+        if (data.failed > 0) {
+          logger.warn('Some resend targets failed', { campaignId, failed: data.failed })
+        }
         const failures = data.failed > 0
-          ? `\n\nNote: ${data.failed} failed — check browser console for details.`
+          ? `\n\nNote: ${data.failed} failed — check logs for details.`
           : ''
         alert((data.message || 'Resend complete.') + failures)
       }
     } catch (err) {
-      console.error('[Resend fetch error]', err)
+      logger.error(err, { page: 'admin/phishing/[campaignId]', action: 'handleResend', campaignId })
       alert(`Resend failed: ${err.message}`)
     } finally {
       setResending(false)
@@ -117,6 +131,11 @@ export default function CampaignDetailAdminPage() {
         </div>
 
         <div className="space-y-6 max-w-4xl">
+          {loadError && (
+            <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+              <p className="text-red-600 dark:text-red-400 text-sm">{loadError}</p>
+            </div>
+          )}
           {/* Stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[

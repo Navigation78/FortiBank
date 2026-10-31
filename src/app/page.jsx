@@ -87,27 +87,27 @@ const STEPS = [
 const TESTIMONIALS = [
   {
     quote: 'FortiBank LMS transformed how we handle security awareness. Our phishing click rates dropped 60% within three months.',
-    name: 'Amara Osei', role: 'Head of IT Security, KCB',
+    name: 'Amara Osei', role: 'Head of IT Security, Ajira Bank',
     img: 'https://images.unsplash.com/photo-1611432579402-7037e3e2c1e4?auto=format&fit=crop&w=200&q=80',
   },
   {
     quote: 'The role-based modules are exactly what we needed. Tellers and managers now get training relevant to their daily risk exposure.',
-    name: 'Kwame Muthoni', role: 'Compliance Manager, Equity Bank',
+    name: 'Kwame Muthoni', role: 'Compliance Manager, CashLink Bank',
     img: 'https://images.unsplash.com/photo-1679117349740-c46c819d0373?auto=format&fit=crop&w=200&q=80',
   },
   {
     quote: 'Audit season used to be stressful. Now we export a compliance report in seconds. Every certificate is CBK-ready.',
-    name: 'Fatuma Njoroge', role: 'Branch Manager, Standard Chartered',
+    name: 'Fatuma Njoroge', role: 'Branch Manager, Standard Banking',
     img: 'https://images.unsplash.com/photo-1612115958726-9af4b6bd28d1?auto=format&fit=crop&w=200&q=80',
   },
   {
     quote: 'The phishing simulation engine revealed vulnerabilities we never knew existed. Training gaps were fixed in days.',
-    name: 'David Kimani', role: 'CISO, Co-operative Bank',
+    name: 'David Kimani', role: 'CISO, Akiba Bank',
     img: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80',
   },
   {
     quote: 'Certificate generation for CBK audits used to take days. FortiBank does it instantly. Verified and downloadable.',
-    name: 'Grace Wanjiku', role: 'IT Manager, NCBA Bank',
+    name: 'Grace Wanjiku', role: 'IT Manager, ACBA Bank',
     img: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80',
   },
 ]
@@ -180,12 +180,12 @@ export default function LandingPage() {
 
           {/* Left — copy */}
           <div className="flex-1 text-left">
-            <h1 className="text-[clamp(36px,4.5vw,60px)] font-bold leading-[1.1] text-th-txt mb-6 tracking-tight">
+            <h3 className="text-[clamp(36px,4.5vw,60px)] font-bold leading-[1.1] text-th-txt mb-6 tracking-tight">
               Fortify Every<br />
               Employee.{' '}
               <span className="text-blue-600 dark:text-blue-400">Defend</span><br />
               Every Branch.
-            </h1>
+            </h3>
 
             <p className="text-base text-th-txt2 max-w-[420px] mb-8 leading-relaxed">
               Role-based cybersecurity training, live phishing simulations, and real-time
@@ -220,16 +220,8 @@ export default function LandingPage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-blue-900/60 via-blue-900/10 to-transparent" />
               </div>
-              {/* floating stat — left */}
-              <div className="absolute -left-6 top-12 bg-white dark:bg-th-elv border border-th-brd rounded-2xl px-4 py-3 shadow-xl text-center min-w-[100px]">
-                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">12</div>
-                <div className="text-[11px] text-th-txt2 leading-tight mt-0.5">Staff roles<br />covered</div>
-              </div>
-              {/* floating stat — right */}
-              <div className="absolute -right-4 bottom-16 bg-blue-600 rounded-2xl px-4 py-3 shadow-xl text-center min-w-[90px]">
-                <div className="text-2xl font-bold text-white">CBK</div>
-                <div className="text-[11px] text-blue-100 leading-tight mt-0.5">Regulation<br />aligned</div>
-              </div>
+              
+          
             </div>
           </div>
         </div>
